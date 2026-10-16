@@ -140,7 +140,8 @@ English
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
-| 1.0 | 2026-10-14 | Initial release with full diagnostics, REST API plugin detection, server/cache inspection, and export tools | Ready for submission |
+| 1.0 | 2026-10-14 | Initial release with full diagnostics, REST API plugin detection, server/cache inspection, and export tools | Submitted |
+| 1.1 | 2026-10-16 | Redesigned modern developer dashboard UI, status pulse badge, toast feedback, and performance polish | Ready for submission |
 
 ## Review Notes
 
