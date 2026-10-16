@@ -201,21 +201,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     refreshBtn: document.getElementById('refresh-btn'),
     copyBtn: document.getElementById('copy-btn'),
     downloadBtn: document.getElementById('download-txt-btn'),
-    exportBtn: document.getElementById('export-json-btn')
+    exportBtn: document.getElementById('export-json-btn'),
+    toast: document.getElementById('toast')
   };
+
+  function showToast(msg) {
+    if (!els.toast) return;
+    els.toast.textContent = msg;
+    els.toast.classList.remove('hidden');
+    clearTimeout(window.__toastTimeout);
+    window.__toastTimeout = setTimeout(() => {
+      els.toast.classList.add('hidden');
+    }, 2200);
+  }
 
   async function runDiagnostics() {
     els.loading.classList.remove('hidden');
     els.results.classList.add('hidden');
+    els.refreshBtn.classList.add('spinning');
 
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (!tab || !tab.url || tab.url.startsWith('chrome://')) throw new Error('Cannot run on internal pages.');
+      if (!tab || !tab.url || tab.url.startsWith('chrome://')) throw new Error('Cannot run on internal browser pages.');
       
       const res = await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: detectWordPress });
       const data = res[0].result;
       
-      if (!data.isWP) throw new Error('Not a WordPress site.');
+      if (!data.isWP) throw new Error('Not a WordPress site or signatures hidden.');
 
       const urlObj = new URL(tab.url);
       data.hostname = urlObj.hostname;
@@ -235,7 +247,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       reportData = data;
       renderDashboard();
     } catch (e) {
-      els.loading.innerHTML = `<p style="color:var(--error)">${e.message}</p>`;
+      els.loading.innerHTML = `<div class="state-card"><p class="state-title" style="color:var(--color-error);">${e.message}</p></div>`;
+    } finally {
+      els.refreshBtn.classList.remove('spinning');
     }
   }
 
@@ -244,21 +258,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     els.results.classList.remove('hidden');
     const d = reportData;
 
-    // Summary
-    document.getElementById('summary-status').innerHTML = `<span class="badge success">Active</span>`;
-    document.getElementById('summary-version').textContent = d.version;
-    document.getElementById('summary-plugins').textContent = d.plugins.length;
+    // Summary Cards
+    document.getElementById('summary-status').innerHTML = `<span class="status-pill success"><span class="pulse-dot"></span> Active</span>`;
+    document.getElementById('summary-version').textContent = d.version !== 'Unknown' ? 'v' + d.version : 'Unknown';
+    document.getElementById('summary-plugins').textContent = `${d.plugins.length} Active`;
 
     // Env & Theme
-    document.getElementById('env-url').textContent = d.url;
-    document.getElementById('env-https').innerHTML = d.protocol === 'https:' ? '<span class="badge success">Passed</span>' : '<span class="badge error">Warning: HTTP</span>';
-    document.getElementById('theme-link').textContent = d.theme;
-    document.getElementById('theme-link').href = `https://wordpress.org/themes/${d.theme}/`;
+    const envUrlEl = document.getElementById('env-url');
+    envUrlEl.textContent = d.url;
+    envUrlEl.title = d.url;
+    
+    document.getElementById('env-https').innerHTML = d.protocol === 'https:' 
+      ? '<span class="badge success">Passed (TLS)</span>' 
+      : '<span class="badge error">Warning: HTTP</span>';
+      
+    const themeLink = document.getElementById('theme-link');
+    themeLink.textContent = d.theme;
+    themeLink.href = `https://wordpress.org/themes/${d.theme}/`;
+    
     document.getElementById('theme-version').textContent = d.themeVersion ? 'v' + d.themeVersion : 'Unknown';
 
     // Server & DNS
-    document.getElementById('server-proxy').textContent = d.proxyCDN;
-    document.getElementById('server-proxy').className = 'info-val badge ' + (d.proxyCDN !== 'None Detected' ? 'info' : '');
+    const proxyBadge = document.getElementById('server-proxy');
+    proxyBadge.textContent = d.proxyCDN;
+    proxyBadge.className = 'info-val badge ' + (d.proxyCDN !== 'None Detected' ? 'purple' : '');
+    
     document.getElementById('server-software').textContent = d.serverSoftware;
     document.getElementById('server-php').textContent = d.phpVersion;
     document.getElementById('server-ip').textContent = d.ip;
@@ -267,7 +291,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Cache
     const ch = document.getElementById('cache-header-status');
     ch.textContent = d.cacheHeaderStatus;
-    ch.className = 'info-val badge ' + (d.cacheHeaderStatus === 'HIT' ? 'success' : d.cacheHeaderStatus === 'MISS' ? 'error' : d.cacheHeaderStatus === 'Unknown' ? '' : 'warning');
+    ch.className = 'info-val badge ' + (
+      d.cacheHeaderStatus === 'HIT' ? 'success' : 
+      d.cacheHeaderStatus === 'MISS' ? 'error' : 
+      d.cacheHeaderStatus === 'Unknown' ? '' : 'warning'
+    );
     document.getElementById('cache-system').textContent = d.cacheSystem;
 
     // Plugins
@@ -279,20 +307,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     const list = document.getElementById('plugins-list');
     list.innerHTML = '';
     if (plugins.length === 0) {
-      list.innerHTML = '<li class="info-muted">No frontend plugins detected</li>';
+      list.innerHTML = '<li class="empty-state">No plugins detected</li>';
       return;
     }
     plugins.forEach(p => {
-      const verText = p.version ? (p.version === 'REST API' ? 'REST API' : 'v' + p.version) : 'Unknown';
-      list.innerHTML += `<li><a href="https://wordpress.org/plugins/${p.slug}/" target="_blank">${p.slug}</a> <span class="badge">${verText}</span></li>`;
+      const isRest = p.version === 'REST API';
+      const badgeClass = isRest ? 'badge purple' : (p.version ? 'badge' : 'badge muted');
+      const verText = p.version ? (isRest ? 'REST API' : 'v' + p.version) : 'Unknown';
+      list.innerHTML += `<li><a href="https://wordpress.org/plugins/${p.slug}/" target="_blank" rel="noopener noreferrer">${p.slug}</a> <span class="${badgeClass}">${verText}</span></li>`;
     });
   }
 
   document.getElementById('plugin-search').addEventListener('input', (e) => {
     if (!reportData) return;
-    const term = e.target.value.toLowerCase();
+    const term = e.target.value.toLowerCase().trim();
     const filtered = reportData.plugins.filter(p => p.slug.toLowerCase().includes(term));
-    renderPluginsList(filtered);
+    if (filtered.length === 0) {
+      document.getElementById('plugins-list').innerHTML = `<li class="empty-state">No plugins matching "${term}"</li>`;
+    } else {
+      renderPluginsList(filtered);
+    }
   });
 
   function generateTXT() {
@@ -304,7 +338,7 @@ Report Mode: Full Technical Report
 
 ## ENVIRONMENT
 WordPress Version: ${d.version}
-PHP Version: ${d.phpVersion}
+Site URL: ${d.url}
 HTTPS: ${d.protocol === 'https:' ? 'Passed' : 'Failed'}
 Database: Unknown (Frontend context)
 
@@ -313,18 +347,19 @@ Active Theme: ${d.theme}
 Version: ${d.themeVersion || 'Unknown'}
 
 ## PLUGINS
-Total Frontend Detected: ${d.plugins.length}
+Total Detected: ${d.plugins.length}
 ${d.plugins.map(p => `- ${p.slug} (${p.version ? (p.version === 'REST API' ? 'REST API' : 'v' + p.version) : 'Unknown'})`).join('\n')}
 
-## SERVER
+## SERVER & HOSTING
 Web Server: ${d.serverSoftware}
-Proxy/CDN: ${d.proxyCDN}
+PHP Version: ${d.phpVersion}
+Proxy / CDN: ${d.proxyCDN}
 Host IP: ${d.ip}
 Nameservers: ${d.dns}
 
 ## CACHING
 Cache Header Status: ${d.cacheHeaderStatus}
-Detected Cache System: ${d.cacheSystem}
+Detected Cache Engine: ${d.cacheSystem}
 Persistent Object Cache: Unknown (Frontend context)
 `;
   }
@@ -334,7 +369,9 @@ Persistent Object Cache: Unknown (Frontend context)
   els.copyBtn.addEventListener('click', () => {
     if (!reportData) return;
     navigator.clipboard.writeText(generateTXT()).then(() => {
-      alert('Report copied to clipboard!');
+      showToast('Report copied to clipboard!');
+    }).catch(() => {
+      showToast('Failed to copy report');
     });
   });
 
@@ -344,9 +381,10 @@ Persistent Object Cache: Unknown (Frontend context)
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `wp-report-full.txt`;
+    a.download = `wp-stack-report-${reportData.hostname || 'site'}.txt`;
     a.click();
     URL.revokeObjectURL(url);
+    showToast('Downloaded text report');
   });
 
   els.exportBtn.addEventListener('click', () => {
@@ -355,9 +393,10 @@ Persistent Object Cache: Unknown (Frontend context)
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `wp-report-full.json`;
+    a.download = `wp-stack-report-${reportData.hostname || 'site'}.json`;
     a.click();
     URL.revokeObjectURL(url);
+    showToast('Exported JSON data');
   });
 
   runDiagnostics();
