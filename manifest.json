@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "WP Detector",
+  "version": "1.0",
+  "description": "Detects WordPress version, active theme, and plugins.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    },
+    "default_popup": "popup/popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://api.wordpress.org/*",
+    "https://dns.google/*"
+  ]
+}

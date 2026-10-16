@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WP Stack Report</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <img src="../icons/icon-48.png" alt="Logo" width="24" height="24">
+        <div>
+          <h1>WP Stack Report</h1>
+          <span class="subtitle" id="last-generated">Diagnostics Tool</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="refresh-btn" class="icon-btn" title="Refresh Data">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        </button>
+        <button id="copy-btn" class="icon-btn" title="Copy Support Summary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path></svg>
+        </button>
+        <button id="download-txt-btn" class="icon-btn" title="Download TXT">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </button>
+        <button id="export-json-btn" class="icon-btn" title="Export JSON">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <div id="loading" class="state-card">
+        <div class="spinner"></div>
+        <p>Running Diagnostics...</p>
+      </div>
+
+      <div id="results" class="hidden">
+        
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+          <div class="summary-box">
+            <span class="summary-label">Status</span>
+            <span class="summary-val" id="summary-status">...</span>
+          </div>
+          <div class="summary-box">
+            <span class="summary-label">Core Version</span>
+            <span class="summary-val" id="summary-version">...</span>
+          </div>
+          <div class="summary-box">
+            <span class="summary-label">Plugins</span>
+            <span class="summary-val" id="summary-plugins">...</span>
+          </div>
+        </div>
+
+        <!-- Accordion Sections -->
+        <div class="accordion">
+          
+          <!-- Environment & Theme -->
+          <details class="accordion-item" open>
+            <summary class="accordion-header">WordPress Environment & Theme</summary>
+            <div class="accordion-content">
+              <div class="info-row"><span class="info-label">Site URL</span><span class="info-val" id="env-url"></span></div>
+              <div class="info-row"><span class="info-label">HTTPS</span><span class="info-val" id="env-https"></span></div>
+              <div class="info-row"><span class="info-label">Active Theme</span><span class="info-val"><a href="#" id="theme-link" target="_blank"></a> <span class="badge" id="theme-version"></span></span></div>
+              <div class="info-row"><span class="info-label">Environment Type</span><span class="info-val" id="env-type">Frontend Extracted</span></div>
+            </div>
+          </details>
+
+          <!-- Plugins Inventory -->
+          <details class="accordion-item" open>
+            <summary class="accordion-header">Plugin Inventory (<span id="plugins-count-header">0</span>)</summary>
+            <div class="accordion-content no-padding">
+              <div class="search-container">
+                <input type="text" id="plugin-search" placeholder="Filter detected plugins...">
+              </div>
+              <ul id="plugins-list" class="plugins-list"></ul>
+              <div class="disclaimer">Note: Only plugins loading frontend assets can be detected by this extension.</div>
+            </div>
+          </details>
+
+          <!-- Server & Hosting -->
+          <details class="accordion-item" open>
+            <summary class="accordion-header">Server, Proxy & DNS</summary>
+            <div class="accordion-content">
+              <div class="info-row"><span class="info-label">Proxy / CDN</span><span class="info-val badge" id="server-proxy"></span></div>
+              <div class="info-row"><span class="info-label">Web Server</span><span class="info-val" id="server-software"></span></div>
+              <div class="info-row"><span class="info-label">PHP Version</span><span class="info-val" id="server-php"></span></div>
+              <div class="info-row"><span class="info-label">Host IP (A Record)</span><span class="info-val" id="server-ip"></span></div>
+              <div class="info-row"><span class="info-label">Nameservers</span><span class="info-val" id="server-dns" style="text-align: right;"></span></div>
+            </div>
+          </details>
+
+          <!-- Performance & Caching -->
+          <details class="accordion-item" open>
+            <summary class="accordion-header">Performance & Caching</summary>
+            <div class="accordion-content">
+              <div class="info-row"><span class="info-label">Page Cache Header</span><span class="info-val badge" id="cache-header-status"></span></div>
+              <div class="info-row"><span class="info-label">Detected Cache System</span><span class="info-val" id="cache-system"></span></div>
+              <div class="info-row"><span class="info-label">Object Cache</span><span class="info-val info-muted">Unknown (Frontend)</span></div>
+            </div>
+          </details>
+
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
