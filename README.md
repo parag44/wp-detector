@@ -53,7 +53,7 @@
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/wp-detector.git
+   git clone https://github.com/parag44/wp-detector.git
    ```
 2. **Open Google Chrome** and navigate to `chrome://extensions/`.
 3. Enable **Developer mode** using the toggle switch in the top-right corner.
