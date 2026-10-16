@@ -87,9 +87,10 @@ English
 | Asset | Dimensions | Status | Filename |
 |-------|-----------|--------|----------|
 | Store Icon [REQUIRED] | 128×128 PNG | ✅ Created | `icons/icon-128.png` |
-| Screenshot 1 [REQUIRED] | 1280×800 or 640×400 | ⬜ Not created | |
-| Screenshot 2 [RECOMMENDED] | 1280×800 or 640×400 | ⬜ Not created | |
-| Small Promo Tile [RECOMMENDED] | 440×280 | ⬜ Not created | |
+| Screenshot 1 [REQUIRED] | 1280×800 | ✅ Created | `screenshot-1280x800.png` |
+| Screenshot 2 (Retina) [OPTIONAL] | 2560×1600 | ✅ Created | `screenshot-2560x1600-retina.png` |
+| Small Promo Tile [RECOMMENDED] | 440×280 (No Alpha) | ✅ Created | `promo-small-440x280.png` / `promo-small-440x280.jpg` |
+| Marquee Promo Tile [RECOMMENDED] | 1400×560 (No Alpha) | ✅ Created | `promo-marquee-1400x560.png` / `promo-marquee-1400x560.jpg` |
 
 ### Screenshot Notes
 - Screenshot 1: Extension popup open on a WordPress site showing WordPress Core, Theme, Plugin list with versions, and Server info.
