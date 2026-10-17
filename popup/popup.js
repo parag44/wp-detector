@@ -37,8 +37,15 @@ async function detectWordPress() {
       let pVer = '';
       const verMatch = url.match(/(?:\?|&)ver=([0-9a-zA-Z.-]+)/i);
       if (verMatch && verMatch[1] !== version) pVer = verMatch[1];
-      if (!pluginsMap.has(slug) || (pVer && !pluginsMap.get(slug))) {
-        pluginsMap.set(slug, pVer);
+      
+      const existing = pluginsMap.get(slug);
+      if (!existing || (pVer && !existing.version)) {
+        pluginsMap.set(slug, {
+          slug,
+          version: pVer,
+          method: 'Frontend Asset',
+          evidence: url
+        });
       }
     }
   });
@@ -120,7 +127,12 @@ async function detectWordPress() {
                if (prefix === 'wc') prefix = 'woocommerce';
                
                if (!pluginsMap.has(prefix)) {
-                 pluginsMap.set(prefix, 'REST API');
+                 pluginsMap.set(prefix, {
+                   slug: prefix,
+                   version: 'REST API',
+                   method: 'REST API Namespace',
+                   evidence: `${origin}/wp-json/${ns}`
+                 });
                }
             }
           }
@@ -143,7 +155,7 @@ async function detectWordPress() {
     phpVersion,
     cacheSystem,
     cacheHeaderStatus,
-    plugins: Array.from(pluginsMap.entries()).map(([slug, ver]) => ({ slug, version: ver }))
+    plugins: Array.from(pluginsMap.values())
   };
 }
 
@@ -189,20 +201,80 @@ async function checkWPCoreUpdate(currentVersion) {
   return null;
 }
 
+// Helper: Categorize plugin and return category icon SVG + color class
+function getPluginCategoryInfo(slug) {
+  const s = slug.toLowerCase();
+  
+  if (s.includes('access') || s.includes('ada') || s.includes('screen-reader')) {
+    return {
+      cls: 'cat-green',
+      svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="7.5" r="1.5" fill="currentColor"></circle><path d="M7 11h10M12 11v4M9.5 19.5l2.5-4.5 2.5 4.5"></path></svg>'
+    };
+  }
+  if (s.includes('config') || s.includes('tool') || s.includes('admin') || s.includes('manager') || s.includes('settings')) {
+    return {
+      cls: 'cat-blue',
+      svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>'
+    };
+  }
+  if (s.includes('parsely') || s.includes('wp-') || s.includes('wordpress')) {
+    return {
+      cls: 'cat-blue',
+      svg: '<svg viewBox="0 0 1000 1000" width="14" height="14" fill="currentColor"><path d="M500 0C223.8 0 0 223.8 0 500c0 276.2 223.8 500 500 500s500-223.8 500-500C1000 223.8 776.2 0 500 0zm0 34.6c257.1 0 465.4 208.3 465.4 465.4 0 94.7-28.3 182.7-76.7 256.4L640.4 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L465.2 537 363.3 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L129 780.8C65.5 704.9 34.6 606.8 34.6 500 34.6 242.9 242.9 34.6 500 34.6z"/></svg>'
+    };
+  }
+  if (s.includes('elastic') || s.includes('database') || s.includes('search') || s.includes('sql') || s.includes('query')) {
+    return {
+      cls: 'cat-purple',
+      svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><line x1="8" y1="9" x2="16" y2="9"></line><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="12" y2="17"></line></svg>'
+    };
+  }
+
+  // Default: Puzzle piece
+  return {
+    cls: 'cat-purple',
+    svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v4h1.5a2.5 2.5 0 0 1 0 5H2v4a2 2 0 0 0 2 2h4v-1.5a2.5 2.5 0 0 1 5 0V21h4a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z"></path></svg>'
+  };
+}
+
+// Format version display and identify fingerprints/hashes
+function formatVersionDisplay(version) {
+  if (!version) return { text: 'Version unknown', badge: 'Unknown', isHash: false };
+  if (version === 'REST API') return { text: 'REST API detected', badge: 'REST API', isHash: false };
+
+  // Check if version looks like a hash / fingerprint (e.g., vecf94842061bea03d54b or a hex string)
+  if (version.length > 15 || /^[0-9a-f]{8,}$/i.test(version.replace(/^v/i, ''))) {
+    return { text: `${version}`, badge: 'Unknown', isHash: true };
+  }
+
+  // Conventional semantic version
+  const cleaned = version.startsWith('v') ? version : 'v' + version;
+  return { text: cleaned, badge: 'Unknown', isHash: false };
+}
+
 // ==========================================
 // 3. MAIN EXECUTION
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
   let reportData = null;
-  
+  let activeFilter = 'all';
+
   const els = {
     loading: document.getElementById('loading'),
     results: document.getElementById('results'),
     refreshBtn: document.getElementById('refresh-btn'),
     copyBtn: document.getElementById('copy-btn'),
     downloadBtn: document.getElementById('download-txt-btn'),
-    exportBtn: document.getElementById('export-json-btn'),
-    toast: document.getElementById('toast')
+    rawCodeBtn: document.getElementById('raw-code-btn'),
+    toast: document.getElementById('toast'),
+    rawModal: document.getElementById('raw-modal'),
+    modalCloseBtn: document.getElementById('modal-close-btn'),
+    modalCopyBtn: document.getElementById('modal-copy-btn'),
+    modalDownloadBtn: document.getElementById('modal-download-btn'),
+    rawJsonContent: document.getElementById('raw-json-content'),
+    pluginSearch: document.getElementById('plugin-search'),
+    pluginsList: document.getElementById('plugins-list'),
+    serverIp: document.getElementById('server-ip')
   };
 
   function showToast(msg) {
@@ -215,12 +287,70 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, 2200);
   }
 
+  function getPreviewMockData() {
+    return {
+      isWP: true,
+      url: 'https://www.nasa.gov/',
+      protocol: 'https:',
+      hostname: 'www.nasa.gov',
+      version: '7.0.7',
+      theme: 'nasa',
+      themeVersion: '',
+      serverSoftware: 'nginx',
+      proxyCDN: 'None Detected',
+      phpVersion: 'Unknown',
+      cacheSystem: 'None Detected',
+      cacheHeaderStatus: 'Unknown',
+      ip: '192.0.66.108',
+      dns: 'a12-64.akam.net, a5-66.akam.net',
+      updateCheck: null,
+      timestamp: new Date().toISOString(),
+      plugins: [
+        { slug: 'popup-maker', version: '1.18.4', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/popup-maker/assets/js/site.min.js?ver=1.18.4' },
+        { slug: 'gravityforms', version: '2.8.6', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/gravityforms/js/gravityforms.min.js?ver=2.8.6' },
+        { slug: 'nasa-blocks', version: '1.2.0', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/nasa-blocks/build/index.js?ver=1.2.0' },
+        { slug: 'wp-parsely', version: 'vecf94842061bea03d54b', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/wp-parsely/build/loader.js?ver=vecf94842061bea03d54b' },
+        { slug: 'accessibility-checker', version: '1.49.0', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/accessibility-checker/assets/js/frontend.js?ver=1.49.0' },
+        { slug: 'accessibility-checker-pro', version: '1.49.0', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/accessibility-checker-pro/assets/js/frontend.js?ver=1.49.0' },
+        { slug: 'gravity-forms-config', version: '1.0.0', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/gravity-forms-config/assets/script.js?ver=1.0.0' },
+        { slug: 'elasticpress', version: '4.5.12', method: 'REST API Namespace (/wp-json/elasticpress/v1)', evidence: 'https://www.nasa.gov/wp-json/elasticpress/v1' },
+        { slug: 'safe-svg', version: '2.2.4', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/safe-svg/assets/safe-svg.js?ver=2.2.4' },
+        { slug: 'wordpress-seo', version: '22.8', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/wordpress-seo/js/dist/frontend.js?ver=22.8' },
+        { slug: 'redirection', version: '5.4.2', method: 'REST API Namespace (/wp-json/redirection/v1)', evidence: 'https://www.nasa.gov/wp-json/redirection/v1' },
+        { slug: 'tablepress', version: '2.3.1', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/tablepress/assets/js/tablepress.js?ver=2.3.1' },
+        { slug: 'user-role-editor', version: '4.64.2', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/user-role-editor/js/ure.js?ver=4.64.2' },
+        { slug: 'simple-custom-post-order', version: '2.5.7', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/simple-custom-post-order/js/scporder.js?ver=2.5.7' },
+        { slug: 'wp-smushit', version: '3.16.3', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/wp-smushit/app/assets/js/smush.min.js?ver=3.16.3' },
+        { slug: 'regenerate-thumbnails', version: '', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/regenerate-thumbnails/regenerate-thumbnails.js' },
+        { slug: 'cookie-law-info', version: '3.2.4', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/cookie-law-info/public/js/cookie-law-info-public.js?ver=3.2.4' },
+        { slug: 'duplicate-post', version: '4.5', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/duplicate-post/duplicate-post.js?ver=4.5' },
+        { slug: 'wp-mail-smtp', version: '4.0.1', method: 'REST API Namespace (/wp-json/wp-mail-smtp/v1)', evidence: 'https://www.nasa.gov/wp-json/wp-mail-smtp/v1' },
+        { slug: 'broken-link-checker', version: '2.3.0', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/broken-link-checker/core/blc.js?ver=2.3.0' },
+        { slug: 'contact-form-7', version: '5.9.5', method: 'REST API Namespace (/wp-json/contact-form-7/v1)', evidence: 'https://www.nasa.gov/wp-json/contact-form-7/v1' },
+        { slug: 'jetpack', version: '13.4.1', method: 'REST API Namespace (/wp-json/jetpack/v4)', evidence: 'https://www.nasa.gov/wp-json/jetpack/v4' },
+        { slug: 'autoptimize', version: '3.1.11', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/autoptimize/classes/external/js/lazysizes.min.js?ver=3.1.11' },
+        { slug: 'advanced-custom-fields-pro', version: '6.2.9', method: 'REST API Namespace (/wp-json/acf/v3)', evidence: 'https://www.nasa.gov/wp-json/acf/v3' },
+        { slug: 'litespeed-cache', version: '6.2.0.1', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/litespeed-cache/assets/js/litespeed.js?ver=6.2.0.1' },
+        { slug: 'updraftplus', version: '', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/updraftplus/admin.js' },
+        { slug: 'wordfence', version: '7.11.5', method: 'REST API Namespace (/wp-json/wordfence/v1)', evidence: 'https://www.nasa.gov/wp-json/wordfence/v1' },
+        { slug: 'better-search-replace', version: '', method: 'Frontend Asset', evidence: 'https://www.nasa.gov/wp-content/plugins/better-search-replace/assets/js/bsr.js' }
+      ]
+    };
+  }
+
   async function runDiagnostics() {
     els.loading.classList.remove('hidden');
     els.results.classList.add('hidden');
     els.refreshBtn.classList.add('spinning');
 
     try {
+      if (!window.chrome || !chrome.tabs || !chrome.tabs.query) {
+        // Fallback for offline preview, screenshots, and direct browser inspection
+        reportData = getPreviewMockData();
+        renderDashboard();
+        return;
+      }
+
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab || !tab.url || tab.url.startsWith('chrome://')) throw new Error('Cannot run on internal browser pages.');
       
@@ -232,7 +362,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const urlObj = new URL(tab.url);
       data.hostname = urlObj.hostname;
       
-      // Async fetches
+      // Async DNS & version fetches
       const [ip, ns, updateCheck] = await Promise.all([
         getHostIP(data.hostname),
         getNameservers(data.hostname),
@@ -247,7 +377,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       reportData = data;
       renderDashboard();
     } catch (e) {
-      els.loading.innerHTML = `<div class="state-card"><p class="state-title" style="color:var(--color-error);">${e.message}</p></div>`;
+      els.loading.innerHTML = `<div class="state-card"><p class="state-title" style="color:var(--color-issue);">${e.message}</p></div>`;
     } finally {
       els.refreshBtn.classList.remove('spinning');
     }
@@ -258,118 +388,240 @@ document.addEventListener('DOMContentLoaded', async () => {
     els.results.classList.remove('hidden');
     const d = reportData;
 
-    // Summary Cards
-    document.getElementById('summary-status').innerHTML = `<span class="status-pill success"><span class="pulse-dot"></span> Active</span>`;
+    // Header Scan Link
+    const scanLink = document.getElementById('header-scan-link');
+    if (scanLink) {
+      scanLink.textContent = d.url;
+      scanLink.href = d.url;
+      scanLink.title = d.url;
+    }
+
+    // Overview Bar
+    document.getElementById('summary-status').textContent = 'Active';
     document.getElementById('summary-version').textContent = d.version !== 'Unknown' ? 'v' + d.version : 'Unknown';
     document.getElementById('summary-plugins').textContent = `${d.plugins.length} Active`;
 
-    // Env & Theme
-    const envUrlEl = document.getElementById('env-url');
-    envUrlEl.textContent = d.url;
-    envUrlEl.title = d.url;
-    
-    document.getElementById('env-https').innerHTML = d.protocol === 'https:' 
-      ? '<span class="badge success">Passed (TLS)</span>' 
-      : '<span class="badge error">Warning: HTTP</span>';
-      
+    // Card 1: WordPress Environment & Theme
+    const envUrl = document.getElementById('env-url');
+    const envUrlText = document.getElementById('env-url-text');
+    if (envUrl && envUrlText) {
+      envUrl.href = d.url;
+      envUrl.title = d.url;
+      envUrlText.textContent = d.url;
+    }
+
+    const envHttps = document.getElementById('env-https');
+    if (envHttps) {
+      envHttps.innerHTML = d.protocol === 'https:'
+        ? '<span class="conf-badge badge-confirmed"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Passed (TLS)</span>'
+        : '<span class="conf-badge badge-error">Warning: HTTP</span>';
+    }
+
     const themeLink = document.getElementById('theme-link');
-    themeLink.textContent = d.theme;
-    themeLink.href = `https://wordpress.org/themes/${d.theme}/`;
-    
-    document.getElementById('theme-version').textContent = d.themeVersion ? 'v' + d.themeVersion : 'Unknown';
+    if (themeLink) {
+      themeLink.textContent = d.theme;
+      themeLink.href = `https://wordpress.org/themes/${d.theme}/`;
+    }
 
-    // Server & DNS
-    const proxyBadge = document.getElementById('server-proxy');
-    proxyBadge.textContent = d.proxyCDN;
-    proxyBadge.className = 'info-val badge ' + (d.proxyCDN !== 'None Detected' ? 'purple' : '');
-    
+    const themeVer = document.getElementById('theme-version');
+    if (themeVer) {
+      themeVer.textContent = d.themeVersion ? 'v' + d.themeVersion : 'Unknown';
+      themeVer.className = 'conf-badge ' + (d.themeVersion ? 'badge-detected' : 'badge-neutral');
+    }
+
+    // Card 2: Server, Proxy & DNS
+    const proxyEl = document.getElementById('server-proxy');
+    if (proxyEl) {
+      proxyEl.textContent = d.proxyCDN;
+      proxyEl.className = 'conf-badge ' + (d.proxyCDN !== 'None Detected' ? 'badge-rest' : 'badge-neutral');
+    }
+
     document.getElementById('server-software').textContent = d.serverSoftware;
-    document.getElementById('server-php').textContent = d.phpVersion;
-    document.getElementById('server-ip').textContent = d.ip;
-    document.getElementById('server-dns').innerHTML = d.dns.replace(/, /g, '<br>');
+    
+    const phpEl = document.getElementById('server-php');
+    if (phpEl) {
+      phpEl.textContent = d.phpVersion;
+      phpEl.className = 'conf-badge ' + (d.phpVersion !== 'Unknown' ? 'badge-detected' : 'badge-neutral');
+    }
 
-    // Cache
-    const ch = document.getElementById('cache-header-status');
-    ch.textContent = d.cacheHeaderStatus;
-    ch.className = 'info-val badge ' + (
-      d.cacheHeaderStatus === 'HIT' ? 'success' : 
-      d.cacheHeaderStatus === 'MISS' ? 'error' : 
-      d.cacheHeaderStatus === 'Unknown' ? '' : 'warning'
-    );
-    document.getElementById('cache-system').textContent = d.cacheSystem;
+    const ipEl = document.getElementById('server-ip');
+    if (ipEl) {
+      ipEl.textContent = d.ip;
+    }
 
-    // Plugins
+    const dnsEl = document.getElementById('server-dns');
+    if (dnsEl) {
+      dnsEl.innerHTML = d.dns.replace(/, /g, '<br>');
+    }
+
+    const cacheEl = document.getElementById('cache-header-status');
+    if (cacheEl) {
+      cacheEl.textContent = d.cacheHeaderStatus;
+      cacheEl.className = 'conf-badge ' + (
+        d.cacheHeaderStatus === 'HIT' ? 'badge-confirmed' :
+        d.cacheHeaderStatus === 'MISS' ? 'badge-inferred' :
+        d.cacheHeaderStatus === 'DYNAMIC' ? 'badge-detected' : 'badge-neutral'
+      );
+    }
+
+    // Right Column: Plugin Inventory
     document.getElementById('plugins-count-header').textContent = d.plugins.length;
-    renderPluginsList(d.plugins);
+    const allCount = document.getElementById('filter-all-count');
+    if (allCount) allCount.textContent = d.plugins.length;
+
+    renderFilteredPlugins();
   }
 
-  function renderPluginsList(plugins) {
-    const list = document.getElementById('plugins-list');
+  function renderFilteredPlugins() {
+    if (!reportData) return;
+    const list = els.pluginsList;
     list.innerHTML = '';
-    if (plugins.length === 0) {
-      list.innerHTML = '<li class="empty-state">No plugins detected</li>';
+
+    const term = els.pluginSearch.value.toLowerCase().trim();
+
+    let filtered = reportData.plugins.filter(p => {
+      // Search match
+      const slugMatch = p.slug.toLowerCase().includes(term);
+      const verMatch = (p.version || '').toLowerCase().includes(term);
+      const methodMatch = (p.method || '').toLowerCase().includes(term);
+      const matchesSearch = !term || slugMatch || verMatch || methodMatch;
+
+      // Filter chip match
+      let matchesFilter = true;
+      if (activeFilter === 'versioned') {
+        matchesFilter = p.version && p.version !== 'Unknown' && p.version !== 'REST API';
+      } else if (activeFilter === 'unknown') {
+        matchesFilter = !p.version || p.version === 'Unknown';
+      } else if (activeFilter === 'rest') {
+        matchesFilter = p.version === 'REST API' || (p.method && p.method.includes('REST'));
+      }
+
+      return matchesSearch && matchesFilter;
+    });
+
+    if (filtered.length === 0) {
+      list.innerHTML = `<li class="empty-state">No plugins matching current search &amp; filter</li>`;
       return;
     }
-    plugins.forEach(p => {
-      const isRest = p.version === 'REST API';
-      const badgeClass = isRest ? 'badge purple' : (p.version ? 'badge' : 'badge muted');
-      const verText = p.version ? (isRest ? 'REST API' : 'v' + p.version) : 'Unknown';
-      list.innerHTML += `<li><a href="https://wordpress.org/plugins/${p.slug}/" target="_blank" rel="noopener noreferrer">${p.slug}</a> <span class="${badgeClass}">${verText}</span></li>`;
+
+    filtered.forEach(p => {
+      const verInfo = formatVersionDisplay(p.version);
+      const cat = getPluginCategoryInfo(p.slug);
+      const isRest = p.version === 'REST API' || (p.method && p.method.includes('REST'));
+      const badgeCls = isRest ? 'badge-rest' : 'badge-neutral';
+      const badgeText = isRest ? 'REST API' : 'Unknown';
+
+      const li = document.createElement('li');
+      li.className = 'plugin-row-item';
+
+      li.innerHTML = `
+        <div class="plugin-row-header" role="button" tabindex="0" aria-expanded="false">
+          <div class="plugin-row-left">
+            <div class="plugin-cat-icon ${cat.cls}">
+              ${cat.svg}
+            </div>
+            <div class="plugin-names-wrap">
+              <span class="plugin-slug" title="${p.slug}">${p.slug}</span>
+              <span class="plugin-ver-sub">${verInfo.text}</span>
+            </div>
+          </div>
+          <div class="plugin-row-right">
+            <span class="conf-badge ${badgeCls}">${badgeText}</span>
+            <svg class="row-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+        </div>
+        <div class="plugin-row-details">
+          <div class="detail-line"><span class="detail-lbl">Detection Method:</span> ${p.method || 'Frontend Asset Inspection'}</div>
+          ${p.evidence ? `<div class="detail-line"><span class="detail-lbl">Evidence / Path:</span> <span class="mono">${p.evidence}</span></div>` : ''}
+          <div class="detail-line">
+            <a href="https://wordpress.org/plugins/${p.slug}/" class="detail-link" target="_blank" rel="noopener noreferrer">
+              Open on WordPress.org
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </div>
+      `;
+
+      // Expand / Collapse interaction
+      const rowHeader = li.querySelector('.plugin-row-header');
+      rowHeader.addEventListener('click', () => {
+        const isOpen = li.classList.toggle('open');
+        rowHeader.setAttribute('aria-expanded', isOpen);
+      });
+      rowHeader.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const isOpen = li.classList.toggle('open');
+          rowHeader.setAttribute('aria-expanded', isOpen);
+        }
+      });
+
+      list.appendChild(li);
     });
   }
 
-  document.getElementById('plugin-search').addEventListener('input', (e) => {
-    if (!reportData) return;
-    const term = e.target.value.toLowerCase().trim();
-    const filtered = reportData.plugins.filter(p => p.slug.toLowerCase().includes(term));
-    if (filtered.length === 0) {
-      document.getElementById('plugins-list').innerHTML = `<li class="empty-state">No plugins matching "${term}"</li>`;
-    } else {
-      renderPluginsList(filtered);
-    }
+  // Filter Chips Click Handling
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.getAttribute('data-filter') || 'all';
+      renderFilteredPlugins();
+    });
   });
 
+  // Search Input Handling
+  els.pluginSearch.addEventListener('input', () => {
+    renderFilteredPlugins();
+  });
+
+  // Click to copy Host IP
+  if (els.serverIp) {
+    els.serverIp.addEventListener('click', () => {
+      const ip = els.serverIp.textContent;
+      if (ip && ip !== 'Unknown') {
+        navigator.clipboard.writeText(ip).then(() => {
+          showToast(`Copied IP: ${ip}`);
+        });
+      }
+    });
+  }
+
+  // Plain Text Report Generator
   function generateTXT() {
     const d = reportData;
+    if (!d) return '';
     
     return `# WordPress Stack Report
 Generated: ${d.timestamp}
-Report Mode: Full Technical Report
+Site URL: ${d.url}
 
 ## ENVIRONMENT
-WordPress Version: ${d.version}
-Site URL: ${d.url}
-HTTPS: ${d.protocol === 'https:' ? 'Passed' : 'Failed'}
-Database: Unknown (Frontend context)
+WordPress Core: ${d.version}
+HTTPS: ${d.protocol === 'https:' ? 'Passed (TLS)' : 'Warning: HTTP'}
+Active Theme: ${d.theme} (${d.themeVersion ? 'v' + d.themeVersion : 'Unknown'})
+Environment Type: Frontend Extracted
 
-## THEME
-Active Theme: ${d.theme}
-Version: ${d.themeVersion || 'Unknown'}
-
-## PLUGINS
-Total Detected: ${d.plugins.length}
-${d.plugins.map(p => `- ${p.slug} (${p.version ? (p.version === 'REST API' ? 'REST API' : 'v' + p.version) : 'Unknown'})`).join('\n')}
-
-## SERVER & HOSTING
+## SERVER, PROXY & DNS
+Proxy / CDN: ${d.proxyCDN}
 Web Server: ${d.serverSoftware}
 PHP Version: ${d.phpVersion}
-Proxy / CDN: ${d.proxyCDN}
 Host IP: ${d.ip}
 Nameservers: ${d.dns}
+Cache Status: ${d.cacheHeaderStatus}
 
-## CACHING
-Cache Header Status: ${d.cacheHeaderStatus}
-Detected Cache Engine: ${d.cacheSystem}
-Persistent Object Cache: Unknown (Frontend context)
+## DETECTED PLUGINS (${d.plugins.length})
+${d.plugins.map(p => `- ${p.slug} (${p.version || 'Version unknown'}) [${p.method || 'Frontend'}]`).join('\n')}
 `;
   }
 
+  // Actions
   els.refreshBtn.addEventListener('click', runDiagnostics);
 
   els.copyBtn.addEventListener('click', () => {
     if (!reportData) return;
     navigator.clipboard.writeText(generateTXT()).then(() => {
-      showToast('Report copied to clipboard!');
+      showToast('Support summary copied to clipboard!');
     }).catch(() => {
       showToast('Failed to copy report');
     });
@@ -384,10 +636,34 @@ Persistent Object Cache: Unknown (Frontend context)
     a.download = `wp-stack-report-${reportData.hostname || 'site'}.txt`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Downloaded text report');
+    showToast('Downloaded report TXT');
   });
 
-  els.exportBtn.addEventListener('click', () => {
+  // Raw Diagnostic Modal Handlers
+  function openRawModal() {
+    if (!reportData) return;
+    els.rawJsonContent.textContent = JSON.stringify(reportData, null, 2);
+    els.rawModal.classList.remove('hidden');
+  }
+
+  function closeRawModal() {
+    els.rawModal.classList.add('hidden');
+  }
+
+  els.rawCodeBtn.addEventListener('click', openRawModal);
+  els.modalCloseBtn.addEventListener('click', closeRawModal);
+  els.rawModal.addEventListener('click', (e) => {
+    if (e.target === els.rawModal) closeRawModal();
+  });
+
+  els.modalCopyBtn.addEventListener('click', () => {
+    if (!reportData) return;
+    navigator.clipboard.writeText(JSON.stringify(reportData, null, 2)).then(() => {
+      showToast('Raw JSON copied to clipboard!');
+    });
+  });
+
+  els.modalDownloadBtn.addEventListener('click', () => {
     if (!reportData) return;
     const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -396,7 +672,7 @@ Persistent Object Cache: Unknown (Frontend context)
     a.download = `wp-stack-report-${reportData.hostname || 'site'}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Exported JSON data');
+    showToast('Downloaded JSON report');
   });
 
   runDiagnostics();

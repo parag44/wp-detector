@@ -9,191 +9,229 @@
   <div class="container">
     <!-- Header -->
     <header class="app-header">
-      <div class="brand">
-        <div class="brand-icon">
-          <img src="../icons/icon-48.png" alt="WordPress Logo" width="22" height="22">
+      <div class="brand-section">
+        <div class="brand-logo">
+          <svg viewBox="0 0 1000 1000" class="wp-logo-svg" aria-hidden="true"><path d="M500 0C223.8 0 0 223.8 0 500c0 276.2 223.8 500 500 500s500-223.8 500-500C1000 223.8 776.2 0 500 0zm0 34.6c257.1 0 465.4 208.3 465.4 465.4 0 94.7-28.3 182.7-76.7 256.4L640.4 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L465.2 537 363.3 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L129 780.8C65.5 704.9 34.6 606.8 34.6 500 34.6 242.9 242.9 34.6 500 34.6z"/></svg>
         </div>
-        <div class="brand-text">
-          <h1>WP Stack Report</h1>
-          <span class="subtitle" id="last-generated">Diagnostics Tool</span>
+        <div class="brand-info">
+          <div class="brand-title-wrap">
+            <h1 class="brand-title">WP Stack Report</h1>
+            <span class="brand-subtitle">Diagnostics Tool</span>
+          </div>
+          <div class="brand-scan-row">
+            <svg class="scan-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span class="scan-label">Scanning:</span>
+            <a href="#" id="header-scan-link" class="scan-url" target="_blank" rel="noopener noreferrer">Detecting site...</a>
+          </div>
         </div>
       </div>
-      <div class="actions">
-        <button id="refresh-btn" class="icon-btn" title="Refresh Diagnostics" aria-label="Refresh Diagnostics">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+
+      <div class="header-actions">
+        <button id="refresh-btn" class="header-btn" title="Refresh Diagnostics" aria-label="Refresh Diagnostics">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
         </button>
-        <button id="copy-btn" class="icon-btn" title="Copy Stack Report" aria-label="Copy Stack Report">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path></svg>
+        <button id="copy-btn" class="header-btn" title="Copy Support Summary" aria-label="Copy Support Summary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
         </button>
-        <button id="download-txt-btn" class="icon-btn" title="Download TXT Report" aria-label="Download TXT Report">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <button id="download-txt-btn" class="header-btn" title="Download Report TXT" aria-label="Download Report TXT">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
         </button>
-        <button id="export-json-btn" class="icon-btn" title="Export Structured JSON" aria-label="Export Structured JSON">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        <button id="raw-code-btn" class="header-btn" title="View Raw Diagnostic JSON" aria-label="View Raw Diagnostic JSON">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
         </button>
+        <!-- Keep export-json-btn hidden for backward compatibility -->
+        <button id="export-json-btn" class="hidden" aria-hidden="true"></button>
       </div>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <main class="main-content">
       <!-- Loading State -->
       <div id="loading" class="state-card">
         <div class="spinner"></div>
         <p class="state-title">Running Diagnostics...</p>
-        <span class="state-desc">Inspecting headers, DOM signatures &amp; REST API</span>
+        <span class="state-desc">Inspecting headers, DOM signatures &amp; REST API namespaces</span>
       </div>
 
       <!-- Results Area -->
       <div id="results" class="hidden">
         
-        <!-- Summary Status Cards -->
-        <div class="summary-grid">
-          <div class="summary-card">
-            <div class="summary-header">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-              <span class="summary-label">STATUS</span>
+        <!-- Summary Overview Bar -->
+        <section class="overview-bar" aria-label="Overview Summary">
+          <div class="overview-item item-status">
+            <span class="status-indicator-dot" id="summary-status-dot"></span>
+            <div class="item-text">
+              <span class="overview-label">Status</span>
+              <span class="overview-val val-status" id="summary-status">Active</span>
             </div>
-            <div class="summary-val" id="summary-status">...</div>
           </div>
-          <div class="summary-card">
-            <div class="summary-header">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-              <span class="summary-label">CORE VERSION</span>
-            </div>
-            <div class="summary-val primary" id="summary-version">...</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-header">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.439 7.85c-.049-.322-.28-.58-.597-.661a3.003 3.003 0 0 1-2.192-2.192.75.75 0 0 0-.661-.597 3 3 0 0 0-5.978 0 .75.75 0 0 0-.661.597A3.003 3.003 0 0 1 7.158 7.19a.75.75 0 0 0-.597.661 3 3 0 0 0 0 5.978.75.75 0 0 0 .597.661 3.003 3.003 0 0 1 2.192 2.192.75.75 0 0 0 .661.597 3 3 0 0 0 5.978 0 .75.75 0 0 0 .661-.597 3.003 3.003 0 0 1 2.192-2.192.75.75 0 0 0 .597-.661 3 3 0 0 0 0-5.978z"></path></svg>
-              <span class="summary-label">PLUGINS</span>
-            </div>
-            <div class="summary-val" id="summary-plugins">...</div>
-          </div>
-        </div>
 
-        <!-- 2-Column Panoramic Dashboard Grid -->
+          <div class="overview-item item-core">
+            <div class="overview-icon wp-icon-circle">
+              <svg viewBox="0 0 1000 1000"><path d="M500 0C223.8 0 0 223.8 0 500c0 276.2 223.8 500 500 500s500-223.8 500-500C1000 223.8 776.2 0 500 0zm0 34.6c257.1 0 465.4 208.3 465.4 465.4 0 94.7-28.3 182.7-76.7 256.4L640.4 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L465.2 537 363.3 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L129 780.8C65.5 704.9 34.6 606.8 34.6 500 34.6 242.9 242.9 34.6 500 34.6z"/></svg>
+            </div>
+            <div class="item-text">
+              <span class="overview-label">Core Version</span>
+              <span class="overview-val val-blue" id="summary-version">...</span>
+            </div>
+          </div>
+
+          <div class="overview-item item-plugins">
+            <div class="overview-icon puzzle-icon-box">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.439 7.85c-.049-.322-.28-.58-.597-.661a3.003 3.003 0 0 1-2.192-2.192.75.75 0 0 0-.661-.597 3 3 0 0 0-5.978 0 .75.75 0 0 0-.661.597A3.003 3.003 0 0 1 7.158 7.19a.75.75 0 0 0-.597.661 3 3 0 0 0 0 5.978.75.75 0 0 0 .597.661 3.003 3.003 0 0 1 2.192 2.192.75.75 0 0 0 .661.597 3 3 0 0 0 5.978 0 .75.75 0 0 0 .661-.597 3.003 3.003 0 0 1 2.192-2.192.75.75 0 0 0 .597-.661 3 3 0 0 0 0-5.978z"></path></svg>
+            </div>
+            <div class="item-text">
+              <span class="overview-label">Plugins</span>
+              <span class="overview-val val-white" id="summary-plugins">...</span>
+            </div>
+          </div>
+
+          <div class="overview-item item-legend">
+            <span class="overview-label">Detection Confidence</span>
+            <div class="legend-dots">
+              <span class="legend-chip"><span class="dot-legend dot-confirmed"></span> Confirmed</span>
+              <span class="legend-chip"><span class="dot-legend dot-detected"></span> Detected</span>
+              <span class="legend-chip"><span class="dot-legend dot-inferred"></span> Inferred</span>
+              <span class="legend-chip"><span class="dot-legend dot-unknown"></span> Unknown</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Main 2-Column Dashboard Grid -->
         <div class="dashboard-grid">
           
-          <!-- Left Column: Environment, Server, and Performance -->
-          <div class="dashboard-col left-col">
+          <!-- Left Column: Environment & Infrastructure -->
+          <div class="col-left">
             
-            <!-- 1. WordPress Environment & Theme -->
-            <details class="section-card" open>
-              <summary class="section-header">
-                <div class="header-left">
-                  <span class="section-icon icon-blue">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <!-- Card 1: WordPress Environment & Theme -->
+            <details class="card-section" open>
+              <summary class="card-header">
+                <div class="card-header-title">
+                  <span class="badge-icon icon-blue">
+                    <svg viewBox="0 0 1000 1000" class="mini-wp"><path d="M500 0C223.8 0 0 223.8 0 500c0 276.2 223.8 500 500 500s500-223.8 500-500C1000 223.8 776.2 0 500 0zm0 34.6c257.1 0 465.4 208.3 465.4 465.4 0 94.7-28.3 182.7-76.7 256.4L640.4 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L465.2 537 363.3 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L129 780.8C65.5 704.9 34.6 606.8 34.6 500 34.6 242.9 242.9 34.6 500 34.6z"/></svg>
                   </span>
-                  <span class="section-title">WordPress Environment &amp; Theme</span>
+                  <h2>WordPress Environment &amp; Theme</h2>
                 </div>
-                <svg class="chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
               </summary>
-              <div class="section-body">
-                <div class="info-row">
-                  <span class="info-label">Site URL</span>
-                  <span class="info-val url-val" id="env-url" title=""></span>
+              <div class="card-body">
+                <div class="prop-row">
+                  <span class="prop-label">Site URL</span>
+                  <div class="prop-val-wrap">
+                    <a href="#" id="env-url" class="prop-link mono" target="_blank" rel="noopener noreferrer">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                      <span id="env-url-text">...</span>
+                      <svg class="ext-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                  </div>
                 </div>
-                <div class="info-row">
-                  <span class="info-label">HTTPS</span>
-                  <span class="info-val" id="env-https"></span>
-                </div>
-                <div class="info-row">
-                  <span class="info-label">Active Theme</span>
-                  <span class="info-val theme-val">
-                    <a href="#" id="theme-link" target="_blank" rel="noopener noreferrer"></a>
-                    <span class="badge" id="theme-version"></span>
+
+                <div class="prop-row">
+                  <span class="prop-label">HTTPS</span>
+                  <span class="prop-val" id="env-https">
+                    <span class="conf-badge badge-confirmed">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      Passed (TLS)
+                    </span>
                   </span>
                 </div>
-                <div class="info-row">
-                  <span class="info-label">Environment Type</span>
-                  <span class="info-val" id="env-type">Frontend Extracted</span>
+
+                <div class="prop-row">
+                  <span class="prop-label">Active Theme</span>
+                  <div class="prop-val-wrap">
+                    <a href="#" id="theme-link" class="theme-name" target="_blank" rel="noopener noreferrer">...</a>
+                    <span class="conf-badge badge-neutral" id="theme-version">Unknown</span>
+                  </div>
+                </div>
+
+                <div class="prop-row">
+                  <span class="prop-label">Environment Type</span>
+                  <span class="prop-val text-white" id="env-type">Frontend Extracted</span>
                 </div>
               </div>
             </details>
 
-            <!-- 2. Server, Proxy & DNS -->
-            <details class="section-card" open>
-              <summary class="section-header">
-                <div class="header-left">
-                  <span class="section-icon icon-teal">
+            <!-- Card 2: Server, Proxy & DNS -->
+            <details class="card-section" open>
+              <summary class="card-header">
+                <div class="card-header-title">
+                  <span class="badge-icon icon-teal">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
                   </span>
-                  <span class="section-title">Server, Proxy &amp; DNS</span>
+                  <h2>Server, Proxy &amp; DNS</h2>
                 </div>
-                <svg class="chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
               </summary>
-              <div class="section-body">
-                <div class="info-row">
-                  <span class="info-label">Proxy / CDN</span>
-                  <span class="info-val badge" id="server-proxy">None Detected</span>
+              <div class="card-body">
+                <div class="prop-row">
+                  <span class="prop-label">Proxy / CDN</span>
+                  <span class="conf-badge badge-neutral" id="server-proxy">None Detected</span>
                 </div>
-                <div class="info-row">
-                  <span class="info-label">Web Server</span>
-                  <span class="info-val" id="server-software">Unknown</span>
-                </div>
-                <div class="info-row">
-                  <span class="info-label">PHP Version</span>
-                  <span class="info-val" id="server-php">Unknown</span>
-                </div>
-                <div class="info-row">
-                  <span class="info-label">Host IP (A Record)</span>
-                  <span class="info-val mono-val" id="server-ip">Unknown</span>
-                </div>
-                <div class="info-row">
-                  <span class="info-label">Nameservers</span>
-                  <span class="info-val" id="server-dns" style="text-align: right;">Unknown</span>
-                </div>
-              </div>
-            </details>
 
-            <!-- 3. Performance & Caching -->
-            <details class="section-card" open>
-              <summary class="section-header">
-                <div class="header-left">
-                  <span class="section-icon icon-amber">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                  </span>
-                  <span class="section-title">Performance &amp; Caching</span>
+                <div class="prop-row">
+                  <span class="prop-label">Web Server</span>
+                  <span class="prop-val text-white" id="server-software">Unknown</span>
                 </div>
-                <svg class="chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </summary>
-              <div class="section-body">
-                <div class="info-row">
-                  <span class="info-label">Page Cache Header</span>
-                  <span class="info-val badge" id="cache-header-status">Unknown</span>
+
+                <div class="prop-row">
+                  <span class="prop-label">PHP Version</span>
+                  <span class="conf-badge badge-neutral" id="server-php">Unknown</span>
                 </div>
-                <div class="info-row">
-                  <span class="info-label">Detected Cache System</span>
-                  <span class="info-val" id="cache-system">None Detected</span>
+
+                <div class="prop-row">
+                  <span class="prop-label">Host IP (A Record)</span>
+                  <span class="prop-val mono copyable-val" id="server-ip" title="Click to copy IP">Unknown</span>
                 </div>
-                <div class="info-row">
-                  <span class="info-label">Object Cache</span>
-                  <span class="info-val info-muted">Unknown (Frontend)</span>
+
+                <div class="prop-row">
+                  <span class="prop-label">Nameservers</span>
+                  <span class="prop-val text-secondary text-right" id="server-dns">Unknown</span>
                 </div>
+
+                <div class="prop-row hidden">
+                  <span class="prop-label">Cache Header Status</span>
+                  <span class="conf-badge badge-neutral" id="cache-header-status">Unknown</span>
+                </div>
+                <!-- Hidden element to preserve cache-system lookup -->
+                <span id="cache-system" class="hidden"></span>
               </div>
             </details>
 
           </div>
 
           <!-- Right Column: Plugin Inventory -->
-          <div class="dashboard-col right-col">
-            <details class="section-card plugin-card" open>
-              <summary class="section-header">
-                <div class="header-left">
-                  <span class="section-icon icon-purple">
+          <div class="col-right">
+            <details class="card-section plugin-inventory-card" open>
+              <summary class="card-header">
+                <div class="card-header-title">
+                  <span class="badge-icon icon-purple">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v4h1.5a2.5 2.5 0 0 1 0 5H2v4a2 2 0 0 0 2 2h4v-1.5a2.5 2.5 0 0 1 5 0V21h4a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z"></path></svg>
                   </span>
-                  <span class="section-title">Plugin Inventory (<span id="plugins-count-header">0</span>)</span>
+                  <h2>Plugin Inventory (<span id="plugins-count-header">0</span>)</h2>
                 </div>
-                <svg class="chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
               </summary>
-              <div class="section-body no-padding plugin-body">
-                <div class="search-wrap">
-                  <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                  <input type="text" id="plugin-search" placeholder="Search detected plugins..." aria-label="Search plugins">
+
+              <div class="plugin-card-body">
+                <!-- Search Box -->
+                <div class="plugin-search-wrap">
+                  <svg class="search-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <input type="text" id="plugin-search" placeholder="Search detected plugins..." aria-label="Search detected plugins">
                 </div>
-                <ul id="plugins-list" class="plugins-list"></ul>
-                <div class="disclaimer">
+
+                <!-- Filter Chips (hidden to match design reference) -->
+                <div class="plugin-filters hidden" role="group" aria-label="Plugin filters">
+                  <button type="button" class="filter-chip active" data-filter="all">All (<span id="filter-all-count">0</span>)</button>
+                  <button type="button" class="filter-chip" data-filter="versioned">Version Known</button>
+                  <button type="button" class="filter-chip" data-filter="unknown">Unknown</button>
+                  <button type="button" class="filter-chip" data-filter="rest">REST API</button>
+                </div>
+
+                <!-- Plugin Rows List -->
+                <ul id="plugins-list" class="plugin-rows-list"></ul>
+
+                <!-- Footer Disclaimer -->
+                <div class="plugin-footer-note">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                   <span>Note: Only plugins with public assets or REST API endpoints can be detected.</span>
                 </div>
@@ -205,8 +243,28 @@
       </div>
     </main>
 
-    <!-- Feedback Toast -->
-    <div id="toast" class="toast hidden">Report copied to clipboard!</div>
+    <!-- Raw JSON Report Modal -->
+    <div id="raw-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="raw-modal-title">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <h3 id="raw-modal-title">Raw Diagnostic Report (JSON)</h3>
+          </div>
+          <button id="modal-close-btn" class="modal-close" aria-label="Close modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <pre id="raw-json-content"></pre>
+        </div>
+        <div class="modal-footer">
+          <button id="modal-copy-btn" class="btn-primary">Copy Raw JSON</button>
+          <button id="modal-download-btn" class="btn-secondary">Download JSON</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden" role="status" aria-live="polite">Report copied to clipboard!</div>
   </div>
 
   <script src="popup.js"></script>
