@@ -396,6 +396,7 @@ body {
 .col-right {
   display: flex;
   flex-direction: column;
+  gap: 10px;
   height: 100%;
 }
 
@@ -634,7 +635,7 @@ body {
 .plugin-inventory-card {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
 }
 
 .plugin-card-body {
@@ -718,7 +719,7 @@ body {
   padding: 0;
   list-style: none;
   flex: 1;
-  max-height: 350px;
+  max-height: 220px;
   overflow-y: auto;
 }
 
@@ -868,20 +869,23 @@ body {
   font-size: 12px;
 }
 
-/* Plugin Footer */
-.plugin-footer-note {
-  padding: 7px 12px;
-  font-size: 10.5px;
-  color: var(--text-muted);
-  background: var(--bg-input);
-  border-top: 1px solid var(--border-subtle);
+/* 2nd Column Bottom Note Card */
+.col-footer-note {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  font-size: 11px;
+  color: var(--text-muted);
   line-height: 1.35;
+  box-shadow: var(--shadow-card);
+  flex-shrink: 0;
 }
 
-.plugin-footer-note svg {
+.col-footer-note svg {
   flex-shrink: 0;
   color: var(--color-detected);
 }
