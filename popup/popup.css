@@ -272,11 +272,11 @@ body {
 
 .overview-bar {
   display: grid;
-  grid-template-columns: 0.8fr 1.05fr 0.9fr 2.25fr;
+  grid-template-columns: repeat(3, 1fr);
   background-color: var(--bg-card);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-lg);
-  padding: 8px 12px;
+  padding: 9px 16px;
   margin-bottom: 10px;
   align-items: center;
   box-shadow: var(--shadow-card);
@@ -285,18 +285,18 @@ body {
 .overview-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 10px;
+  gap: 12px;
+  padding: 0 16px;
   border-right: 1px solid var(--border-subtle);
 }
 
 .overview-item:first-child {
-  padding-left: 2px;
+  padding-left: 6px;
 }
 
 .overview-item:last-child {
   border-right: none;
-  padding-right: 2px;
+  padding-right: 6px;
 }
 
 .item-text {
@@ -375,41 +375,6 @@ body {
   flex-shrink: 0;
 }
 
-/* Legend Segment */
-.item-legend {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
-}
-
-.legend-dots {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: nowrap;
-}
-
-.legend-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  white-space: nowrap;
-}
-
-.dot-legend {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.dot-confirmed { background-color: var(--color-confirmed); }
-.dot-detected { background-color: var(--color-detected); }
-.dot-inferred { background-color: var(--color-inferred); }
-.dot-unknown { background-color: var(--color-unknown); }
 
 /* ==========================================================================
    2-Column Dashboard Grid
