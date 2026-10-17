@@ -142,7 +142,8 @@ English
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
 | 1.0 | 2026-10-14 | Initial release with full diagnostics, REST API plugin detection, server/cache inspection, and export tools | Submitted |
-| 1.1 | 2026-10-16 | Redesigned modern developer dashboard UI, status pulse badge, toast feedback, and performance polish | Ready for submission |
+| 1.1 | 2026-10-16 | Redesigned modern developer dashboard UI, status pulse badge, toast feedback, and performance polish | Submitted |
+| 1.2 | 2026-10-17 | Panoramic developer UI, automatic light/dark mode adapting to OS settings, full-height dynamic plugin inventory, rounded corners, and restored cache status | Ready for submission |
 
 ## Review Notes
 
