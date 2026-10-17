@@ -106,7 +106,7 @@
 
 body {
   font-family: var(--font-sans);
-  width: 420px;
+  width: 720px;
   background-color: var(--color-background);
   color: var(--color-text-primary);
   margin: 0;
@@ -120,8 +120,7 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-  min-height: 380px;
-  max-height: 590px;
+  min-height: 520px;
 }
 
 /* ==========================================================================
@@ -340,13 +339,44 @@ body {
 }
 
 /* ==========================================================================
-   Accordion & Section Cards
+   2-Column Dashboard Grid & Section Cards
    ========================================================================== */
 
-.accordion-group {
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.dashboard-col {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.dashboard-col.left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dashboard-col.right-col {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.plugin-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.plugin-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .section-card {
@@ -598,7 +628,9 @@ a:hover {
   margin: 0;
   padding: 0;
   list-style: none;
-  max-height: 180px;
+  flex: 1;
+  max-height: 310px;
+  min-height: 260px;
   overflow-y: auto;
 }
 
