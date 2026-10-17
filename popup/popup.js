@@ -457,6 +457,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cacheEl = document.getElementById('cache-header-status');
     if (cacheEl) {
       cacheEl.textContent = d.cacheHeaderStatus;
+      if (d.cacheSystem && d.cacheSystem !== 'None Detected') {
+        cacheEl.title = `Detected Header: ${d.cacheSystem}`;
+      } else {
+        cacheEl.title = '';
+      }
       cacheEl.className = 'conf-badge ' + (
         d.cacheHeaderStatus === 'HIT' ? 'badge-confirmed' :
         d.cacheHeaderStatus === 'MISS' ? 'badge-inferred' :
