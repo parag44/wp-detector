@@ -3,11 +3,16 @@
    ========================================================================== */
 
 :root {
-  /* Surface & Background */
+  color-scheme: dark light;
+
+  /* Surface & Background (Dark Default) */
   --bg-main: #080F1B;
   --bg-card: #0F1B2D;
   --bg-elevated: #172438;
   --bg-input: #0B1423;
+  --bg-hover: #1f304a;
+  --bg-header-open: rgba(23, 36, 56, 0.35);
+  --bg-row-hover: rgba(23, 36, 56, 0.5);
 
   /* Borders & Dividers */
   --border-primary: #263850;
@@ -28,6 +33,7 @@
   --color-unknown: #94A3B8;
   --color-issue: #F87171;
   --color-rest: #C084FC;
+  --color-teal: #2dd4bf;
 
   /* Badges Backgrounds & Borders */
   --badge-confirmed-bg: rgba(52, 211, 153, 0.12);
@@ -40,6 +46,17 @@
   --badge-unknown-border: rgba(148, 163, 184, 0.22);
   --badge-rest-bg: rgba(192, 132, 252, 0.14);
   --badge-rest-border: rgba(192, 132, 252, 0.32);
+  --badge-teal-bg: rgba(45, 212, 191, 0.15);
+  --badge-error-bg: rgba(248, 113, 113, 0.12);
+  --badge-error-border: rgba(248, 113, 113, 0.3);
+
+  /* Modal Backdrop & Shadows */
+  --modal-backdrop: rgba(8, 15, 27, 0.85);
+  --scrollbar-thumb: #263850;
+  --scrollbar-thumb-hover: #3b5275;
+  --scrollbar-track: #0F1B2D;
+  --circle-wp-fill: #ffffff;
+  --circle-wp-bg: #172438;
 
   /* Geometry & Typography */
   --radius-sm: 6px;
@@ -52,6 +69,191 @@
 
   --shadow-card: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
   --shadow-toast: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+  --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.7);
+}
+
+/* ==========================================================================
+   Light Mode / Skin (Automatic via device settings, or via [data-theme="light"])
+   ========================================================================== */
+@media (prefers-color-scheme: light) {
+  :root {
+    /* Surface & Background */
+    --bg-main: #F1F5F9;
+    --bg-card: #FFFFFF;
+    --bg-elevated: #F8FAFC;
+    --bg-input: #F8FAFC;
+    --bg-hover: #E2E8F0;
+    --bg-header-open: #F8FAFC;
+    --bg-row-hover: #F8FAFC;
+
+    /* Borders & Dividers */
+    --border-primary: #E2E8F0;
+    --border-subtle: #EDF2F7;
+    --border-hover: #CBD5E1;
+
+    /* Typography */
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #64748B;
+
+    /* Semantic & Confidence Colors */
+    --color-accent: #0284C7;
+    --color-accent-hover: #0369A1;
+    --color-confirmed: #16A34A;
+    --color-detected: #2563EB;
+    --color-inferred: #D97706;
+    --color-unknown: #64748B;
+    --color-issue: #DC2626;
+    --color-rest: #9333EA;
+    --color-teal: #0D9488;
+
+    /* Badges Backgrounds & Borders */
+    --badge-confirmed-bg: #DCFCE7;
+    --badge-confirmed-border: #86EFAC;
+    --badge-detected-bg: #DBEAFE;
+    --badge-detected-border: #93C5FD;
+    --badge-inferred-bg: #FEF3C7;
+    --badge-inferred-border: #FDE68A;
+    --badge-unknown-bg: #F1F5F9;
+    --badge-unknown-border: #CBD5E1;
+    --badge-rest-bg: #F3E8FF;
+    --badge-rest-border: #D8B4FE;
+    --badge-teal-bg: #CCFBF1;
+    --badge-error-bg: #FEE2E2;
+    --badge-error-border: #FCA5A5;
+
+    /* Modal Backdrop & Shadows */
+    --modal-backdrop: rgba(15, 23, 42, 0.5);
+    --scrollbar-thumb: #CBD5E1;
+    --scrollbar-thumb-hover: #94A3B8;
+    --scrollbar-track: #F1F5F9;
+    --circle-wp-fill: #0F172A;
+    --circle-wp-bg: #E2E8F0;
+
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.04);
+    --shadow-toast: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+    --shadow-modal: 0 20px 40px rgba(15, 23, 42, 0.18);
+  }
+}
+
+:root[data-theme="light"],
+body[data-theme="light"] {
+  /* Surface & Background */
+  --bg-main: #F1F5F9;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #F8FAFC;
+  --bg-input: #F8FAFC;
+  --bg-hover: #E2E8F0;
+  --bg-header-open: #F8FAFC;
+  --bg-row-hover: #F8FAFC;
+
+  /* Borders & Dividers */
+  --border-primary: #E2E8F0;
+  --border-subtle: #EDF2F7;
+  --border-hover: #CBD5E1;
+
+  /* Typography */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+
+  /* Semantic & Confidence Colors */
+  --color-accent: #0284C7;
+  --color-accent-hover: #0369A1;
+  --color-confirmed: #16A34A;
+  --color-detected: #2563EB;
+  --color-inferred: #D97706;
+  --color-unknown: #64748B;
+  --color-issue: #DC2626;
+  --color-rest: #9333EA;
+  --color-teal: #0D9488;
+
+  /* Badges Backgrounds & Borders */
+  --badge-confirmed-bg: #DCFCE7;
+  --badge-confirmed-border: #86EFAC;
+  --badge-detected-bg: #DBEAFE;
+  --badge-detected-border: #93C5FD;
+  --badge-inferred-bg: #FEF3C7;
+  --badge-inferred-border: #FDE68A;
+  --badge-unknown-bg: #F1F5F9;
+  --badge-unknown-border: #CBD5E1;
+  --badge-rest-bg: #F3E8FF;
+  --badge-rest-border: #D8B4FE;
+  --badge-teal-bg: #CCFBF1;
+  --badge-error-bg: #FEE2E2;
+  --badge-error-border: #FCA5A5;
+
+  /* Modal Backdrop & Shadows */
+  --modal-backdrop: rgba(15, 23, 42, 0.5);
+  --scrollbar-thumb: #CBD5E1;
+  --scrollbar-thumb-hover: #94A3B8;
+  --scrollbar-track: #F1F5F9;
+  --circle-wp-fill: #0F172A;
+  --circle-wp-bg: #E2E8F0;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-toast: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+  --shadow-modal: 0 20px 40px rgba(15, 23, 42, 0.18);
+}
+
+:root[data-theme="dark"],
+body[data-theme="dark"] {
+  /* Surface & Background (Dark Default) */
+  --bg-main: #080F1B;
+  --bg-card: #0F1B2D;
+  --bg-elevated: #172438;
+  --bg-input: #0B1423;
+  --bg-hover: #1f304a;
+  --bg-header-open: rgba(23, 36, 56, 0.35);
+  --bg-row-hover: rgba(23, 36, 56, 0.5);
+
+  /* Borders & Dividers */
+  --border-primary: #263850;
+  --border-subtle: #1D2C40;
+  --border-hover: #3b5275;
+
+  /* Typography */
+  --text-primary: #F1F5FC;
+  --text-secondary: #A4B3C8;
+  --text-muted: #7E90A8;
+
+  /* Semantic & Confidence Colors */
+  --color-accent: #38BDF8;
+  --color-accent-hover: #0ea5e9;
+  --color-confirmed: #34D399;
+  --color-detected: #60A5FA;
+  --color-inferred: #FBBF24;
+  --color-unknown: #94A3B8;
+  --color-issue: #F87171;
+  --color-rest: #C084FC;
+  --color-teal: #2dd4bf;
+
+  /* Badges Backgrounds & Borders */
+  --badge-confirmed-bg: rgba(52, 211, 153, 0.12);
+  --badge-confirmed-border: rgba(52, 211, 153, 0.3);
+  --badge-detected-bg: rgba(96, 165, 250, 0.12);
+  --badge-detected-border: rgba(96, 165, 250, 0.3);
+  --badge-inferred-bg: rgba(251, 191, 36, 0.12);
+  --badge-inferred-border: rgba(251, 191, 36, 0.3);
+  --badge-unknown-bg: rgba(148, 163, 184, 0.1);
+  --badge-unknown-border: rgba(148, 163, 184, 0.22);
+  --badge-rest-bg: rgba(192, 132, 252, 0.14);
+  --badge-rest-border: rgba(192, 132, 252, 0.32);
+  --badge-teal-bg: rgba(45, 212, 191, 0.15);
+  --badge-error-bg: rgba(248, 113, 113, 0.12);
+  --badge-error-border: rgba(248, 113, 113, 0.3);
+
+  /* Modal Backdrop & Shadows */
+  --modal-backdrop: rgba(8, 15, 27, 0.85);
+  --scrollbar-thumb: #263850;
+  --scrollbar-thumb-hover: #3b5275;
+  --scrollbar-track: #0F1B2D;
+  --circle-wp-fill: #ffffff;
+  --circle-wp-bg: #172438;
+
+  --shadow-card: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
+  --shadow-toast: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+  --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.7);
 }
 
 /* Base Reset */
@@ -199,7 +401,7 @@ body {
 }
 
 .header-btn:hover {
-  background: #1f304a;
+  background: var(--bg-hover);
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
@@ -351,7 +553,7 @@ body {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: #172438;
+  background: var(--circle-wp-bg);
   border: 1px solid var(--border-primary);
   display: flex;
   align-items: center;
@@ -362,7 +564,7 @@ body {
 .wp-icon-circle svg {
   width: 15px;
   height: 15px;
-  fill: #ffffff;
+  fill: var(--circle-wp-fill);
 }
 
 .puzzle-icon-box {
@@ -454,13 +656,13 @@ body {
 }
 
 .badge-icon.icon-blue {
-  background: rgba(56, 189, 248, 0.15);
+  background: var(--badge-detected-bg);
   color: var(--color-accent);
 }
 
 .badge-icon.icon-teal {
-  background: rgba(45, 212, 191, 0.15);
-  color: #2dd4bf;
+  background: var(--badge-teal-bg);
+  color: var(--color-teal);
 }
 
 .badge-icon.icon-purple {
@@ -482,7 +684,7 @@ body {
 
 .card-section[open] .card-header {
   border-bottom: 1px solid var(--border-subtle);
-  background: rgba(23, 36, 56, 0.35);
+  background: var(--bg-header-open);
 }
 
 .card-section[open] .chevron-icon {
@@ -623,8 +825,8 @@ body {
 }
 
 .badge-error {
-  background: rgba(248, 113, 113, 0.12);
-  border: 1px solid rgba(248, 113, 113, 0.3);
+  background: var(--badge-error-bg);
+  border: 1px solid var(--badge-error-border);
   color: var(--color-issue);
 }
 
@@ -703,12 +905,12 @@ body {
 }
 
 .filter-chip:hover {
-  background: #1f304a;
+  background: var(--bg-hover);
   color: var(--text-primary);
 }
 
 .filter-chip.active {
-  background: rgba(56, 189, 248, 0.16);
+  background: var(--badge-detected-bg);
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
@@ -742,7 +944,7 @@ body {
 }
 
 .plugin-row-header:hover {
-  background: rgba(23, 36, 56, 0.5);
+  background: var(--bg-row-hover);
 }
 
 .plugin-row-left {
@@ -768,7 +970,7 @@ body {
 }
 
 .plugin-cat-icon.cat-blue {
-  background: rgba(56, 189, 248, 0.15);
+  background: var(--badge-detected-bg);
   color: var(--color-accent);
 }
 
@@ -778,8 +980,8 @@ body {
 }
 
 .plugin-cat-icon.cat-teal {
-  background: rgba(45, 212, 191, 0.15);
-  color: #2dd4bf;
+  background: var(--badge-teal-bg);
+  color: var(--color-teal);
 }
 
 .plugin-names-wrap {
@@ -897,7 +1099,7 @@ body {
 .modal-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(8, 15, 27, 0.85);
+  background: var(--modal-backdrop);
   backdrop-filter: blur(4px);
   z-index: 1000;
   display: flex;
@@ -913,7 +1115,7 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-lg);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+  box-shadow: var(--shadow-modal);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1005,7 +1207,7 @@ body {
 }
 
 .btn-secondary:hover {
-  background: #1f304a;
+  background: var(--bg-hover);
   color: var(--text-primary);
 }
 
@@ -1018,7 +1220,7 @@ body {
   bottom: 16px;
   left: 50%;
   transform: translateX(-50%) translateY(0);
-  background: #172438;
+  background: var(--bg-elevated);
   border: 1px solid var(--border-primary);
   color: var(--text-primary);
   padding: 8px 16px;
@@ -1042,12 +1244,12 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: #263850;
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b5275;
+  background: var(--scrollbar-thumb-hover);
 }
