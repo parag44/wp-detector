@@ -338,10 +338,136 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 
+  function renderEmptyState(type, detail) {
+    els.results.classList.add('hidden');
+    els.loading.classList.remove('hidden');
+
+    const scanLink = document.getElementById('header-scan-link');
+    if (scanLink) {
+      if (detail && detail.startsWith('http')) {
+        scanLink.textContent = detail;
+        scanLink.href = detail;
+        scanLink.title = detail;
+      } else if (detail) {
+        scanLink.textContent = detail;
+        scanLink.removeAttribute('href');
+      } else {
+        scanLink.textContent = type === 'internal_page' ? 'chrome://internal' : 'No target URL';
+        scanLink.removeAttribute('href');
+      }
+    }
+
+    if (type === 'internal_page') {
+      els.loading.innerHTML = `
+        <div class="not-wp-container">
+          <div class="not-wp-card">
+            <div class="not-wp-icon-badge">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-detected);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+            </div>
+            <h2 class="not-wp-title">Internal Browser Page</h2>
+            <span class="conf-badge badge-detected">Restricted Page</span>
+            <p class="not-wp-desc">
+              Browser security policies prevent extensions from executing diagnostics on internal pages (such as <code>chrome://</code>, <code>edge://</code>, or New Tab).
+            </p>
+            <div class="not-wp-checklist">
+              <div class="checklist-header">How to run diagnostics</div>
+              <div class="check-item">
+                <svg class="check-icon-info" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Navigate to any public website in a standard tab</span>
+              </div>
+              <div class="check-item">
+                <svg class="check-icon-info" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Click the WP Stack Report icon in your toolbar</span>
+              </div>
+              <div class="check-item">
+                <svg class="check-icon-info" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>WordPress core version, active theme &amp; plugin stack scan automatically</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (type === 'not_wordpress') {
+      els.loading.innerHTML = `
+        <div class="not-wp-container">
+          <div class="not-wp-card">
+            <div class="not-wp-icon-badge">
+              <svg viewBox="0 0 1000 1000" class="wp-gray-svg"><path d="M500 0C223.8 0 0 223.8 0 500c0 276.2 223.8 500 500 500s500-223.8 500-500C1000 223.8 776.2 0 500 0zm0 34.6c257.1 0 465.4 208.3 465.4 465.4 0 94.7-28.3 182.7-76.7 256.4L640.4 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L465.2 537 363.3 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L129 780.8C65.5 704.9 34.6 606.8 34.6 500 34.6 242.9 242.9 34.6 500 34.6z"/></svg>
+              <span class="not-wp-badge-sub">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+              </span>
+            </div>
+
+            <h2 class="not-wp-title">No WordPress Detected</h2>
+            <span class="conf-badge badge-neutral">Non-WordPress Site</span>
+            
+            <p class="not-wp-desc">
+              We inspected the page headers, DOM signatures, and script paths, but found no evidence of an active WordPress installation.
+            </p>
+
+            <div class="not-wp-checklist">
+              <div class="checklist-header">Diagnostic Checks Performed</div>
+              <div class="check-item">
+                <svg class="check-icon-no" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                <span>No <code>/wp-content/</code> or <code>/wp-includes/</code> asset paths</span>
+              </div>
+              <div class="check-item">
+                <svg class="check-icon-no" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                <span>No WordPress generator meta tag identified</span>
+              </div>
+              <div class="check-item">
+                <svg class="check-icon-no" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                <span>No public <code>/wp-json</code> REST API endpoints reachable</span>
+              </div>
+            </div>
+
+            <div class="not-wp-actions">
+              <button class="btn-rescan" id="rescan-empty-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                Rescan Page
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      const rescanBtn = document.getElementById('rescan-empty-btn');
+      if (rescanBtn) rescanBtn.addEventListener('click', runDiagnostics);
+    } else {
+      els.loading.innerHTML = `
+        <div class="not-wp-container">
+          <div class="not-wp-card">
+            <div class="not-wp-icon-badge">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-issue);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <h2 class="not-wp-title">Diagnostics Incomplete</h2>
+            <span class="conf-badge badge-error">Inspection Issue</span>
+            <p class="not-wp-desc">${detail || 'An unexpected issue occurred while analyzing this tab.'}</p>
+            <div class="not-wp-actions">
+              <button class="btn-rescan" id="rescan-empty-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                Retry Diagnostics
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      const rescanBtn = document.getElementById('rescan-empty-btn');
+      if (rescanBtn) rescanBtn.addEventListener('click', runDiagnostics);
+    }
+  }
+
   async function runDiagnostics() {
+    reportData = null;
+    els.loading.innerHTML = `
+      <div class="spinner"></div>
+      <p class="state-title">Running Diagnostics...</p>
+      <span class="state-desc">Inspecting headers, DOM signatures &amp; REST API namespaces</span>
+    `;
     els.loading.classList.remove('hidden');
     els.results.classList.add('hidden');
     els.refreshBtn.classList.add('spinning');
+
+    let currentTabUrl = '';
 
     try {
       if (!window.chrome || !chrome.tabs || !chrome.tabs.query) {
@@ -352,32 +478,55 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (!tab || !tab.url || tab.url.startsWith('chrome://')) throw new Error('Cannot run on internal browser pages.');
-      
+      if (!tab || !tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('edge://') || tab.url.startsWith('about:') || tab.url.startsWith('chrome-extension://')) {
+        renderEmptyState('internal_page', tab ? tab.url : '');
+        return;
+      }
+
+      currentTabUrl = tab.url;
+
+      // Update header scan link immediately
+      const scanLink = document.getElementById('header-scan-link');
+      if (scanLink) {
+        scanLink.textContent = tab.url;
+        scanLink.href = tab.url;
+        scanLink.title = tab.url;
+      }
+
       const res = await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: detectWordPress });
-      const data = res[0].result;
-      
-      if (!data.isWP) throw new Error('Not a WordPress site or signatures hidden.');
+      const data = res && res[0] ? res[0].result : null;
+
+      if (!data || !data.isWP) {
+        renderEmptyState('not_wordpress', tab.url);
+        return;
+      }
 
       const urlObj = new URL(tab.url);
       data.hostname = urlObj.hostname;
-      
+
       // Async DNS & version fetches
       const [ip, ns, updateCheck] = await Promise.all([
         getHostIP(data.hostname),
         getNameservers(data.hostname),
         checkWPCoreUpdate(data.version)
       ]);
-      
+
       data.ip = ip;
       data.dns = ns;
       data.updateCheck = updateCheck;
       data.timestamp = new Date().toISOString();
-      
+
       reportData = data;
       renderDashboard();
     } catch (e) {
-      els.loading.innerHTML = `<div class="state-card"><p class="state-title" style="color:var(--color-issue);">${e.message}</p></div>`;
+      const errMsg = e && e.message ? e.message : String(e);
+      if (errMsg.includes('internal browser pages') || errMsg.includes('Cannot access a chrome://') || errMsg.includes('The extensions gallery cannot be scripted')) {
+        renderEmptyState('internal_page', currentTabUrl);
+      } else if (errMsg.includes('Not a WordPress site')) {
+        renderEmptyState('not_wordpress', currentTabUrl);
+      } else {
+        renderEmptyState('error', errMsg);
+      }
     } finally {
       els.refreshBtn.classList.remove('spinning');
     }
