@@ -592,7 +592,7 @@ body {
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr 1.05fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
   gap: 12px;
   align-items: stretch;
 }
@@ -601,6 +601,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 0;
 }
 
 .col-right {
@@ -608,6 +609,7 @@ body {
   flex-direction: column;
   gap: 10px;
   height: 100%;
+  min-width: 0;
 }
 
 /* Card Sections */
@@ -618,6 +620,7 @@ body {
   box-shadow: var(--shadow-card);
   overflow: hidden;
   transition: border-color 0.15s ease;
+  min-width: 0;
 }
 
 .card-section:hover {
@@ -706,6 +709,7 @@ body {
 /* Card Body Rows */
 .card-body {
   padding: 4px 12px 6px;
+  min-width: 0;
 }
 
 .prop-row {
@@ -714,6 +718,8 @@ body {
   align-items: center;
   padding: 5.5px 0;
   border-bottom: 1px solid var(--border-subtle);
+  min-width: 0;
+  gap: 8px;
 }
 
 .prop-row:last-child {
@@ -724,11 +730,14 @@ body {
   color: var(--text-secondary);
   font-size: 12px;
   font-weight: 500;
+  flex-shrink: 0;
 }
 
 .prop-val {
   font-size: 12px;
   font-weight: 600;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .prop-val-wrap {
@@ -737,6 +746,7 @@ body {
   gap: 6px;
   max-width: 65%;
   justify-content: flex-end;
+  min-width: 0;
 }
 
 .prop-link {
@@ -745,17 +755,24 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .prop-link:hover {
   text-decoration: underline;
 }
 
-.prop-link .ext-icon {
-  opacity: 0.7;
+.prop-link span,
+#env-url-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  display: block;
+}
+
+.prop-link svg {
   flex-shrink: 0;
 }
 
@@ -763,6 +780,10 @@ body {
   color: var(--color-accent);
   font-weight: 700;
   text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .theme-name:hover {
