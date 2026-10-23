@@ -50,13 +50,91 @@ async function detectWordPress() {
     }
   });
 
-  // 3. Try to get headers
+  // 3. Try to get headers & caching signals
   let serverSoftware = 'Unknown';
   let proxyCDN = 'None Detected';
   let phpVersion = 'Unknown';
   let cacheSystem = 'None Detected';
   let cacheHeaderStatus = 'Unknown';
+  let cacheDetail = '';
   const urlParams = new URL(document.location.href);
+
+  // Helper to normalize cache status values across plugins & servers
+  function parseCacheStatus(raw) {
+    if (!raw) return 'Unknown';
+    const s = raw.trim();
+    const upper = s.toUpperCase();
+
+    if (upper.includes('HIT') || upper === 'CACHED' || upper.includes('SUPERCACHE') || upper.includes('WP-CACHE') || upper === 'ACTIVE') {
+      return 'HIT';
+    }
+    if (upper.includes('SAVING') || upper.includes('SAVING TO CACHE')) {
+      return 'Saving to Cache';
+    }
+    if (upper.includes('MISS')) {
+      return 'MISS';
+    }
+    if (upper.includes('BYPASS') || upper.includes('DISABLED') || upper.includes('NOT CACHED') || upper.includes('NO-CACHE') || upper.includes('EXCLUDED')) {
+      return 'BYPASS';
+    }
+    if (upper.includes('DYNAMIC')) {
+      return 'DYNAMIC';
+    }
+    if (upper.includes('EXPIRED')) {
+      return 'EXPIRED';
+    }
+    if (upper.includes('STALE')) {
+      return 'STALE';
+    }
+    if (upper.includes('REVALIDATED')) {
+      return 'REVALIDATED';
+    }
+    if (upper.includes('UPDATING')) {
+      return 'UPDATING';
+    }
+
+    return s.length > 20 ? s.substring(0, 20) : s;
+  }
+
+  const knownCacheRules = [
+    // WordPress Cache Plugins
+    { header: 'wpo-cache-status', system: 'WP-Optimize', pluginSlug: 'wp-optimize' },
+    { header: 'x-wpo-cache-status', system: 'WP-Optimize', pluginSlug: 'wp-optimize' },
+    { header: 'x-litespeed-cache', system: 'LiteSpeed Cache', pluginSlug: 'litespeed-cache' },
+    { header: 'x-litespeed-cache-control', system: 'LiteSpeed Cache', pluginSlug: 'litespeed-cache' },
+    { header: 'x-lsadc-cache', system: 'LiteSpeed Cache', pluginSlug: 'litespeed-cache' },
+    { header: 'wp-super-cache', system: 'WP Super Cache', pluginSlug: 'wp-super-cache' },
+    { header: 'x-super-cache', system: 'WP Super Cache', pluginSlug: 'wp-super-cache' },
+    { header: 'x-w3tc-pagecache', system: 'W3 Total Cache', pluginSlug: 'w3-total-cache' },
+    { header: 'x-w3tc-min', system: 'W3 Total Cache', pluginSlug: 'w3-total-cache' },
+    { header: 'x-flying-press-cache', system: 'FlyingPress', pluginSlug: 'flying-press' },
+    { header: 'flying-press-cache', system: 'FlyingPress', pluginSlug: 'flying-press' },
+    { header: 'x-nitro-cache', system: 'NitroPack', pluginSlug: 'nitropack' },
+    { header: 'nitro-cache', system: 'NitroPack', pluginSlug: 'nitropack' },
+    { header: 'x-breeze-cache', system: 'Breeze Cache', pluginSlug: 'breeze' },
+    { header: 'x-cache-handler', system: 'Cache Enabler', pluginSlug: 'cache-enabler' },
+    { header: 'x-wp-cf-super-cache-active', system: 'Super Page Cache', pluginSlug: 'wp-cloudflare-super-page-cache' },
+    { header: 'x-sg-cache', system: 'SiteGround Cache', pluginSlug: 'sg-cachepress' },
+    { header: 'x-siteground-cache', system: 'SiteGround Cache', pluginSlug: 'sg-cachepress' },
+
+    // Cloud / CDN / Platform / Reverse Proxy Caches
+    { header: 'cf-cache-status', system: 'Cloudflare' },
+    { header: 'x-kinsta-cache', system: 'Kinsta Cache' },
+    { header: 'x-wpengine-cache', system: 'WP Engine Cache' },
+    { header: 'x-pantheon-styx-edge-cache', system: 'Pantheon Styx' },
+    { header: 'x-varnish-cache', system: 'Varnish' },
+    { header: 'x-varnish', system: 'Varnish' },
+    { header: 'x-fastcgi-cache', system: 'Nginx FastCGI' },
+    { header: 'x-nginx-cache', system: 'Nginx Cache' },
+    { header: 'x-proxy-cache', system: 'Proxy Cache' },
+    { header: 'x-cache-status', system: 'Server Cache' },
+    { header: 'x-cache', system: 'Edge/Server Cache' },
+    { header: 'x-fastly-cache-status', system: 'Fastly' },
+    { header: 'fastly-cache-status', system: 'Fastly' },
+    { header: 'x-sucuri-cache', system: 'Sucuri Cache' },
+    { header: 'x-run-cloud-cache', system: 'RunCloud Cache' },
+    { header: 'x-gridpane-cache', system: 'GridPane Cache' }
+  ];
 
   try {
     const response = await fetch(document.location.href, { method: 'HEAD' });
@@ -84,23 +162,202 @@ async function detectWordPress() {
     if (response.headers.has('x-kinsta-cache')) proxyCDN = 'Kinsta (Platform)';
     if (response.headers.has('x-pantheon-styx-edge-cache')) proxyCDN = 'Pantheon (Platform)';
 
-    // Cache Header Status
-    const cacheHeaders = ['x-cache', 'cf-cache-status', 'x-kinsta-cache', 'x-wpengine-cache', 'x-pantheon-styx-edge-cache', 'x-litespeed-cache', 'x-varnish-cache'];
-    for (const h of cacheHeaders) {
-      if (response.headers.has(h)) {
-        cacheSystem = h;
-        const val = response.headers.get(h).toUpperCase();
-        if (val.includes('HIT')) cacheHeaderStatus = 'HIT';
-        else if (val.includes('MISS')) cacheHeaderStatus = 'MISS';
-        else if (val.includes('BYPASS')) cacheHeaderStatus = 'BYPASS';
-        else if (val.includes('DYNAMIC')) cacheHeaderStatus = 'DYNAMIC';
-        else cacheHeaderStatus = val.substring(0, 15);
+    // Cache Header Detection - Step 1: Check known priority headers
+    for (const rule of knownCacheRules) {
+      if (response.headers.has(rule.header)) {
+        cacheSystem = rule.system;
+        const rawVal = response.headers.get(rule.header);
+        cacheHeaderStatus = parseCacheStatus(rawVal);
+        cacheDetail = `${rule.header}: ${rawVal}`;
+
+        // Auto-register detected caching plugin if not in pluginsMap
+        if (rule.pluginSlug && !pluginsMap.has(rule.pluginSlug)) {
+          pluginsMap.set(rule.pluginSlug, {
+            slug: rule.pluginSlug,
+            version: '',
+            method: 'HTTP Cache Header',
+            evidence: `${rule.header}: ${rawVal}`
+          });
+        }
         break;
+      }
+    }
+
+    // Cache Header Detection - Step 2: Dynamic wildcard scan of all response headers
+    if (cacheSystem === 'None Detected') {
+      response.headers.forEach((val, key) => {
+        if (cacheSystem !== 'None Detected') return;
+        const lKey = key.toLowerCase();
+        if (lKey.includes('cache-status') || (lKey.includes('cache') && !lKey.includes('cache-control'))) {
+          cacheSystem = key;
+          cacheHeaderStatus = parseCacheStatus(val);
+          cacheDetail = `${key}: ${val}`;
+        }
+      });
+    }
+
+    // Cache Header Detection - Step 3: RFC 7234 standard Age header
+    if (cacheSystem === 'None Detected' && response.headers.has('age')) {
+      const ageVal = parseInt(response.headers.get('age'), 10);
+      if (!isNaN(ageVal) && ageVal > 0) {
+        cacheSystem = 'Proxy Cache (Age)';
+        cacheHeaderStatus = 'HIT';
+        cacheDetail = `Age: ${ageVal}s`;
       }
     }
 
   } catch (e) {
     // CORS or Network error
+  }
+
+  // Cache Detection - Step 4: DOM HTML Comment Inspection (Fallback & Complementary)
+  if (cacheSystem === 'None Detected' || cacheHeaderStatus === 'Unknown') {
+    try {
+      const commentIterator = document.createNodeIterator(
+        document,
+        NodeFilter.SHOW_COMMENT,
+        () => NodeFilter.FILTER_ACCEPT
+      );
+      let commentNode;
+      while ((commentNode = commentIterator.nextNode())) {
+        const text = (commentNode.nodeValue || '').trim();
+        if (!text) continue;
+
+        if (/cached\s+by\s+wp-optimize|wpo-cache/i.test(text)) {
+          cacheSystem = 'WP-Optimize';
+          cacheHeaderStatus = 'HIT';
+          cacheDetail = 'HTML Comment: WP-Optimize';
+          if (!pluginsMap.has('wp-optimize')) {
+            pluginsMap.set('wp-optimize', {
+              slug: 'wp-optimize',
+              version: '',
+              method: 'HTML Comment Signature',
+              evidence: text.substring(0, 80)
+            });
+          }
+          break;
+        } else if (/wp\s*rocket/i.test(text)) {
+          cacheSystem = 'WP Rocket';
+          cacheHeaderStatus = 'Active';
+          cacheDetail = 'HTML Comment: WP Rocket';
+          if (!pluginsMap.has('wp-rocket')) {
+            pluginsMap.set('wp-rocket', {
+              slug: 'wp-rocket',
+              version: '',
+              method: 'HTML Comment Signature',
+              evidence: text.substring(0, 80)
+            });
+          }
+          break;
+        } else if (/wp\s*fastest\s*cache/i.test(text)) {
+          cacheSystem = 'WP Fastest Cache';
+          cacheHeaderStatus = 'HIT';
+          cacheDetail = 'HTML Comment: WP Fastest Cache';
+          if (!pluginsMap.has('wp-fastest-cache')) {
+            pluginsMap.set('wp-fastest-cache', {
+              slug: 'wp-fastest-cache',
+              version: '',
+              method: 'HTML Comment Signature',
+              evidence: text.substring(0, 80)
+            });
+          }
+          break;
+        } else if (/w3\s*total\s*cache/i.test(text)) {
+          cacheSystem = 'W3 Total Cache';
+          cacheHeaderStatus = 'HIT';
+          cacheDetail = 'HTML Comment: W3 Total Cache';
+          if (!pluginsMap.has('w3-total-cache')) {
+            pluginsMap.set('w3-total-cache', {
+              slug: 'w3-total-cache',
+              version: '',
+              method: 'HTML Comment Signature',
+              evidence: text.substring(0, 80)
+            });
+          }
+          break;
+        } else if (/supercache|cached\s+page\s+served\s+by\s+wp-cache/i.test(text)) {
+          cacheSystem = 'WP Super Cache';
+          cacheHeaderStatus = 'HIT';
+          cacheDetail = 'HTML Comment: WP Super Cache';
+          if (!pluginsMap.has('wp-super-cache')) {
+            pluginsMap.set('wp-super-cache', {
+              slug: 'wp-super-cache',
+              version: '',
+              method: 'HTML Comment Signature',
+              evidence: text.substring(0, 80)
+            });
+          }
+          break;
+        } else if (/litespeed\s*cache/i.test(text)) {
+          cacheSystem = 'LiteSpeed Cache';
+          cacheHeaderStatus = 'HIT';
+          cacheDetail = 'HTML Comment: LiteSpeed Cache';
+          if (!pluginsMap.has('litespeed-cache')) {
+            pluginsMap.set('litespeed-cache', {
+              slug: 'litespeed-cache',
+              version: '',
+              method: 'HTML Comment Signature',
+              evidence: text.substring(0, 80)
+            });
+          }
+          break;
+        } else if (/cache\s*enabler/i.test(text)) {
+          cacheSystem = 'Cache Enabler';
+          cacheHeaderStatus = 'HIT';
+          cacheDetail = 'HTML Comment: Cache Enabler';
+          if (!pluginsMap.has('cache-enabler')) {
+            pluginsMap.set('cache-enabler', {
+              slug: 'cache-enabler',
+              version: '',
+              method: 'HTML Comment Signature',
+              evidence: text.substring(0, 80)
+            });
+          }
+          break;
+        } else if (/hummingbird/i.test(text)) {
+          cacheSystem = 'Hummingbird';
+          cacheHeaderStatus = 'Active';
+          cacheDetail = 'HTML Comment: Hummingbird';
+          if (!pluginsMap.has('hummingbird-performance')) {
+            pluginsMap.set('hummingbird-performance', {
+              slug: 'hummingbird-performance',
+              version: '',
+              method: 'HTML Comment Signature',
+              evidence: text.substring(0, 80)
+            });
+          }
+          break;
+        } else if (/flyingpress/i.test(text)) {
+          cacheSystem = 'FlyingPress';
+          cacheHeaderStatus = 'HIT';
+          cacheDetail = 'HTML Comment: FlyingPress';
+          if (!pluginsMap.has('flying-press')) {
+            pluginsMap.set('flying-press', {
+              slug: 'flying-press',
+              version: '',
+              method: 'HTML Comment Signature',
+              evidence: text.substring(0, 80)
+            });
+          }
+          break;
+        } else if (/breeze/i.test(text)) {
+          cacheSystem = 'Breeze Cache';
+          cacheHeaderStatus = 'HIT';
+          cacheDetail = 'HTML Comment: Breeze';
+          if (!pluginsMap.has('breeze')) {
+            pluginsMap.set('breeze', {
+              slug: 'breeze',
+              version: '',
+              method: 'HTML Comment Signature',
+              evidence: text.substring(0, 80)
+            });
+          }
+          break;
+        }
+      }
+    } catch (e) {
+      // Ignore comment scan errors
+    }
   }
 
   // 4. REST API Namespace detection
@@ -155,6 +412,7 @@ async function detectWordPress() {
     phpVersion,
     cacheSystem,
     cacheHeaderStatus,
+    cacheDetail,
     plugins: Array.from(pluginsMap.values())
   };
 }
@@ -299,8 +557,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       serverSoftware: 'nginx',
       proxyCDN: 'None Detected',
       phpVersion: 'Unknown',
-      cacheSystem: 'None Detected',
-      cacheHeaderStatus: 'Unknown',
+      cacheSystem: 'LiteSpeed Cache',
+      cacheHeaderStatus: 'HIT',
+      cacheDetail: 'x-litespeed-cache: hit',
       ip: '192.0.66.108',
       dns: 'a12-64.akam.net, a5-66.akam.net',
       updateCheck: null,
@@ -605,17 +864,51 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const cacheEl = document.getElementById('cache-header-status');
     if (cacheEl) {
-      cacheEl.textContent = d.cacheHeaderStatus;
+      let displayText = d.cacheHeaderStatus;
       if (d.cacheSystem && d.cacheSystem !== 'None Detected') {
-        cacheEl.title = `Detected Header: ${d.cacheSystem}`;
-      } else {
-        cacheEl.title = '';
+        if (d.cacheSystem === 'WP-Optimize') {
+          displayText = d.cacheHeaderStatus === 'Saving to Cache' ? 'WP-Optimize: Saving' : `WP-Optimize: ${d.cacheHeaderStatus}`;
+        } else if (d.cacheSystem === 'LiteSpeed Cache') {
+          displayText = `LiteSpeed: ${d.cacheHeaderStatus}`;
+        } else if (d.cacheSystem === 'WP Super Cache') {
+          displayText = `SuperCache: ${d.cacheHeaderStatus}`;
+        } else if (d.cacheSystem === 'W3 Total Cache') {
+          displayText = `W3TC: ${d.cacheHeaderStatus}`;
+        } else if (d.cacheSystem === 'Cloudflare') {
+          displayText = `Cloudflare: ${d.cacheHeaderStatus}`;
+        } else if (d.cacheSystem === 'WP Rocket') {
+          displayText = 'WP Rocket: Active';
+        } else if (d.cacheSystem.length <= 14 && d.cacheHeaderStatus !== 'Unknown') {
+          displayText = `${d.cacheSystem}: ${d.cacheHeaderStatus}`;
+        }
       }
-      cacheEl.className = 'conf-badge ' + (
-        d.cacheHeaderStatus === 'HIT' ? 'badge-confirmed' :
-        d.cacheHeaderStatus === 'MISS' ? 'badge-inferred' :
-        d.cacheHeaderStatus === 'DYNAMIC' ? 'badge-detected' : 'badge-neutral'
-      );
+      cacheEl.textContent = displayText;
+
+      if (d.cacheDetail) {
+        cacheEl.title = `Cache Engine: ${d.cacheSystem}\nDetail: ${d.cacheDetail}`;
+      } else if (d.cacheSystem && d.cacheSystem !== 'None Detected') {
+        cacheEl.title = `Cache Engine: ${d.cacheSystem}`;
+      } else {
+        cacheEl.title = 'No caching headers or signatures detected';
+      }
+
+      const statusUpper = (d.cacheHeaderStatus || '').toUpperCase();
+      let badgeClass = 'badge-neutral';
+      if (statusUpper === 'HIT' || statusUpper === 'CACHED' || statusUpper === 'ACTIVE') {
+        badgeClass = 'badge-confirmed';
+      } else if (statusUpper.includes('SAVING') || statusUpper === 'MISS' || statusUpper === 'STALE' || statusUpper === 'EXPIRED') {
+        badgeClass = 'badge-inferred';
+      } else if (statusUpper === 'DYNAMIC' || statusUpper === 'REVALIDATED') {
+        badgeClass = 'badge-detected';
+      } else {
+        badgeClass = 'badge-neutral';
+      }
+      cacheEl.className = `conf-badge ${badgeClass}`;
+    }
+
+    const cacheSysEl = document.getElementById('cache-system');
+    if (cacheSysEl) {
+      cacheSysEl.textContent = d.cacheSystem;
     }
 
     // Right Column: Plugin Inventory
@@ -762,8 +1055,8 @@ Web Server: ${d.serverSoftware}
 PHP Version: ${d.phpVersion}
 Host IP: ${d.ip}
 Nameservers: ${d.dns}
-Cache Status: ${d.cacheHeaderStatus}
-
+Cache Status: ${d.cacheHeaderStatus}${d.cacheSystem && d.cacheSystem !== 'None Detected' ? ` (${d.cacheSystem})` : ''}
+${d.cacheDetail ? `Cache Detail: ${d.cacheDetail}\n` : ''}
 ## DETECTED PLUGINS (${d.plugins.length})
 ${d.plugins.map(p => `- ${p.slug} (${p.version || 'Version unknown'}) [${p.method || 'Frontend'}]`).join('\n')}
 `;
