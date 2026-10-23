@@ -65,18 +65,23 @@ async function detectWordPress() {
     const s = raw.trim();
     const upper = s.toUpperCase();
 
-    if (upper.includes('HIT') || upper === 'CACHED' || upper.includes('SUPERCACHE') || upper.includes('WP-CACHE') || upper === 'ACTIVE') {
-      return 'HIT';
-    }
-    if (upper.includes('SAVING') || upper.includes('SAVING TO CACHE')) {
+    // 1. In-progress / saving states
+    if (upper.includes('SAVING')) {
       return 'Saving to Cache';
     }
+    // 2. Explicit bypass / disabled / not cached
+    if (upper.includes('NOT CACHED') || upper.includes('NO-CACHE') || upper.includes('BYPASS') || upper.includes('DISABLED') || upper.includes('EXCLUDED')) {
+      return 'BYPASS';
+    }
+    // 3. Cache Hits
+    if (upper.includes('HIT') || upper.includes('CACHED') || upper.includes('SUPERCACHE') || upper.includes('WP-CACHE') || upper === 'ACTIVE') {
+      return 'HIT';
+    }
+    // 4. Cache Misses
     if (upper.includes('MISS')) {
       return 'MISS';
     }
-    if (upper.includes('BYPASS') || upper.includes('DISABLED') || upper.includes('NOT CACHED') || upper.includes('NO-CACHE') || upper.includes('EXCLUDED')) {
-      return 'BYPASS';
-    }
+    // 5. CDN / Proxy specific states
     if (upper.includes('DYNAMIC')) {
       return 'DYNAMIC';
     }
@@ -136,8 +141,21 @@ async function detectWordPress() {
     { header: 'x-gridpane-cache', system: 'GridPane Cache' }
   ];
 
+  const abortCtrl = new AbortController();
   try {
-    const response = await fetch(document.location.href, { method: 'HEAD' });
+    let response;
+    try {
+      // Use GET with AbortController so PHP/WordPress caching plugins (WP-Optimize, etc.)
+      // see a genuine GET request and return their real cache status ('cached')
+      // instead of bypassing with 'not cached' as they do on HEAD requests!
+      response = await fetch(document.location.href, {
+        method: 'GET',
+        signal: abortCtrl.signal
+      });
+    } catch (e) {
+      // Fallback to HEAD if GET is blocked or fails
+      response = await fetch(document.location.href, { method: 'HEAD' });
+    }
     
     // Server & Proxy Logic
     const rawServer = response.headers.get('server');
@@ -168,7 +186,11 @@ async function detectWordPress() {
         cacheSystem = rule.system;
         const rawVal = response.headers.get(rule.header);
         cacheHeaderStatus = parseCacheStatus(rawVal);
-        cacheDetail = `${rule.header}: ${rawVal}`;
+        let detail = `${rule.header}: ${rawVal}`;
+        if (rule.header === 'wpo-cache-status' && response.headers.has('wpo-cache-message')) {
+          detail += ` (${response.headers.get('wpo-cache-message')})`;
+        }
+        cacheDetail = detail;
 
         // Auto-register detected caching plugin if not in pluginsMap
         if (rule.pluginSlug && !pluginsMap.has(rule.pluginSlug)) {
@@ -176,7 +198,7 @@ async function detectWordPress() {
             slug: rule.pluginSlug,
             version: '',
             method: 'HTTP Cache Header',
-            evidence: `${rule.header}: ${rawVal}`
+            evidence: detail
           });
         }
         break;
@@ -206,12 +228,17 @@ async function detectWordPress() {
       }
     }
 
+    // Cancel body stream now that headers have been inspected
+    abortCtrl.abort();
+
   } catch (e) {
     // CORS or Network error
   }
 
-  // Cache Detection - Step 4: DOM HTML Comment Inspection (Fallback & Complementary)
-  if (cacheSystem === 'None Detected' || cacheHeaderStatus === 'Unknown') {
+  // Cache Detection - Step 4: DOM HTML Comment Inspection (Fallback & Active Tab Verification)
+  // If headers were missing OR if headers reported BYPASS, check if the current active tab HTML
+  // was actually delivered from cache via plugin HTML comment signatures!
+  if (cacheSystem === 'None Detected' || cacheHeaderStatus === 'Unknown' || cacheHeaderStatus === 'BYPASS') {
     try {
       const commentIterator = document.createNodeIterator(
         document,
