@@ -143,7 +143,8 @@ English
 |---------|------|---------|--------|
 | 1.0 | 2026-10-14 | Initial release with full diagnostics, REST API plugin detection, server/cache inspection, and export tools | Submitted |
 | 1.1 | 2026-10-16 | Redesigned modern developer dashboard UI, status pulse badge, toast feedback, and performance polish | Submitted |
-| 1.2 | 2026-10-17 | Panoramic developer UI, automatic light/dark mode adapting to OS settings, full-height dynamic plugin inventory, rounded corners, and restored cache status | Ready for submission |
+| 1.2 | 2026-10-17 | Panoramic developer UI, automatic light/dark mode adapting to OS settings, full-height dynamic plugin inventory, rounded corners, and restored cache status | Submitted |
+| 1.3 | 2026-10-26 | Multi-tier WordPress cache detection (WP-Optimize, LiteSpeed, WP Rocket, Cloudflare, FastCGI, Super Cache, W3TC), GET stream aborting for live cache accuracy, HTML comment signature verification, redesigned empty & non-WordPress state diagnostics card, and long URL wrapping | Ready for submission |
 
 ## Review Notes
 
