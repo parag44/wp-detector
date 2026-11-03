@@ -75,11 +75,6 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         <span>Overview</span>
       </button>
-      <button class="nav-tab" data-tab="plugins" role="tab" aria-selected="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v4h1.5a2.5 2.5 0 0 1 0 5H2v4a2 2 0 0 0 2 2h4v-1.5a2.5 2.5 0 0 1 5 0V21h4a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z"></path></svg>
-        <span>Plugins</span>
-        <span class="tab-badge" id="tab-plugins-count">0</span>
-      </button>
       <button class="nav-tab" data-tab="theme" role="tab" aria-selected="false">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"></path></svg>
         <span>Theme</span>
@@ -214,71 +209,42 @@
           </button>
         </div>
 
-        <!-- Server & Environment Summary Card -->
-        <div class="section-card">
+        <!-- Detected Plugins Section (Theme & Plugins First) -->
+        <div class="section-card plugins-overview-card" id="plugins-section">
           <div class="card-header-bar">
             <div class="card-header-title">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-              <span>Server &amp; Tech Stack</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v4h1.5a2.5 2.5 0 0 1 0 5H2v4a2 2 0 0 0 2 2h4v-1.5a2.5 2.5 0 0 1 5 0V21h4a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z"></path></svg>
+              <span>Detected Plugins</span>
+              <span class="count-pill" id="overview-plugins-count">0</span>
             </div>
-            <button class="btn-text-link" id="btn-goto-hosting">Full Specs &rarr;</button>
+            <span class="card-header-hint">Scanned Assets &amp; API</span>
           </div>
 
-          <div class="data-table">
-            <div class="data-row">
-              <span class="data-label">Hosting / Platform</span>
-              <span class="data-val bold" id="overview-hosting">Detecting...</span>
+          <div class="plugins-toolbar">
+            <div class="search-input-wrap">
+              <svg class="search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="plugin-search" class="search-input" placeholder="Search detected plugins...">
+              <button id="search-clear-btn" class="search-clear-btn hidden" title="Clear search">&times;</button>
             </div>
-            <div class="data-row">
-              <span class="data-label">Web Server</span>
-              <span class="data-val mono" id="overview-server">...</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Cache Engine</span>
-              <span class="data-val" id="overview-cache">
-                <span class="status-pill pill-neutral" id="overview-cache-badge">Unknown</span>
-              </span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Page Builder</span>
-              <span class="data-val" id="overview-builder">None Detected</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">IP Address</span>
-              <span class="data-val mono copyable" id="overview-ip" title="Click to copy IP">...</span>
+
+            <div class="filter-chips">
+              <button class="chip active" data-filter="all">All (<span id="chip-all-count">0</span>)</button>
+              <button class="chip" data-filter="known">With Version</button>
+              <button class="chip" data-filter="api">REST API</button>
+              <button class="chip" data-filter="cache">Cache &amp; Perf</button>
+              <button class="chip" data-filter="seo">SEO</button>
+              <button class="chip" data-filter="forms">Forms</button>
             </div>
           </div>
-        </div>
 
-      </section>
-
-      <!-- TAB 2: PLUGINS INVENTORY -->
-      <section id="pane-plugins" class="tab-pane hidden" role="tabpanel">
-
-        <div class="plugins-toolbar">
-          <div class="search-input-wrap">
-            <svg class="search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="plugin-search" class="search-input" placeholder="Search detected plugins...">
-            <button id="search-clear-btn" class="search-clear-btn hidden" title="Clear search">&times;</button>
+          <div class="plugins-list-container" id="plugins-list">
+            <!-- Populated dynamically with real thumbnails & metadata -->
           </div>
 
-          <div class="filter-chips">
-            <button class="chip active" data-filter="all">All (<span id="chip-all-count">0</span>)</button>
-            <button class="chip" data-filter="known">With Version</button>
-            <button class="chip" data-filter="api">REST API</button>
-            <button class="chip" data-filter="cache">Cache &amp; Perf</button>
-            <button class="chip" data-filter="seo">SEO</button>
-            <button class="chip" data-filter="forms">Forms</button>
+          <div class="tab-note">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Detected via frontend scripts, stylesheets, and exposed REST API endpoints.</span>
           </div>
-        </div>
-
-        <div class="plugins-list-container" id="plugins-list">
-          <!-- Populated dynamically with real thumbnails & metadata -->
-        </div>
-
-        <div class="tab-note">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-          <span>Detected via frontend scripts, stylesheets, and exposed REST API endpoints.</span>
         </div>
 
       </section>
@@ -403,6 +369,10 @@
             <div class="data-row">
               <span class="data-label">Web Server</span>
               <span class="data-val mono" id="host-server">...</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Page Builder</span>
+              <span class="data-val" id="host-builder">None Detected</span>
             </div>
             <div class="data-row">
               <span class="data-label">CDN / Edge</span>

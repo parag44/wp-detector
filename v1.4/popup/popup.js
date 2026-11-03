@@ -525,6 +525,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // --- Tab Navigation ---
   function switchTab(tabId) {
+    if (tabId === 'plugins') {
+      tabId = 'overview';
+      setTimeout(() => {
+        document.getElementById('plugins-section')?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('plugin-search')?.focus();
+      }, 50);
+    }
     els.tabs.forEach(t => {
       const active = t.getAttribute('data-tab') === tabId;
       t.classList.toggle('active', active);
@@ -544,7 +551,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Quick navigation shortcuts from Overview cards
-  document.getElementById('card-click-plugins')?.addEventListener('click', () => switchTab('plugins'));
+  document.getElementById('card-click-plugins')?.addEventListener('click', () => {
+    switchTab('overview');
+    document.getElementById('plugins-section')?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('plugin-search')?.focus();
+  });
   document.getElementById('card-click-theme')?.addEventListener('click', () => switchTab('theme'));
   document.getElementById('card-click-signals')?.addEventListener('click', () => switchTab('signals'));
   document.getElementById('btn-goto-theme')?.addEventListener('click', () => switchTab('theme'));
@@ -692,7 +703,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Overview 4 Metric Cards
     document.getElementById('metric-confidence').textContent = data.confidence;
     document.getElementById('metric-plugins').textContent = data.plugins.length;
-    document.getElementById('tab-plugins-count').textContent = data.plugins.length;
+    const ovPlCount = document.getElementById('overview-plugins-count');
+    if (ovPlCount) ovPlCount.textContent = data.plugins.length;
+    const tabPlCount = document.getElementById('tab-plugins-count');
+    if (tabPlCount) tabPlCount.textContent = data.plugins.length;
     document.getElementById('chip-all-count').textContent = data.plugins.length;
     document.getElementById('metric-theme-name').textContent = data.theme !== 'Unknown' ? data.theme : 'Theme';
     document.getElementById('metric-signals-count').textContent = `${data.signalScore} / 7`;
@@ -710,15 +724,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const overviewPlaceholder = document.getElementById('overview-theme-placeholder');
     loadThemeScreenshot(overviewThumb, overviewPlaceholder, themeCandidates);
 
-    // Overview Server & Stack Table
-    document.getElementById('overview-hosting').textContent = data.proxyCDN !== 'None Detected' ? data.proxyCDN : (data.isp || 'Self-Hosted');
-    document.getElementById('overview-server').textContent = data.serverSoftware;
+    // Overview Server & Stack Table (safeguarded if present)
+    const ovHost = document.getElementById('overview-hosting');
+    if (ovHost) ovHost.textContent = data.proxyCDN !== 'None Detected' ? data.proxyCDN : (data.isp || 'Self-Hosted');
+    const ovServer = document.getElementById('overview-server');
+    if (ovServer) ovServer.textContent = data.serverSoftware;
     const cacheBadge = document.getElementById('overview-cache-badge');
-    cacheBadge.textContent = data.cacheSystem !== 'None Detected' ? `${data.cacheSystem}: ${data.cacheHeaderStatus}` : data.cacheHeaderStatus;
-    cacheBadge.className = 'status-pill ' + (data.cacheHeaderStatus === 'HIT' ? 'pill-green' : data.cacheHeaderStatus === 'BYPASS' ? 'pill-amber' : 'pill-neutral');
-    document.getElementById('overview-builder').textContent = data.pageBuilder;
+    if (cacheBadge) {
+      cacheBadge.textContent = data.cacheSystem !== 'None Detected' ? `${data.cacheSystem}: ${data.cacheHeaderStatus}` : data.cacheHeaderStatus;
+      cacheBadge.className = 'status-pill ' + (data.cacheHeaderStatus === 'HIT' ? 'pill-green' : data.cacheHeaderStatus === 'BYPASS' ? 'pill-amber' : 'pill-neutral');
+    }
+    const ovBuilder = document.getElementById('overview-builder');
+    if (ovBuilder) ovBuilder.textContent = data.pageBuilder;
     const ipEl = document.getElementById('overview-ip');
-    ipEl.textContent = data.ip;
+    if (ipEl) ipEl.textContent = data.ip;
 
     // --- Tab 3: Theme Hero Card ---
     document.getElementById('theme-big-title').textContent = data.theme !== 'Unknown' ? data.theme : 'Custom Theme';
@@ -745,6 +764,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('host-isp').textContent = data.isp || 'Detecting...';
     document.getElementById('host-location').textContent = data.location || 'Unknown';
     document.getElementById('host-server').textContent = data.serverSoftware;
+    const hostBuilder = document.getElementById('host-builder');
+    if (hostBuilder) hostBuilder.textContent = data.pageBuilder;
     document.getElementById('host-cdn').textContent = data.proxyCDN;
     const hostCacheBadge = document.getElementById('host-cache-badge');
     hostCacheBadge.textContent = data.cacheSystem !== 'None Detected' ? `${data.cacheSystem}: ${data.cacheHeaderStatus}` : data.cacheHeaderStatus;

@@ -468,6 +468,20 @@ body.theme-dark .moon-icon { display: none; }
   text-decoration: underline;
 }
 
+.card-header-hint {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.plugins-overview-card .plugin-item {
+  background: var(--bg-elevated);
+}
+
+.plugins-overview-card .plugin-item:hover {
+  background: var(--bg-hover);
+}
+
 /* ==========================================================================
    TAB 1: OVERVIEW METRICS & SUMMARIES
    ========================================================================== */
