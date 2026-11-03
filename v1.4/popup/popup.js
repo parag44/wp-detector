@@ -962,55 +962,56 @@ document.addEventListener('DOMContentLoaded', async () => {
     return candidates;
   }
 
+  // In-memory cache for resolved WordPress.org plugin icons
+  const pluginIconCache = new Map();
+
   // Multi-Tier Dynamic WordPress.org Icon Resolver
-  // By default, the fallback puzzle SVG is visible instantly. If an icon is found on WP.org, it smoothly swaps in.
+  // By default, the fallback puzzle SVG is visible instantly. If an icon is found on WP.org, it smoothly swaps in without delay.
   function loadPluginIcon(thumbWrap, slug, name, rowEl) {
     if (!thumbWrap) return;
     const fallbackEl = thumbWrap.querySelector('.plugin-thumb-fallback');
     const imgEl = thumbWrap.querySelector('.plugin-thumb-img');
     if (!imgEl) return;
 
+    const cleanSlug = (slug || '').toLowerCase().trim();
+
+    // 0. Instant Cache Check: If icon was already resolved, apply immediately (0ms)
+    if (pluginIconCache.has(cleanSlug)) {
+      const cachedUrl = pluginIconCache.get(cleanSlug);
+      if (cachedUrl) {
+        imgEl.src = cachedUrl;
+        imgEl.classList.remove('hidden');
+        if (fallbackEl) fallbackEl.classList.add('hidden');
+      }
+      return;
+    }
+
     let resolved = false;
 
     function applyFoundIcon(src) {
       if (resolved || !src) return;
       resolved = true;
-      const tester = new Image();
-      tester.onload = () => {
-        if (tester.naturalWidth > 1 && tester.naturalHeight > 1) {
-          imgEl.src = src;
-          imgEl.classList.remove('hidden');
-          if (fallbackEl) fallbackEl.classList.add('hidden');
-        }
-      };
-      tester.src = src;
+      pluginIconCache.set(cleanSlug, src);
+      imgEl.src = src;
+      imgEl.classList.remove('hidden');
+      if (fallbackEl) fallbackEl.classList.add('hidden');
     }
 
-    // 1. Direct candidate probes in background
-    const candidates = getPluginIconCandidates(slug);
-    let step = 0;
-
-    function tryNextCandidate() {
-      if (resolved || step >= candidates.length) return;
-      const probeUrl = candidates[step++];
+    // 1. Fast parallel probe of top WordPress.org CDN asset candidates
+    const candidates = getPluginIconCandidates(cleanSlug);
+    candidates.forEach(url => {
+      if (resolved) return;
       const tester = new Image();
       tester.onload = () => {
-        if (tester.naturalWidth > 1 && tester.naturalHeight > 1) {
-          applyFoundIcon(probeUrl);
-        } else {
-          tryNextCandidate();
+        if (!resolved && tester.naturalWidth > 1 && tester.naturalHeight > 1) {
+          applyFoundIcon(url);
         }
       };
-      tester.onerror = () => {
-        tryNextCandidate();
-      };
-      tester.src = probeUrl;
-    }
+      tester.src = url;
+    });
 
-    tryNextCandidate();
-
-    // 2. In parallel, dynamically query official WordPress.org Plugin API to resolve exact icon & metadata
-    fetchWpOrgPluginMetadata(slug).then(meta => {
+    // 2. In parallel, query official WordPress.org Plugin API to resolve exact icon & official name
+    fetchWpOrgPluginMetadata(cleanSlug).then(meta => {
       if (!meta) return;
       if (meta.iconUrl && !resolved) {
         applyFoundIcon(meta.iconUrl);

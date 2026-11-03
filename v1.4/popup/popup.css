@@ -79,8 +79,7 @@ body {
   color: var(--text-primary);
   width: 420px;
   min-height: 580px;
-  height: 600px;
-  max-height: 600px;
+  max-height: 800px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -89,14 +88,14 @@ body {
 
 /* ==========================================================================
    Header & App Shell
-   ========================================================================== */
+   ========================================================================= */
 
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 600px;
-  max-height: 600px;
   width: 100%;
+  min-height: 580px;
+  max-height: 800px;
   overflow: hidden;
 }
 
