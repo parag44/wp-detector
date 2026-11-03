@@ -12,7 +12,7 @@
 - **Multi-Tier Icon Resolver**: Solves missing icons for both directory plugins and premium/custom plugins (matching and exceeding WPSniffer).
 - **Directory Plugins**: Cascades through official WordPress.org CDN formats (`.png`, `256x256.png`, `.svg`, `.jpg`, `.gif` with asset cache busting).
 - **Premium & Commercial Plugins**: Resolves direct brand domains for Gravity Forms, Yoast, Rank Math, Schema Pro, WP Rocket, NitroPack, Elementor Pro, Divi, Beaver Builder, WPBakery, UpdraftPlus, etc. via high-res Google favicon integration (`sz=64`).
-- **Theme Screenshots & Fallbacks**: Live preview via official theme CDN (`ts.w.org`) with a polished generic WordPress fallback icon for custom/unregistered themes or missing screenshots.
+- **Theme Screenshots & Generic Thumbnails**: Resolves theme screenshots in both `.jpg` and `.png` (as well as `.jpeg` and `.webp`) from both the local website's theme directory and WordPress.org theme CDN (`ts.w.org`). If no screenshot is available, an authentic generic website/theme mockup thumbnail is displayed instead of a blank box.
 - **Generic WP Fallback Icon**: If a custom or proprietary plugin has no known icon available, an elegant WordPress SVG icon is rendered instead of broken images or plain text letters.
 - **Wise Support Link**: Header action button and footer support links integrated (`https://wise.com/pay/r/dY07p1CL5kn91qw`).
 

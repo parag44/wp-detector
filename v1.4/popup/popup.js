@@ -705,27 +705,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('overview-theme-author').textContent = data.themeAuthor ? `By ${data.themeAuthor}` : `Slug: ${data.theme}`;
 
     // Theme Thumbnail in Overview
+    const themeCandidates = getThemeScreenshotCandidates(data);
     const overviewThumb = document.getElementById('overview-theme-thumb');
     const overviewPlaceholder = document.getElementById('overview-theme-placeholder');
-    if (data.theme !== 'Unknown') {
-      const tsUrl = `https://ts.w.org/wp-content/themes/${data.theme}/screenshot.jpg`;
-      overviewThumb.src = tsUrl;
-      overviewThumb.onload = () => {
-        overviewThumb.classList.remove('hidden');
-        overviewPlaceholder.classList.add('hidden');
-      };
-      overviewThumb.onerror = () => {
-        // Try png
-        overviewThumb.src = `https://ts.w.org/wp-content/themes/${data.theme}/screenshot.png`;
-        overviewThumb.onerror = () => {
-          overviewThumb.classList.add('hidden');
-          overviewPlaceholder.classList.remove('hidden');
-        };
-      };
-    } else {
-      overviewThumb.classList.add('hidden');
-      overviewPlaceholder.classList.remove('hidden');
-    }
+    loadThemeScreenshot(overviewThumb, overviewPlaceholder, themeCandidates);
 
     // Overview Server & Stack Table
     document.getElementById('overview-hosting').textContent = data.proxyCDN !== 'None Detected' ? data.proxyCDN : (data.isp || 'Self-Hosted');
@@ -752,19 +735,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const fullThumb = document.getElementById('theme-full-screenshot');
     const fullFallback = document.getElementById('theme-full-fallback');
+    loadThemeScreenshot(fullThumb, fullFallback, themeCandidates);
     if (data.theme !== 'Unknown') {
-      fullThumb.src = `https://ts.w.org/wp-content/themes/${data.theme}/screenshot.jpg`;
-      fullThumb.onload = () => {
-        fullThumb.classList.remove('hidden');
-        fullFallback.classList.add('hidden');
-      };
-      fullThumb.onerror = () => {
-        fullThumb.src = `https://ts.w.org/wp-content/themes/${data.theme}/screenshot.png`;
-        fullThumb.onerror = () => {
-          fullThumb.classList.add('hidden');
-          fullFallback.classList.remove('hidden');
-        };
-      };
       document.getElementById('theme-wp-link').href = `https://wordpress.org/themes/${data.theme}/`;
     }
 
@@ -895,6 +867,88 @@ document.addEventListener('DOMContentLoaded', async () => {
     'memberpress': 'https://memberpress.com/',
     'membermouse': 'https://membermouse.com/'
   };
+
+  // Multi-source Theme Screenshot Resolver (Local site + ts.w.org + parent theme)
+  function getThemeScreenshotCandidates(data) {
+    if (!data || !data.theme || data.theme === 'Unknown') return [];
+
+    const candidates = [];
+    const theme = encodeURIComponent(data.theme);
+
+    // 1. Direct local theme directory from inspected page's stylesheets
+    if (data.themeStylesheet) {
+      try {
+        const match = data.themeStylesheet.match(/^(https?:\/\/[^\?#]+\/themes\/[^\/]+\/)/i);
+        if (match) {
+          const base = match[1];
+          candidates.push(`${base}screenshot.png`);
+          candidates.push(`${base}screenshot.jpg`);
+          candidates.push(`${base}screenshot.jpeg`);
+          candidates.push(`${base}screenshot.webp`);
+        }
+      } catch(e) {}
+    }
+
+    // 2. Direct local theme directory from origin
+    if (data.origin) {
+      const originBase = `${data.origin.replace(/\/$/, '')}/wp-content/themes/${theme}/`;
+      candidates.push(`${originBase}screenshot.png`);
+      candidates.push(`${originBase}screenshot.jpg`);
+      candidates.push(`${originBase}screenshot.jpeg`);
+      candidates.push(`${originBase}screenshot.webp`);
+    }
+
+    // 3. Official WordPress.org Theme CDN (ts.w.org)
+    candidates.push(`https://ts.w.org/wp-content/themes/${theme}/screenshot.png`);
+    candidates.push(`https://ts.w.org/wp-content/themes/${theme}/screenshot.jpg`);
+    candidates.push(`https://ts.w.org/wp-content/themes/${theme}/screenshot.jpeg`);
+
+    // 4. Parent theme if child theme
+    if (data.isChildTheme && data.parentTheme) {
+      const parent = encodeURIComponent(data.parentTheme);
+      if (data.origin) {
+        const parentOrigin = `${data.origin.replace(/\/$/, '')}/wp-content/themes/${parent}/`;
+        candidates.push(`${parentOrigin}screenshot.png`);
+        candidates.push(`${parentOrigin}screenshot.jpg`);
+      }
+      candidates.push(`https://ts.w.org/wp-content/themes/${parent}/screenshot.png`);
+      candidates.push(`https://ts.w.org/wp-content/themes/${parent}/screenshot.jpg`);
+    }
+
+    return [...new Set(candidates)];
+  }
+
+  function loadThemeScreenshot(imgEl, placeholderEl, candidates) {
+    if (!candidates || candidates.length === 0) {
+      imgEl.classList.add('hidden');
+      if (placeholderEl) placeholderEl.classList.remove('hidden');
+      return;
+    }
+
+    let step = 0;
+
+    function tryNext() {
+      if (step < candidates.length) {
+        imgEl.src = candidates[step++];
+      } else {
+        // All screenshot URLs exhausted -> fallback to generic image thumb
+        imgEl.classList.add('hidden');
+        if (placeholderEl) placeholderEl.classList.remove('hidden');
+      }
+    }
+
+    imgEl.onload = () => {
+      if (imgEl.naturalWidth > 1 && imgEl.naturalHeight > 1) {
+        imgEl.classList.remove('hidden');
+        if (placeholderEl) placeholderEl.classList.add('hidden');
+      } else {
+        tryNext();
+      }
+    };
+
+    imgEl.onerror = tryNext;
+    tryNext();
+  }
 
   // Comprehensive Multi-Tier Icon Resolver
   function loadPluginIcon(img, fallback, slug, name) {
