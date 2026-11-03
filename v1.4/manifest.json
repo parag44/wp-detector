@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "SiteIntelix Detect",
+  "name": "WPScout",
   "version": "1.4",
-  "description": "Detect WordPress versions, themes, plugins, server technologies, caching systems, DNS records, and more with a single click.",
+  "description": "Scout Any WordPress Website. Detect WordPress versions, themes, plugins, server technologies, caching systems, DNS records, and more with a single click.",
   "icons": {
     "16": "icons/icon-16.png",
     "48": "icons/icon-48.png",

@@ -1039,8 +1039,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   function generateReportText() {
     if (!reportData) return '';
     const d = reportData;
-    return `# SiteIntelix Detect - Diagnostic Stack Report
-Tagline: Know What's Behind Every Website.
+    return `# WPScout - Diagnostic Stack Report
+Tagline: Scout Any WordPress Website.
 Version: v1.4
 Target URL: ${d.url}
 Title: ${d.pageTitle}
@@ -1096,7 +1096,7 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `siteintelix-detect-${new URL(reportData.url).hostname}.json`;
+    a.download = `wpscout-${new URL(reportData.url).hostname}.json`;
     a.click();
     URL.revokeObjectURL(url);
     showToast('Exported JSON payload!');

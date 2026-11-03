@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SiteIntelix Detect</title>
+  <title>WPScout - Scout Any WordPress Website</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body class="theme-dark">
@@ -11,19 +11,21 @@
 
     <!-- Top Navigation Header -->
     <header class="app-header">
-      <div class="header-main">
-        <div class="site-identity">
-          <div class="site-favicon-wrap" id="site-favicon-wrap">
-            <img id="site-favicon" class="site-favicon" src="../icons/icon-48.png" alt="Favicon" width="22" height="22">
+      <!-- Top Brand Bar (WPSNIFFER Style) -->
+      <div class="header-brand-bar">
+        <div class="brand-group">
+          <div class="brand-badge" title="WPScout">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <circle cx="11" cy="11" r="3" fill="#FFFFFF"></circle>
+            </svg>
           </div>
-          <div class="site-text">
-            <h1 class="site-title" id="site-title">Detecting site...</h1>
-            <a href="#" class="site-url mono" id="site-url" target="_blank" rel="noopener noreferrer">...</a>
-          </div>
+          <span class="brand-name">WPSCOUT</span>
         </div>
 
         <div class="header-actions">
-          <a href="https://wise.com/pay/r/dY07p1CL5kn91qw" target="_blank" rel="noopener noreferrer" class="icon-btn support-btn" title="Support SiteIntelix Detect" aria-label="Support">
+          <a href="https://wise.com/pay/r/dY07p1CL5kn91qw" target="_blank" rel="noopener noreferrer" class="icon-btn support-btn" title="Support WPScout" aria-label="Support">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
           </a>
           <button id="theme-toggle-btn" class="icon-btn" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
@@ -46,11 +48,24 @@
       <div class="sub-status-bar" id="sub-status-bar">
         <span class="status-pill status-wp" id="pill-wp-status">
           <span class="status-dot"></span>
-          <span id="pill-wp-text">WordPress</span>
+          <span id="pill-wp-text">WORDPRESS</span>
         </span>
         <span class="status-pill pill-neutral" id="pill-core-version">v...</span>
-        <span class="status-pill pill-purple hidden" id="pill-gutenberg">Gutenberg Blocks</span>
-        <span class="status-pill pill-blue hidden" id="pill-rest-api">REST API Active</span>
+        <span class="status-pill pill-purple hidden" id="pill-gutenberg">GUTENBERG (BLOCKS)</span>
+        <span class="status-pill pill-blue hidden" id="pill-rest-api">&#10003; REST API</span>
+      </div>
+
+      <!-- Current Inspected Site Identity -->
+      <div class="site-bar" id="site-bar">
+        <div class="site-identity">
+          <div class="site-favicon-wrap" id="site-favicon-wrap">
+            <img id="site-favicon" class="site-favicon" src="../icons/icon-48.png" alt="Favicon" width="16" height="16">
+          </div>
+          <div class="site-text">
+            <h1 class="site-title" id="site-title">Detecting site...</h1>
+            <a href="#" class="site-url mono" id="site-url" target="_blank" rel="noopener noreferrer">...</a>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -492,12 +507,12 @@
     <!-- Bottom Footer -->
     <footer class="app-footer">
       <div class="footer-left">
-        <span class="brand-sub">SiteIntelix Detect <span class="v-tag">v1.4</span></span>
+        <span class="brand-sub">WPScout <span class="v-tag">v1.4</span></span>
         <span class="footer-dot">&bull;</span>
-        <a href="https://wise.com/pay/r/dY07p1CL5kn91qw" target="_blank" rel="noopener noreferrer" class="footer-support-link" title="Support SiteIntelix Detect">Support</a>
+        <a href="https://wise.com/pay/r/dY07p1CL5kn91qw" target="_blank" rel="noopener noreferrer" class="footer-support-link" title="Support WPScout">Support</a>
       </div>
       <div class="footer-right">
-        <span class="footer-tagline">Know What's Behind Every Website.</span>
+        <span class="footer-tagline">Scout Any WordPress Website.</span>
       </div>
     </footer>
 

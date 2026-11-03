@@ -1,6 +1,6 @@
-# SiteIntelix Detect (v1.4)
+# WPScout (v1.4)
 
-> **Know What's Behind Every Website.**
+> **Scout Any WordPress Website.**
 >
 > Detect WordPress versions, themes, plugins, server technologies, caching systems, DNS records, and more with a single click.
 
