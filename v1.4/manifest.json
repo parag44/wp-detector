@@ -42,7 +42,6 @@
     "https://dns.google/*",
     "https://ipwho.is/*",
     "https://ps.w.org/*",
-    "https://ts.w.org/*",
-    "https://www.google.com/s2/favicons*"
+    "https://ts.w.org/*"
   ]
 }

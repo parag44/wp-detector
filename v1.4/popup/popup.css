@@ -834,6 +834,23 @@ body.theme-dark .moon-icon { display: none; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+}
+
+.plugin-thumb-img.is-fallback {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  margin: auto;
+  opacity: 0.85;
+}
+
+body.theme-dark .plugin-thumb-img.is-fallback {
+  filter: invert(1) brightness(1.2);
+}
+
+body.theme-light .plugin-thumb-img.is-fallback {
+  filter: none;
 }
 
 .plugin-wp-fallback {
