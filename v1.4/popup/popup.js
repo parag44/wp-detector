@@ -659,6 +659,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         adminPaths: { id: 'sig-admin-paths', detected: true, detail: 'Verified public login endpoint /wp-login.php' }
       },
       plugins: [
+        { slug: 'tutor', name: 'Tutor LMS – eLearning and online course solution', version: '4.2.0', category: 'LMS', sourceTag: 'URL', evidence: 'http://tutorlms.wp/wp-content/plugins/tutor/assets/js/tutor.front.js' },
+        { slug: 'tutor-pro', name: 'Tutor LMS Pro', version: '4.2.0', category: 'LMS', sourceTag: 'URL', evidence: 'http://tutorlms.wp/wp-content/plugins/tutor-pro/assets/js/tutor-pro.js' },
+        { slug: 'kirki', name: 'Kirki Customizer Framework', version: '5.1.0', category: 'Framework', sourceTag: 'API', evidence: 'http://tutorlms.wp/wp-json/kirki/v1' },
         { slug: 'accessibility-checker', name: 'Equalize Digital Accessibility Checker', version: '1.51.1', category: 'Accessibility', sourceTag: 'URL', evidence: 'https://www.nasa.gov/wp-content/plugins/accessibility-checker/assets/js/frontend.js' },
         { slug: 'gravityforms', name: 'Gravity Forms', version: '2.8.6', category: 'Forms', sourceTag: 'URL', evidence: 'https://www.nasa.gov/wp-content/plugins/gravityforms/js/gravityforms.min.js' },
         { slug: 'nasa-blocks', name: 'Nasa Blocks', version: '1.2.0', category: 'Blocks', sourceTag: 'URL', evidence: 'https://www.nasa.gov/wp-content/plugins/nasa-blocks/build/index.js' },
@@ -707,7 +710,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (ovPlCount) ovPlCount.textContent = data.plugins.length;
     const tabPlCount = document.getElementById('tab-plugins-count');
     if (tabPlCount) tabPlCount.textContent = data.plugins.length;
-    document.getElementById('chip-all-count').textContent = data.plugins.length;
+    const chipAll = document.getElementById('chip-all-count');
+    if (chipAll) chipAll.textContent = data.plugins.length;
     document.getElementById('metric-theme-name').textContent = data.theme !== 'Unknown' ? data.theme : 'Theme';
     document.getElementById('metric-signals-count').textContent = `${data.signalScore} / 7`;
     document.getElementById('tab-signals-score').textContent = `${data.signalScore}/7`;
@@ -871,6 +875,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     'affiliatewp': 'https://affiliatewp.com/',
     'funnel-builder': 'https://funnelkit.com/',
 
+    // LMS & Education
+    'tutor': 'https://tutorlms.com/',
+    'tutor-pro': 'https://tutorlms.com/',
+    'learndash': 'https://learndash.com/',
+    'lifterlms': 'https://lifterlms.com/',
+    'sensei-lms': 'https://senseilms.com/',
+    'learnpress': 'https://thimpress.com/',
+
+    // Frameworks & Customizer
+    'kirki': 'https://kirki.org/',
+    'kirki-pro': 'https://kirki.org/',
+    'kirkicomponentlibrary': 'https://kirki.org/',
+    'redux-framework': 'https://redux.io/',
+    'code-snippets': 'https://codesnippets.pro/',
+    'code-snippets-pro': 'https://codesnippets.pro/',
+
     // Accessibility & Utilities
     'accessibility-checker': 'https://equalizedigital.com/',
     'accessibility-checker-pro': 'https://equalizedigital.com/',
@@ -971,23 +991,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     tryNext();
   }
 
+  // Multi-format & Base-slug Icon Candidate Generator
+  function getPluginIconCandidates(slug) {
+    if (!slug) return [];
+    const cleanSlug = slug.toLowerCase().trim();
+    const slugs = [cleanSlug];
+
+    // If slug has -pro, -premium, -addon, -addons, -extension, -plugin, -core, -config:
+    // test the base slug as well (e.g. tutor-pro -> tutor, elementor-pro -> elementor)
+    const base = cleanSlug.replace(/-(?:pro|premium|addon|addons|extension|plugin|core|config)$/i, '');
+    if (base && base !== cleanSlug) {
+      slugs.push(base);
+    }
+
+    // Common namespace prefixes (e.g. kirkicomponentlibrary -> kirki)
+    if (cleanSlug.startsWith('kirki') && !slugs.includes('kirki')) {
+      slugs.push('kirki');
+    }
+
+    const fileNames = [
+      'icon-256x256.png',
+      'icon-256x256.jpg',
+      'icon-128x128.png',
+      'icon-128x128.jpg',
+      'icon.svg',
+      'icon-512x512.jpg',
+      'icon-512x512.png',
+      'icon.png',
+      'icon.jpg',
+      'icon-256x256.webp',
+      'icon-128x128.webp'
+    ];
+
+    const candidates = [];
+
+    // 1. Official WordPress.org CDN for each slug and format
+    slugs.forEach(s => {
+      fileNames.forEach(fn => {
+        candidates.push(`https://ps.w.org/${s}/assets/${fn}`);
+      });
+    });
+
+    // 2. Direct Plugin Domain via Google Favicon service
+    slugs.forEach(s => {
+      if (DIRECT_PLUGIN_URLS[s]) {
+        try {
+          const domain = new URL(DIRECT_PLUGIN_URLS[s]).hostname.replace(/^www\./, '');
+          candidates.push(`https://www.google.com/s2/favicons?sz=64&domain=${domain}`);
+        } catch (e) {}
+      }
+    });
+
+    return candidates;
+  }
+
   // Comprehensive Multi-Tier Icon Resolver
   function loadPluginIcon(img, fallback, slug, name) {
     let step = 0;
-    const candidates = [
-      `https://ps.w.org/${slug}/assets/icon-128x128.png`,
-      `https://ps.w.org/${slug}/assets/icon-256x256.png`,
-      `https://ps.w.org/${slug}/assets/icon.svg`,
-      `https://ps.w.org/${slug}/assets/icon-128x128.jpg`,
-      `https://ps.w.org/${slug}/assets/icon-128x128.gif`
-    ];
-
-    if (DIRECT_PLUGIN_URLS[slug]) {
-      try {
-        const domain = new URL(DIRECT_PLUGIN_URLS[slug]).hostname.replace(/^www\./, '');
-        candidates.push(`https://www.google.com/s2/favicons?sz=64&domain=${domain}`);
-      } catch(e) {}
-    }
+    const candidates = getPluginIconCandidates(slug);
 
     function tryNextCandidate() {
       if (step < candidates.length) {
@@ -1003,8 +1064,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // --- Plugin Inventory Rendering & Search ---
-  let activeFilter = 'all';
-
   function renderFilteredPlugins() {
     if (!reportData) return;
     const container = els.pluginsList;
@@ -1013,16 +1072,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const term = (els.pluginSearch.value || '').toLowerCase().trim();
 
     const filtered = reportData.plugins.filter(p => {
-      const matchSearch = !term || p.slug.toLowerCase().includes(term) || p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term);
-      if (!matchSearch) return false;
-
-      if (activeFilter === 'all') return true;
-      if (activeFilter === 'known') return p.version && p.version !== 'REST API';
-      if (activeFilter === 'api') return p.sourceTag === 'API';
-      if (activeFilter === 'cache') return p.category === 'Cache';
-      if (activeFilter === 'seo') return p.category === 'SEO';
-      if (activeFilter === 'forms') return p.category === 'Forms';
-      return true;
+      if (!term) return true;
+      return p.slug.toLowerCase().includes(term) ||
+             p.name.toLowerCase().includes(term) ||
+             p.category.toLowerCase().includes(term);
     });
 
     if (filtered.length === 0) {

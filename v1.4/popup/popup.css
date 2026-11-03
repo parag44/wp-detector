@@ -78,7 +78,8 @@ body {
   background: var(--bg-app);
   color: var(--text-primary);
   width: 420px;
-  min-height: 540px;
+  min-height: 580px;
+  height: 600px;
   max-height: 600px;
   overflow: hidden;
   display: flex;
@@ -93,7 +94,7 @@ body {
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 600px;
   max-height: 600px;
   width: 100%;
   overflow: hidden;
@@ -128,12 +129,12 @@ body.theme-dark .header-brand-bar {
 .brand-badge {
   width: 24px;
   height: 24px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #FF7A00 0%, #FF4500 100%);
+  border-radius: var(--radius-sm);
+  background: #FF6B00;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(255, 122, 0, 0.35);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   flex-shrink: 0;
 }
 
@@ -549,8 +550,9 @@ body.theme-dark .moon-icon { display: none; }
 }
 
 .theme-summary-thumb {
-  width: 52px;
-  height: 40px;
+  width: 64px;
+  height: 48px;
+  aspect-ratio: 4 / 3;
   border-radius: var(--radius-sm);
   background: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
@@ -564,6 +566,7 @@ body.theme-dark .moon-icon { display: none; }
 .theme-thumb-img {
   width: 100%;
   height: 100%;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   display: block;
 }
@@ -785,9 +788,9 @@ body.theme-dark .moon-icon { display: none; }
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-height: 380px;
-  overflow-y: auto;
-  padding-right: 2px;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
 }
 
 /* Plugin Row Card */
@@ -974,7 +977,8 @@ body.theme-dark .moon-icon { display: none; }
 
 .theme-hero-cover {
   width: 100%;
-  height: 140px;
+  aspect-ratio: 4 / 3;
+  max-height: 270px;
   background: var(--bg-elevated);
   position: relative;
   overflow: hidden;
@@ -987,6 +991,7 @@ body.theme-dark .moon-icon { display: none; }
 .theme-full-img {
   width: 100%;
   height: 100%;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   display: block;
 }
