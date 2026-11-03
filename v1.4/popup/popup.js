@@ -757,7 +757,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('theme-spec-slug').textContent = data.theme;
     document.getElementById('theme-spec-version').textContent = data.themeVersion || 'Not exposed';
     document.getElementById('theme-spec-author').textContent = data.themeAuthor || 'Author not detected';
-    document.getElementById('theme-fallback-name').textContent = data.theme;
+    const fallbackNameEl = document.getElementById('theme-fallback-name');
+    if (fallbackNameEl) fallbackNameEl.textContent = data.theme;
 
     const fullThumb = document.getElementById('theme-full-screenshot');
     const fullFallback = document.getElementById('theme-full-fallback');
