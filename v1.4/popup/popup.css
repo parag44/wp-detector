@@ -840,6 +840,35 @@ body.theme-dark .moon-icon { display: none; }
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+.plugin-thumb-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  border-radius: calc(var(--radius-sm) - 1px);
+  user-select: none;
+}
+
+.plugin-thumb-fallback svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  stroke: var(--text-secondary);
+}
+
+body.theme-light .plugin-thumb-fallback {
+  background: #EEF2F6;
+  color: #475569;
+}
+
+body.theme-light .plugin-thumb-fallback svg {
+  stroke: #475569;
 }
 
 .plugin-thumb-img {
@@ -847,31 +876,6 @@ body.theme-dark .moon-icon { display: none; }
   height: 100%;
   object-fit: cover;
   display: block;
-}
-
-.plugin-thumb-img.is-fallback {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  margin: auto;
-  opacity: 0.85;
-}
-
-body.theme-dark .plugin-thumb-img.is-fallback {
-  filter: invert(1) brightness(1.2);
-}
-
-body.theme-light .plugin-thumb-img.is-fallback {
-  filter: none;
-}
-
-.plugin-wp-fallback {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-elevated);
 }
 
 .generic-wp-icon {

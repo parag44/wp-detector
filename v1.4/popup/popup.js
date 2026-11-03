@@ -930,18 +930,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Multi-format & Base-slug Icon Candidate Generator (100% Dynamic from WordPress.org)
   const WP_ORG_ICON_FORMATS = [
     'icon-256x256.png',
-    'icon-256x256.jpg',
     'icon-128x128.png',
+    'icon-256x256.jpg',
     'icon-128x128.jpg',
-    'icon.svg',
-    'icon-256x256.gif',
-    'icon-128x128.gif',
-    'icon-512x512.jpg',
-    'icon-512x512.png',
-    'icon.png',
-    'icon.jpg',
-    'icon-256x256.webp',
-    'icon-128x128.webp'
+    'icon.svg'
   ];
 
   function getPluginIconCandidates(slug) {
@@ -970,66 +962,58 @@ document.addEventListener('DOMContentLoaded', async () => {
     return candidates;
   }
 
-  const FALLBACK_PLUGIN_ICON = '../icons/plugin-fallback.png';
+  // Multi-Tier Dynamic WordPress.org Icon Resolver
+  // By default, the fallback puzzle SVG is visible instantly. If an icon is found on WP.org, it smoothly swaps in.
+  function loadPluginIcon(thumbWrap, slug, name, rowEl) {
+    if (!thumbWrap) return;
+    const fallbackEl = thumbWrap.querySelector('.plugin-thumb-fallback');
+    const imgEl = thumbWrap.querySelector('.plugin-thumb-img');
+    if (!imgEl) return;
 
-  // Comprehensive Multi-Tier Icon Resolver (Direct CDN probe + Parallel WP.org API query)
-  function loadPluginIcon(img, slug, name, rowEl) {
-    let step = 0;
-    const candidates = getPluginIconCandidates(slug);
     let resolved = false;
 
-    function applyFallback() {
-      if (resolved) return;
-      img.onerror = null;
-      img.src = FALLBACK_PLUGIN_ICON;
-      img.classList.add('is-fallback');
+    function applyFoundIcon(src) {
+      if (resolved || !src) return;
+      resolved = true;
+      const tester = new Image();
+      tester.onload = () => {
+        if (tester.naturalWidth > 1 && tester.naturalHeight > 1) {
+          imgEl.src = src;
+          imgEl.classList.remove('hidden');
+          if (fallbackEl) fallbackEl.classList.add('hidden');
+        }
+      };
+      tester.src = src;
     }
 
-    function markLoaded(src) {
-      if (resolved) return;
-      resolved = true;
-      img.classList.remove('is-fallback');
-      img.onerror = () => {
-        applyFallback();
-      };
-      img.src = src;
-    }
+    // 1. Direct candidate probes in background
+    const candidates = getPluginIconCandidates(slug);
+    let step = 0;
 
     function tryNextCandidate() {
-      if (resolved) return;
-      if (step < candidates.length) {
-        img.src = candidates[step++];
-      } else {
-        // Direct format probes exhausted; if API hasn't resolved either, show fixed plug icon
-        applyFallback();
-      }
+      if (resolved || step >= candidates.length) return;
+      const probeUrl = candidates[step++];
+      const tester = new Image();
+      tester.onload = () => {
+        if (tester.naturalWidth > 1 && tester.naturalHeight > 1) {
+          applyFoundIcon(probeUrl);
+        } else {
+          tryNextCandidate();
+        }
+      };
+      tester.onerror = () => {
+        tryNextCandidate();
+      };
+      tester.src = probeUrl;
     }
 
-    img.onload = () => {
-      if (img.src.includes('plugin-fallback.png')) {
-        img.classList.add('is-fallback');
-        return;
-      }
-      if (img.naturalWidth > 1 && img.naturalHeight > 1) {
-        resolved = true;
-        img.classList.remove('is-fallback');
-      } else {
-        tryNextCandidate();
-      }
-    };
-
-    img.onerror = () => {
-      tryNextCandidate();
-    };
-
-    // 1. Kick off direct CDN candidate requests immediately
     tryNextCandidate();
 
     // 2. In parallel, dynamically query official WordPress.org Plugin API to resolve exact icon & metadata
     fetchWpOrgPluginMetadata(slug).then(meta => {
       if (!meta) return;
       if (meta.iconUrl && !resolved) {
-        markLoaded(meta.iconUrl);
+        applyFoundIcon(meta.iconUrl);
       }
       if (rowEl && meta.name) {
         const titleLink = rowEl.querySelector('.plugin-title-link');
@@ -1094,7 +1078,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       row.innerHTML = `
         <div class="plugin-row-main">
           <div class="plugin-thumb-wrap">
-            <img class="plugin-thumb-img is-fallback" alt="${p.slug}" src="../icons/plugin-fallback.png">
+            <div class="plugin-thumb-fallback">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v4h1.5a2.5 2.5 0 0 1 0 5H2v4a2 2 0 0 0 2 2h4v-1.5a2.5 2.5 0 0 1 5 0V21h4a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z"></path>
+              </svg>
+            </div>
+            <img class="plugin-thumb-img hidden" alt="${p.slug}" src="">
           </div>
           <div class="plugin-info-block">
             <div class="plugin-title-line">
@@ -1120,8 +1109,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       `;
 
       // Multi-tier cascading icon resolution
-      const img = row.querySelector('.plugin-thumb-img');
-      loadPluginIcon(img, p.slug, p.name, row);
+      const thumbWrap = row.querySelector('.plugin-thumb-wrap');
+      loadPluginIcon(thumbWrap, p.slug, p.name, row);
 
       // Expand/Collapse Accordion
       const mainRow = row.querySelector('.plugin-row-main');
