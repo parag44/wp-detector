@@ -905,6 +905,24 @@ body.theme-dark .moon-icon { display: none; }
   color: var(--text-muted);
 }
 
+.ver-confirmed {
+  color: var(--color-success);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ver-muted {
+  color: var(--text-muted);
+}
+
+.confirmed-check {
+  font-size: 10px;
+  color: var(--color-success);
+  font-weight: 800;
+}
+
 .badge-tag {
   font-size: 9px;
   font-weight: 700;
@@ -978,7 +996,6 @@ body.theme-dark .moon-icon { display: none; }
 .theme-hero-cover {
   width: 100%;
   aspect-ratio: 4 / 3;
-  max-height: 270px;
   background: var(--bg-elevated);
   position: relative;
   overflow: hidden;
@@ -999,6 +1016,7 @@ body.theme-dark .moon-icon { display: none; }
 .theme-full-fallback {
   width: 100%;
   height: 100%;
+  aspect-ratio: 4 / 3;
   position: relative;
   display: flex;
   align-items: center;
