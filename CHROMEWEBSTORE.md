@@ -14,53 +14,73 @@ WPScout - Scout Any WordPress Website
 Detect WordPress versions, themes, plugins, server technologies, caching systems, DNS records, and more with a single click.
 
 **Detailed Description** [REQUIRED]
-WPScout is the ultimate, instant WordPress stack intelligence and detection tool built for developers, designers, agencies, and web professionals.
+WPScout is a fast, lightweight, and comprehensive WordPress stack inspection and diagnostics tool designed for developers, site auditors, designers, agencies, and curious web enthusiasts.
 
-With a single click, instantly uncover the complete anatomy of any WordPress website: identify the active theme, parent/child theme hierarchies, installed plugins, live caching status, server software, and DNS infrastructure without opening Developer Tools or parsing page source.
+With a single click, instantly uncover the entire technology stack powering any WordPress website—including core version, active theme, detected plugins, hosting infrastructure, server software, live caching headers, and DNS details.
 
-★ KEY FEATURES
-
-• Instant Core & Gutenberg Detection
-Detect WordPress version numbers, Gutenberg block library integration, and exposed REST API namespaces. The toolbar icon lights up vibrant orange on WordPress sites and dims on non-WordPress sites.
-
-• Confirmed Plugins Listed First
-Scans page stylesheets, scripts, and REST endpoints to enumerate detected plugins. Plugins with verified version numbers are highlighted at the very top of your inventory list with verified status badges.
-
-• 100% Dynamic WordPress.org Icons
-Every detected plugin dynamically resolves its official high-resolution icon from the WordPress.org plugin directory across JPEG, GIF, SVG, PNG, and WebP formats. Plugins not hosted on WordPress.org cleanly display the universal plug indicator. Zero third-party tracking or Google favicon queries.
-
-• 4:3 Theme Intelligence & Artwork
-Detects the active theme, theme version, author, and parent theme relationships. Displays official theme screenshots matching the WordPress 1200x900 standard, or an elegant responsive 4:3 fallback preview.
-
-• Live HTTP Cache Header Status
-Inspect server performance in real time: see live cache status (HIT, MISS, BYPASS, DYNAMIC) across LiteSpeed Cache, WP Rocket, WP-Optimize, W3 Total Cache, NitroPack, Cloudflare, Kinsta, and WP Engine.
-
-• Server, Hosting & DNS Stack
-Uncover the web server software (Nginx, Apache, LiteSpeed, Cloudflare), host IP address, datacenter ISP location with country flag, and authoritative nameservers.
-
-• Deep 7-Signal Diagnostic Verification
-Inspect the evidence behind every detection: REST API endpoints, Link headers, generator meta tags, /wp-content/ asset paths, /wp-includes/ core scripts, link rel tags, and verified admin login routes.
-
-• One-Click Diagnostic Export & Copy
-Copy clean markdown summaries of the entire technology stack to your clipboard or download formatted stack reports for audits, client pitches, and site migrations.
-
-• Dark & Light Mode Support
-Seamlessly adapts to your system theme preference with high-contrast, beautiful typography and custom iconography.
+Whether you're debugging client websites, conducting competitive research, or auditing performance and security, WPScout provides a clear, clean, and developer-friendly breakdown in seconds.
 
 ---
 
-★ HOW TO USE
+### 🚀 Key Features
 
-1. Navigate to any website in Chrome.
-2. Click the WPScout icon in your extension toolbar.
-3. Instantly review the active theme, confirmed plugins, server technologies, and diagnostic signals.
-4. Click any plugin or theme to view evidence and official WordPress.org directory listings.
+🔍 **WordPress Core & Theme Intelligence**
+• Accurately detects whether a site is built with WordPress.
+• Toolbar icon automatically illuminates vibrant orange on WordPress sites and dims on non-WordPress sites.
+• Displays exact WordPress core version and Gutenberg block editor integration.
+• Identifies active theme name, version, author, child-theme inheritance, and 4:3 aspect-ratio theme screenshot (with a clean "No preview available" state when not hosted).
+
+🧩 **Deep Plugin Discovery (Frontend Assets + REST API)**
+• Confirmed Plugins Listed First: Plugins with confirmed version numbers are automatically sorted to the top of your inventory with verified status badges.
+• Scans both loaded scripts and stylesheets to identify active plugins and version numbers.
+• Probes WordPress REST API namespaces (/wp-json) to uncover background plugins that don't load visible frontend assets.
+• 100% Dynamic WordPress.org Icons: Fetches official high-resolution plugin icons across JPEG, PNG, SVG, and WebP formats. Plugins not hosted on WordPress.org display a clean universal plug icon (zero third-party tracking or Google favicon queries).
+• Live Search: Instantly search through detected plugins with the built-in search filter.
+• Direct links to official WordPress.org plugin directory pages for instant documentation lookup.
+
+⚡ **Server, Hosting & CDN Intelligence**
+• Detects the underlying web server software (Nginx, Apache, LiteSpeed, Cloudflare, etc.).
+• Identifies reverse proxies and managed hosts (Cloudflare, Sucuri, WP Engine, Kinsta, Automattic / WordPress VIP, Pantheon, etc.).
+• Detects PHP version when exposed in server response headers.
+
+🚀 **Real-Time Cache Status Inspection**
+• Inspects HTTP response headers to identify active caching engines (LiteSpeed Cache, Cloudflare, WP Rocket, Varnish, WP-Optimize, W3 Total Cache, NitroPack, etc.).
+• Displays real-time cache behavior: HIT, MISS, BYPASS, or DYNAMIC.
+
+🌐 **DNS & Datacenter Resolution**
+• Resolves the domain's public Host IP address (IPv4 A-record).
+• Identifies hosting ISP and geographic datacenter location with country flag.
+• Displays authoritative Nameservers (NS records) for the apex domain.
+
+🛡️ **7-Signal Diagnostic Verification**
+• Multi-vector proof checklist: REST API endpoints, Link headers, generator meta tags, /wp-content/ asset paths, /wp-includes/ core scripts, link rel tags, and verified admin login routes.
+
+📋 **Developer-Friendly Export & Sharing Tools**
+• One-Click Copy: Copies a clean, markdown-ready stack summary to your clipboard.
+• Download TXT: Save a formatted text report directly to your computer.
+• Export JSON: Download structured diagnostic JSON data ready to attach to bug tickets, client audits, or support reports.
+• Quick Refresh: Re-run diagnostics on the current page with a single click without closing the popup.
+
+🎨 **Modern, Streamlined Interface**
+• Non-wide, compact popup layout designed for fast scanning.
+• Full Dark Mode & Light Mode support that seamlessly adapts to your operating system preference.
 
 ---
 
-★ PRIVACY & SECURITY FIRST
+### 🔒 100% Privacy Focused & Safe
 
-WPScout does not track your browsing history, does not sell your data, and runs 100% locally in your browser. All icon assets are retrieved exclusively from official WordPress.org CDNs or local extension resources. No remote scripts, no third-party trackers, and no external cookies.
+• WPScout processes all webpage inspection locally inside your browser.
+• No browsing history tracking, no telemetry, and no third-party analytics.
+• No account, sign-in, or API keys required.
+• All icons are fetched exclusively from official WordPress.org CDNs or bundled locally.
+
+---
+
+### 💡 How to Use
+1. Navigate to any website.
+2. Notice the WPScout toolbar icon: it lights up vibrant orange on WordPress sites and dims on non-WordPress sites.
+3. Click the WPScout icon in your Chrome toolbar.
+4. Instantly view the complete WordPress stack, inspect active plugins and theme details, and export or copy diagnostics as needed!
 
 ---
 
