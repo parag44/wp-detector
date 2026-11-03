@@ -800,6 +800,132 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderFilteredPlugins();
   }
 
+  // --- Direct URLs for Premium & Popular Plugins (Fallback to Google Favicon Service) ---
+  const DIRECT_PLUGIN_URLS = {
+    // Page builders & frameworks
+    'elementor': 'https://elementor.com/',
+    'elementor-pro': 'https://elementor.com/pro/',
+    'divi-builder': 'https://www.elegantthemes.com/gallery/divi/',
+    'divi': 'https://www.elegantthemes.com/gallery/divi/',
+    'js_composer': 'https://wpbakery.com/',
+    'thrive-visual-editor': 'https://thrivethemes.com/architect/',
+    'oxygen-builder': 'https://oxygenbuilder.com/',
+    'bricks': 'https://bricksbuilder.io/',
+    'breakdance': 'https://breakdance.com/',
+    'fusion-builder': 'https://avada.io/',
+    'zionbuilder': 'https://zionbuilder.io/',
+    
+    // Forms & Lead Gen
+    'gravityforms': 'https://www.gravityforms.com/',
+    'gravity-forms-config': 'https://www.gravityforms.com/',
+    'ws-form': 'https://wsform.com/',
+    'wpforms': 'https://wpforms.com/',
+    'wpforms-lite': 'https://wpforms.com/',
+    'fluentform': 'https://fluentforms.com/',
+    'formidable': 'https://formidableforms.com/',
+    'ninja-forms': 'https://ninjaforms.com/',
+    'popup-maker': 'https://wppopupmaker.com/',
+    'optinmonster': 'https://optinmonster.com/',
+    'convert-pro': 'https://www.convertpro.net/',
+    'thrive-leads': 'https://thrivethemes.com/leads/',
+
+    // SEO & Schema
+    'seo-by-rank-math': 'https://rankmath.com/',
+    'rank-math': 'https://rankmath.com/',
+    'schema-pro': 'https://wpschema.com/',
+    'wordpress-seo': 'https://yoast.com/',
+    'all-in-one-seo-pack': 'https://aioseo.com/',
+    'the-seo-framework': 'https://theseoframework.com/',
+
+    // Caching & Performance
+    'wp-rocket': 'https://wp-rocket.me/',
+    'nitropack': 'https://nitropack.io/',
+    'swift-performance-lite': 'https://swiftperformance.io/',
+    'flying-press': 'https://flyingpress.com/',
+    'wp-optimize': 'https://getwpo.com/',
+    'litespeed-cache': 'https://litespeedtech.com/',
+    'w3-total-cache': 'https://www.boldgrid.com/w3-total-cache/',
+    'autoptimize': 'https://autoptimize.com/',
+    'wp-super-cache': 'https://wordpress.org/plugins/wp-super-cache/',
+    'breeze': 'https://cloudways.com/',
+    'cache-enabler': 'https://keycdn.com/',
+
+    // Security & Backups
+    'wordfence': 'https://www.wordfence.com/',
+    'better-wp-security': 'https://ithemes.com/',
+    'sucuri-scanner': 'https://sucuri.net/',
+    'all-in-one-wp-security-and-firewall': 'https://aiosplugin.com/',
+    'updraftplus': 'https://updraftplus.com/',
+    'blogvault-real-time-backup': 'https://blogvault.net/',
+    'malcare-security': 'https://www.malcare.com/',
+    'wpvivid-backups': 'https://wpvivid.com/',
+
+    // E-Commerce & Payments
+    'woocommerce': 'https://woocommerce.com/',
+    'woocommerce-subscriptions': 'https://woocommerce.com/products/woocommerce-subscriptions/',
+    'woocommerce-payments': 'https://woocommerce.com/payments/',
+    'woocommerce-gateway-stripe': 'https://woocommerce.com/products/stripe/',
+    'woocommerce-paypal-payments': 'https://woocommerce.com/products/woocommerce-paypal-payments/',
+    'easy-digital-downloads': 'https://easydigitaldownloads.com/',
+    'surecart': 'https://surecart.com/',
+    'cartflows': 'https://cartflows.com/',
+    'affiliatewp': 'https://affiliatewp.com/',
+    'funnel-builder': 'https://funnelkit.com/',
+
+    // Accessibility & Utilities
+    'accessibility-checker': 'https://equalizedigital.com/',
+    'accessibility-checker-pro': 'https://equalizedigital.com/',
+    'safe-svg': 'https://10up.com/',
+    'wp-parsely': 'https://www.parse.ly/',
+    'redirection': 'https://redirection.me/',
+    'tablepress': 'https://tablepress.org/',
+    'duplicate-post': 'https://yoast.com/',
+    'cookie-law-info': 'https://www.webtoffee.com/',
+    'google-analytics-for-wordpress': 'https://www.monsterinsights.com/',
+    'google-analytics-dashboard-for-wp': 'https://www.exactmetrics.com/',
+    'leadin': 'https://www.hubspot.com/',
+    'fluent-crm': 'https://fluentcrm.com/',
+    'sfwd-lms': 'https://www.learndash.com/',
+    'memberpress': 'https://memberpress.com/',
+    'membermouse': 'https://membermouse.com/'
+  };
+
+  // Comprehensive Multi-Tier Icon Resolver
+  function loadPluginIcon(img, fallback, slug, name) {
+    let step = 0;
+    const candidates = [
+      `https://ps.w.org/${slug}/assets/icon-128x128.png`,
+      `https://ps.w.org/${slug}/assets/icon-256x256.png`,
+      `https://ps.w.org/${slug}/assets/icon.svg`,
+      `https://ps.w.org/${slug}/assets/icon-128x128.jpg`,
+      `https://ps.w.org/${slug}/assets/icon-128x128.gif`
+    ];
+
+    if (DIRECT_PLUGIN_URLS[slug]) {
+      try {
+        const domain = new URL(DIRECT_PLUGIN_URLS[slug]).hostname.replace(/^www\./, '');
+        candidates.push(`https://www.google.com/s2/favicons?sz=64&domain=${domain}`);
+      } catch(e) {}
+    }
+
+    const cleanSlug = slug.replace(/-pro$|-lite$|-free$|-plugin$|-for-wordpress$|^wp-|^seo-by-/, '');
+    if (cleanSlug.length > 2) {
+      candidates.push(`https://www.google.com/s2/favicons?sz=64&domain=${cleanSlug}.com`);
+    }
+
+    function tryNextCandidate() {
+      if (step < candidates.length) {
+        img.src = candidates[step++];
+      } else {
+        img.classList.add('hidden');
+        if (fallback) fallback.classList.remove('hidden');
+      }
+    }
+
+    img.onerror = tryNextCandidate;
+    tryNextCandidate();
+  }
+
   // --- Plugin Inventory Rendering & Search ---
   let activeFilter = 'all';
 
@@ -837,14 +963,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       row.className = 'plugin-item';
 
       const tagClass = p.sourceTag === 'URL' ? 'tag-url' : p.sourceTag === 'API' ? 'tag-api' : p.sourceTag === 'HEADER' ? 'tag-header' : 'tag-dom';
-
-      const iconSrc = `https://ps.w.org/${p.slug}/assets/icon-128x128.png`;
       const fallbackGlyph = p.name.charAt(0).toUpperCase();
 
       row.innerHTML = `
         <div class="plugin-row-main">
           <div class="plugin-thumb-wrap">
-            <img src="${iconSrc}" class="plugin-thumb-img" alt="${p.slug}">
+            <img class="plugin-thumb-img" alt="${p.slug}">
             <span class="plugin-glyph-fallback hidden">${fallbackGlyph}</span>
           </div>
           <div class="plugin-info-block">
@@ -869,16 +993,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       `;
 
-      // Thumbnail error fallback logic
+      // Multi-tier cascading icon resolution
       const img = row.querySelector('.plugin-thumb-img');
       const fallback = row.querySelector('.plugin-glyph-fallback');
-      img.onerror = () => {
-        img.src = `https://ps.w.org/${p.slug}/assets/icon-256x256.png`;
-        img.onerror = () => {
-          img.classList.add('hidden');
-          fallback.classList.remove('hidden');
-        };
-      };
+      loadPluginIcon(img, fallback, p.slug, p.name);
 
       // Expand/Collapse Accordion
       const mainRow = row.querySelector('.plugin-row-main');
@@ -918,7 +1036,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   function generateReportText() {
     if (!reportData) return '';
     const d = reportData;
-    return `# WordPress Stack Report (v1.4)
+    return `# SiteIntelix Detect - Diagnostic Stack Report
+Tagline: Know What's Behind Every Website.
+Version: v1.4
 Target URL: ${d.url}
 Title: ${d.pageTitle}
 Confidence: ${d.confidence} (${d.signalScore}/7 signals confirmed)
@@ -973,7 +1093,7 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `wp-stack-${new URL(reportData.url).hostname}.json`;
+    a.download = `siteintelix-detect-${new URL(reportData.url).hostname}.json`;
     a.click();
     URL.revokeObjectURL(url);
     showToast('Exported JSON payload!');

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "WP Detector",
+  "name": "SiteIntelix Detect",
   "version": "1.4",
-  "description": "Deep WordPress stack diagnostics: plugins with icons, theme screenshot, hosting, cache status & detection signals.",
+  "description": "Detect WordPress versions, themes, plugins, server technologies, caching systems, DNS records, and more with a single click.",
   "icons": {
     "16": "icons/icon-16.png",
     "48": "icons/icon-48.png",
@@ -26,6 +26,7 @@
     "https://dns.google/*",
     "https://ipwho.is/*",
     "https://ps.w.org/*",
-    "https://ts.w.org/*"
+    "https://ts.w.org/*",
+    "https://www.google.com/s2/favicons*"
   ]
 }

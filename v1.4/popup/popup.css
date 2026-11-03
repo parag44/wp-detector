@@ -27,9 +27,6 @@
   --color-error: #F87171;
   --color-purple: #C084FC;
 
-  --coffee-bg: #FFDD00;
-  --coffee-text: #000000;
-
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
@@ -178,26 +175,6 @@ body {
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
-}
-
-.btn-coffee {
-  background: var(--coffee-bg);
-  color: var(--coffee-text);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 9px;
-  border-radius: var(--radius-full);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: transform 0.15s ease, filter 0.15s ease;
-}
-
-.btn-coffee:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.05);
 }
 
 .icon-btn {
@@ -1266,15 +1243,15 @@ body.theme-dark .moon-icon { display: none; }
   font-weight: 700;
 }
 
-.footer-coffee-link {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.15s ease;
-}
-
-.footer-coffee-link:hover {
-  color: var(--coffee-bg);
+.footer-tagline {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 500;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 230px;
 }
 
 .toast {
