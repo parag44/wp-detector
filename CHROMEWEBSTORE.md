@@ -1,75 +1,66 @@
-# Chrome Web Store Listing — WP Detector
+# Chrome Web Store Listing — WPScout
 
-> Last Updated: 2026-10-14
+> Last Updated: 2026-11-03
+> Target Version: v1.4
 
-## Store Listing
+---
+
+## 1. Store Listing Details
 
 **Extension Name** [REQUIRED]
-WP Detector - WordPress Stack & Plugin Checker
+WPScout - Scout Any WordPress Website
 
-**Short Description** [REQUIRED] (Max 132 characters)
-Instantly detect WordPress core version, active theme, plugins, web server, CDN, cache status, and DNS info on any website.
+**Short Description** [REQUIRED]
+Detect WordPress versions, themes, plugins, server technologies, caching systems, DNS records, and more with a single click.
 
 **Detailed Description** [REQUIRED]
-WP Detector is a fast, lightweight, and comprehensive WordPress stack inspection and diagnostics tool designed for developers, site auditors, designers, and curious web enthusiasts.
+WPScout is the ultimate, instant WordPress stack intelligence and detection tool built for developers, designers, agencies, and web professionals.
 
-With a single click, instantly uncover the entire technology stack powering any WordPress website—including core version, active theme, detected plugins, hosting infrastructure, server software, caching headers, and DNS details.
+With a single click, instantly uncover the complete anatomy of any WordPress website: identify the active theme, parent/child theme hierarchies, installed plugins, live caching status, server software, and DNS infrastructure without opening Developer Tools or parsing page source.
 
-Whether you're debugging client websites, conducting competitive research, or auditing security, WP Detector provides a clear, clean, and developer-friendly breakdown in seconds.
+★ KEY FEATURES
 
----
+• Instant Core & Gutenberg Detection
+Detect WordPress version numbers, Gutenberg block library integration, and exposed REST API namespaces. The toolbar icon lights up vibrant orange on WordPress sites and dims on non-WordPress sites.
 
-### 🚀 Key Features
+• Confirmed Plugins Listed First
+Scans page stylesheets, scripts, and REST endpoints to enumerate detected plugins. Plugins with verified version numbers are highlighted at the very top of your inventory list with verified status badges.
 
-🔍 **WordPress Core & Theme Detection**
-• Accurately detects whether a site is built with WordPress.
-• Displays the exact WordPress core version.
-• Identifies the active theme, theme version, and provides direct links to the official WordPress theme directory.
+• 100% Dynamic WordPress.org Icons
+Every detected plugin dynamically resolves its official high-resolution icon from the WordPress.org plugin directory across JPEG, GIF, SVG, PNG, and WebP formats. Plugins not hosted on WordPress.org cleanly display the universal plug indicator. Zero third-party tracking or Google favicon queries.
 
-🧩 **Deep Plugin Discovery (Assets + REST API)**
-• Scans both loaded frontend scripts and styles to identify installed plugins with version numbers.
-• Probes the WordPress REST API namespaces to uncover background plugins that don't load visible frontend assets.
-• Search & Filter: Instantly filter through large plugin lists with the built-in search bar.
-• Direct links to official WordPress.org plugin directory pages for instant documentation lookup.
+• 4:3 Theme Intelligence & Artwork
+Detects the active theme, theme version, author, and parent theme relationships. Displays official theme screenshots matching the WordPress 1200x900 standard, or an elegant responsive 4:3 fallback preview.
 
-⚡ **Server, Hosting & CDN Intelligence**
-• Detects the underlying web server software (Nginx, Apache, LiteSpeed, etc.).
-• Identifies whether the site sits behind a reverse proxy or CDN (such as Cloudflare, Sucuri, WP Engine, Kinsta, or Pantheon).
-• Detects PHP version when exposed via response headers.
+• Live HTTP Cache Header Status
+Inspect server performance in real time: see live cache status (HIT, MISS, BYPASS, DYNAMIC) across LiteSpeed Cache, WP Rocket, WP-Optimize, W3 Total Cache, NitroPack, Cloudflare, Kinsta, and WP Engine.
 
-🚀 **Real-Time Cache Status Inspection**
-• Inspects HTTP response headers to identify active caching systems (Cloudflare, LiteSpeed, Varnish, WP Engine, Kinsta, etc.).
-• Displays real-time cache behavior: HIT, MISS, BYPASS, or DYNAMIC.
+• Server, Hosting & DNS Stack
+Uncover the web server software (Nginx, Apache, LiteSpeed, Cloudflare), host IP address, datacenter ISP location with country flag, and authoritative nameservers.
 
-🌐 **DNS & Host Resolution**
-• Resolves the domain's public Host IP address (IPv4 A-record).
-• Displays the authoritative Nameservers (NS records) for the apex domain.
+• Deep 7-Signal Diagnostic Verification
+Inspect the evidence behind every detection: REST API endpoints, Link headers, generator meta tags, /wp-content/ asset paths, /wp-includes/ core scripts, link rel tags, and verified admin login routes.
 
-📋 **Developer-Friendly Export & Sharing Tools**
-• One-Click Copy: Copies a clean, markdown-ready stack summary to your clipboard.
-• Download TXT: Save a formatted text report directly to your computer.
-• Export JSON: Download structured diagnostic JSON data ready to attach to bug tickets, client audits, or support reports.
-• Quick Refresh: Re-run diagnostics on the current page with a single click without closing the popup.
+• One-Click Diagnostic Export & Copy
+Copy clean markdown summaries of the entire technology stack to your clipboard or download formatted stack reports for audits, client pitches, and site migrations.
 
-🎨 **Modern, WordPress Admin-Inspired Interface**
-• Intuitive card and accordion layout styled after familiar WordPress admin conventions.
-• Full Dark Mode support that automatically matches your operating system theme.
-• All information sections expanded by default for rapid scanning.
+• Dark & Light Mode Support
+Seamlessly adapts to your system theme preference with high-contrast, beautiful typography and custom iconography.
 
 ---
 
-### 🔒 100% Privacy Focused & Safe
+★ HOW TO USE
 
-• WP Detector processes all webpage inspection locally inside your browser.
-• No browsing history tracking, no telemetry, and no third-party analytics.
-• No account or sign-in required.
+1. Navigate to any website in Chrome.
+2. Click the WPScout icon in your extension toolbar.
+3. Instantly review the active theme, confirmed plugins, server technologies, and diagnostic signals.
+4. Click any plugin or theme to view evidence and official WordPress.org directory listings.
 
 ---
 
-### 💡 How to Use
-1. Navigate to any website.
-2. Click the WP Detector icon in your Chrome toolbar.
-3. Instantly view the complete WordPress stack and export or copy the details as needed!
+★ PRIVACY & SECURITY FIRST
+
+WPScout does not track your browsing history, does not sell your data, and runs 100% locally in your browser. All icon assets are retrieved exclusively from official WordPress.org CDNs or local extension resources. No remote scripts, no third-party trackers, and no external cookies.
 
 ---
 
@@ -77,76 +68,71 @@ Whether you're debugging client websites, conducting competitive research, or au
 Developer Tools
 
 **Single Purpose** [REQUIRED]
-Detects and displays WordPress version, themes, plugins, server, cache, and DNS information for the active website.
+Detects WordPress themes, plugins, caching engines, and server technologies running on any active website with one click.
 
 **Primary Language** [REQUIRED]
 English
 
-## Graphics & Assets
+---
 
-| Asset | Dimensions | Status | Filename |
-|-------|-----------|--------|----------|
-| Store Icon [REQUIRED] | 128×128 PNG | ✅ Created | `icons/icon-128.png` |
-| Screenshot 1 [REQUIRED] | 1280×800 | ✅ Created | `screenshot-1280x800.png` |
-| Screenshot 2 (Retina) [OPTIONAL] | 2560×1600 | ✅ Created | `screenshot-2560x1600-retina.png` |
-| Small Promo Tile [RECOMMENDED] | 440×280 (No Alpha) | ✅ Created | `promo-small-440x280.png` / `promo-small-440x280.jpg` |
-| Marquee Promo Tile [RECOMMENDED] | 1400×560 (No Alpha) | ✅ Created | `promo-marquee-1400x560.png` / `promo-marquee-1400x560.jpg` |
+## 2. Graphics & Asset Inventory
 
-### Screenshot Notes
-- Screenshot 1: Extension popup open on a WordPress site showing WordPress Core, Theme, Plugin list with versions, and Server info.
-- Screenshot 2: Server & Performance section showing Cache Status, Host IP, and Nameservers with Dark Mode enabled.
+All submission assets have been generated at exact Chrome Web Store specification dimensions and stored in `store-assets/`:
 
-## Permissions Justification
+| Asset | Dimensions | Status | File Location | Description |
+|---|---|---|---|---|
+| **Store Icon** | 128×128 PNG | ✅ Ready | `store-assets/store-icon-128x128.png` | Vibrant orange scout lens icon on transparent background |
+| **Small Promo Tile** | 440×280 PNG | ✅ Ready | `store-assets/promo-small-440x280.png` | Catalog search card with logo, typography, and feature pills |
+| **Marquee Promo Banner** | 1400×560 PNG | ✅ Ready | `store-assets/promo-marquee-1400x560.png` | Large featured header banner with mockup & key highlights |
+| **Screenshot 1 (Overview)** | 1280×800 PNG | ✅ Ready | `store-assets/screenshot-1-overview-1280x800.png` | Active theme, confidence score, and confirmed plugins list |
+| **Screenshot 2 (Theme)** | 1280×800 PNG | ✅ Ready | `store-assets/screenshot-2-theme-1280x800.png` | 4:3 theme screenshot standard, version, and parent theme |
+| **Screenshot 3 (Server)** | 1280×800 PNG | ✅ Ready | `store-assets/screenshot-3-server-1280x800.png` | Live HTTP cache status, web server, ISP, and DNS nameservers |
+| **Screenshot 4 (Signals)** | 1280×800 PNG | ✅ Ready | `store-assets/screenshot-4-signals-1280x800.png` | 7 core WordPress detection diagnostic evidence checklist |
 
-| Permission | Type | Justification |
-|------------|------|---------------|
-| activeTab | permissions | Required to access the URL and content of the currently active tab when the user clicks the extension icon, allowing the script to scan for WordPress signatures. |
-| scripting | permissions | Required to execute the detection script within the context of the active tab to analyze the page's DOM elements, meta tags, and network headers. |
-| tabs | permissions | Required to read the URL of the active tab to ensure the extension only runs on valid webpages and not on browser internal pages (e.g., chrome://). |
-| https://api.wordpress.org/* | host_permissions | Required to securely check the detected WordPress core version against the official WordPress API to verify release information. |
-| https://dns.google/* | host_permissions | Required to perform secure DNS-over-HTTPS lookups to resolve the domain's public host IP (A record) and nameservers (NS records) without using third-party trackers. |
+---
 
+## 3. Permissions Justification (For CWS Review Form)
 
-## Privacy & Data Use
+The Chrome Web Store Developer Dashboard requires a specific justification for every requested permission. Copy-paste these exact plain-English descriptions into the submission form:
 
-### Data Collection
+| Permission / Host | Type | Exact Justification for Submission Form |
+|---|---|---|
+| `activeTab` | permission | Required to inspect the current active webpage's DOM for WordPress generator meta tags, theme stylesheet links, and script paths when the user opens the extension popup. |
+| `scripting` | permission | Required to execute the lightweight detection function in the active tab context to read asset URLs and REST API link rel elements. |
+| `tabs` | permission | Required to read the current tab's active URL and dynamically update the toolbar action icon between active (WordPress site) and dimmed (non-WordPress site). |
+| `https://api.wordpress.org/*` | host_permission | Required to query official WordPress.org plugin and theme API endpoints to fetch official titles, version numbers, and update dates. |
+| `https://ps.w.org/*` | host_permission | Required to load official plugin brand thumbnails directly from the official WordPress.org Plugin assets CDN. |
+| `https://ts.w.org/*` | host_permission | Required to load official theme screenshot artwork directly from the official WordPress.org Theme assets CDN. |
+| `https://dns.google/*` | host_permission | Required to resolve DNS-over-HTTPS queries for the inspected domain's host IP and apex nameservers. |
+| `https://ipwho.is/*` | host_permission | Required to resolve the datacenter hosting provider (ISP) and server country location for the inspected IP address. |
 
-**Does the extension collect user data?** No
+---
 
-### Data Use Certification
-- [x] Data is NOT sold to third parties
-- [x] Data is NOT used for purposes unrelated to the extension's core functionality
-- [x] Data is NOT used for creditworthiness or lending purposes
+## 4. Privacy Disclosures & Data Use
 
-## Privacy Policy
+In the **Privacy** tab of the Chrome Developer Dashboard, declare:
 
-**Privacy Policy URL** [REQUIRED]
-[To be added]
+- **Single Purpose**: Confirmed. Detects WordPress themes, plugins, caching engines, and server technologies.
+- **Permission Justification**: Fill in the table above.
+- **Data Collection**:
+  - Personally Identifiable Information: **NO**
+  - Health Info: **NO**
+  - Financial & Payment Info: **NO**
+  - Authentication Info: **NO**
+  - Personal Communications: **NO**
+  - Location: **NO** (Server IP geolocation is public domain infrastructure data, not user location)
+  - Web History: **NO** (Only the active URL of the clicked tab is inspected locally)
+  - User Activity: **NO**
+  - Website Content: **NO** (Only publicly exposed HTML meta tags and script src URLs are inspected)
+- **Data Selling**: Declare that you **do NOT sell** user data to third parties.
+- **Data Use**: Declare that data is **NOT used or transferred** for reasons unrelated to the single purpose.
+- **Data Lending**: Declare that data is **NOT used or transferred** to determine creditworthiness.
 
-## Distribution
+---
 
-**Visibility**: Public
-**Regions**: All regions
+## 5. Submission Package
 
-## Developer Info
-
-**Publisher Name** [REQUIRED]
-[To be added]
-
-**Contact Email** [REQUIRED]
-[To be added]
-
-**Support URL / Email** [RECOMMENDED]
-[To be added]
-
-| Version | Date | Changes | Status |
-|---------|------|---------|--------|
-| 1.0 | 2026-10-14 | Initial release with full diagnostics, REST API plugin detection, server/cache inspection, and export tools | Submitted |
-| 1.1 | 2026-10-16 | Redesigned modern developer dashboard UI, status pulse badge, toast feedback, and performance polish | Submitted |
-| 1.2 | 2026-10-17 | Panoramic developer UI, automatic light/dark mode adapting to OS settings, full-height dynamic plugin inventory, rounded corners, and restored cache status | Submitted |
-| 1.3 | 2026-10-26 | Multi-tier WordPress cache detection (WP-Optimize, LiteSpeed, WP Rocket, Cloudflare, FastCGI, Super Cache, W3TC), GET stream aborting for live cache accuracy, HTML comment signature verification, redesigned empty & non-WordPress state diagnostics card, and long URL wrapping | Ready for submission |
-
-## Review Notes
-
-### Known Issues / Limitations
-- Detects plugins and themes through two complementary methods: (1) frontend assets exposed in scripts/stylesheets, and (2) active WordPress REST API namespaces (`/wp-json`). Plugins that load neither frontend scripts nor public REST API endpoints cannot be detected from an external browser context.
+- **Clean Package Location**: `/Users/parag/Documents/WPScout-ChromeWebStore-v1.4.zip`
+- **Package Size**: ~120 KB
+- **Package Integrity**: Contains strictly production runtime files (`manifest.json`, `background.js`, `content.js`, `popup/`, `icons/`). Excludes `.git`, `.DS_Store`, `README.md`, test files, and raw store assets.
+- **Unpacked Folder**: `v1.4/`

@@ -1248,14 +1248,8 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
 
     let currentTabUrl = '';
 
-    function setExtensionActionIcon(tabId, isWP) {
+    function notifyTabStatus(tabId, isWP) {
       if (!window.chrome || !tabId) return;
-      const path = isWP
-        ? { 16: '/icons/icon-16.png', 48: '/icons/icon-48.png', 128: '/icons/icon-128.png' }
-        : { 16: '/icons/icon-dim-16.png', 48: '/icons/icon-dim-48.png', 128: '/icons/icon-dim-128.png' };
-      if (chrome.action && chrome.action.setIcon) {
-        chrome.action.setIcon({ tabId, path }).catch(() => {});
-      }
       if (chrome.runtime && chrome.runtime.sendMessage) {
         try {
           chrome.runtime.sendMessage({ type: 'WP_STATUS', isWP, tabId }, () => {
@@ -1277,7 +1271,7 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab || !tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('edge://') || tab.url.startsWith('about:') || tab.url.startsWith('chrome-extension://')) {
         if (tab && tab.id) {
-          setExtensionActionIcon(tab.id, false);
+          notifyTabStatus(tab.id, false);
         }
         els.loading.classList.add('hidden');
         els.empty.classList.remove('hidden');
@@ -1298,7 +1292,7 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
 
       if (!data || !data.isWP) {
         if (tab && tab.id) {
-          setExtensionActionIcon(tab.id, false);
+          notifyTabStatus(tab.id, false);
         }
         els.loading.classList.add('hidden');
         els.empty.classList.remove('hidden');
@@ -1327,7 +1321,7 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
       renderDashboard(data);
 
       if (tab && tab.id) {
-        setExtensionActionIcon(tab.id, true);
+        notifyTabStatus(tab.id, true);
       }
 
     } catch (e) {
