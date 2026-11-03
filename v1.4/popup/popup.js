@@ -550,6 +550,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-goto-theme')?.addEventListener('click', () => switchTab('theme'));
   document.getElementById('btn-goto-hosting')?.addEventListener('click', () => switchTab('hosting'));
 
+  // Optional hash-based tab activation (e.g. #plugins, #theme)
+  const initialHash = (window.location.hash || '').replace('#', '').toLowerCase();
+  if (['overview', 'plugins', 'theme', 'hosting', 'signals'].includes(initialHash)) {
+    switchTab(initialHash);
+  }
+
   // --- DNS & IP Whois Utilities ---
   async function getHostIP(hostname) {
     try {
@@ -908,11 +914,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       } catch(e) {}
     }
 
-    const cleanSlug = slug.replace(/-pro$|-lite$|-free$|-plugin$|-for-wordpress$|^wp-|^seo-by-/, '');
-    if (cleanSlug.length > 2) {
-      candidates.push(`https://www.google.com/s2/favicons?sz=64&domain=${cleanSlug}.com`);
-    }
-
     function tryNextCandidate() {
       if (step < candidates.length) {
         img.src = candidates[step++];
@@ -969,7 +970,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="plugin-row-main">
           <div class="plugin-thumb-wrap">
             <img class="plugin-thumb-img" alt="${p.slug}">
-            <span class="plugin-glyph-fallback hidden">${fallbackGlyph}</span>
+            <span class="plugin-wp-fallback hidden">
+              <svg viewBox="0 0 1000 1000" class="generic-wp-icon"><path d="M500 0C223.8 0 0 223.8 0 500c0 276.2 223.8 500 500 500s500-223.8 500-500C1000 223.8 776.2 0 500 0zm0 34.6c257.1 0 465.4 208.3 465.4 465.4 0 94.7-28.3 182.7-76.7 256.4L640.4 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L465.2 537 363.3 274.6c18.5-.9 35.8-2.6 35.8-2.6 15.3-1.7 13.6-24.1-1.7-23.2 0 0-46.7 3.4-76.6 3.4-28.2 0-75.7-3.4-75.7-3.4-15.3-.9-17 21.5-1.7 23.2 0 0 16.5 1.7 33.2 2.6L129 780.8C65.5 704.9 34.6 606.8 34.6 500 34.6 242.9 242.9 34.6 500 34.6z"/></svg>
+            </span>
           </div>
           <div class="plugin-info-block">
             <div class="plugin-title-line">
@@ -995,7 +998,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // Multi-tier cascading icon resolution
       const img = row.querySelector('.plugin-thumb-img');
-      const fallback = row.querySelector('.plugin-glyph-fallback');
+      const fallback = row.querySelector('.plugin-wp-fallback');
       loadPluginIcon(img, fallback, p.slug, p.name);
 
       // Expand/Collapse Accordion
