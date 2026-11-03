@@ -5,15 +5,15 @@
 // ==========================================================================
 
 const ICONS_ACTIVE = {
-  16: 'icons/icon-16.png',
-  48: 'icons/icon-48.png',
-  128: 'icons/icon-128.png'
+  16: '/icons/icon-16.png',
+  48: '/icons/icon-48.png',
+  128: '/icons/icon-128.png'
 };
 
 const ICONS_DIMMED = {
-  16: 'icons/icon-dim-16.png',
-  48: 'icons/icon-dim-48.png',
-  128: 'icons/icon-dim-128.png'
+  16: '/icons/icon-dim-16.png',
+  48: '/icons/icon-dim-48.png',
+  128: '/icons/icon-dim-128.png'
 };
 
 // Update toolbar action icon & tooltip for a specific tab
@@ -31,8 +31,11 @@ function updateTabIcon(tabId, isWP) {
 
 // 1. Listen for detection reports from content scripts or popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message && message.type === 'WP_STATUS' && sender && sender.tab && sender.tab.id) {
-    updateTabIcon(sender.tab.id, Boolean(message.isWP));
+  if (message && message.type === 'WP_STATUS') {
+    const tabId = message.tabId || (sender && sender.tab && sender.tab.id);
+    if (tabId) {
+      updateTabIcon(tabId, Boolean(message.isWP));
+    }
     sendResponse({ ok: true });
   }
 });
