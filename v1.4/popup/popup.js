@@ -1213,6 +1213,12 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
 
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab || !tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('edge://') || tab.url.startsWith('about:') || tab.url.startsWith('chrome-extension://')) {
+        if (window.chrome && chrome.action && tab && tab.id) {
+          chrome.action.setIcon({
+            tabId: tab.id,
+            path: { 16: 'icons/icon-dim-16.png', 48: 'icons/icon-dim-48.png', 128: 'icons/icon-dim-128.png' }
+          }).catch(() => {});
+        }
         els.loading.classList.add('hidden');
         els.empty.classList.remove('hidden');
         document.getElementById('empty-title').textContent = 'Internal Browser Page';
@@ -1231,6 +1237,12 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
       const data = res && res[0] ? res[0].result : null;
 
       if (!data || !data.isWP) {
+        if (window.chrome && chrome.action && tab && tab.id) {
+          chrome.action.setIcon({
+            tabId: tab.id,
+            path: { 16: 'icons/icon-dim-16.png', 48: 'icons/icon-dim-48.png', 128: 'icons/icon-dim-128.png' }
+          }).catch(() => {});
+        }
         els.loading.classList.add('hidden');
         els.empty.classList.remove('hidden');
         document.getElementById('empty-title').textContent = 'Non-WordPress Site';
@@ -1256,6 +1268,13 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
 
       reportData = data;
       renderDashboard(data);
+
+      if (window.chrome && chrome.action && tab && tab.id) {
+        chrome.action.setIcon({
+          tabId: tab.id,
+          path: { 16: 'icons/icon-16.png', 48: 'icons/icon-48.png', 128: 'icons/icon-128.png' }
+        }).catch(() => {});
+      }
 
     } catch (e) {
       els.loading.classList.add('hidden');

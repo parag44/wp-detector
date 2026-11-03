@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "WPScout",
+  "name": "WPScout - Scout Any WordPress Website",
   "version": "1.4",
-  "description": "Scout Any WordPress Website. Detect WordPress versions, themes, plugins, server technologies, caching systems, DNS records, and more with a single click.",
+  "description": "Detect WordPress versions, themes, plugins, server technologies, caching systems, DNS records, and more with a single click.",
   "icons": {
     "16": "icons/icon-16.png",
     "48": "icons/icon-48.png",
@@ -10,12 +10,28 @@
   },
   "action": {
     "default_icon": {
-      "16": "icons/icon-16.png",
-      "48": "icons/icon-48.png",
-      "128": "icons/icon-128.png"
+      "16": "icons/icon-dim-16.png",
+      "48": "icons/icon-dim-48.png",
+      "128": "icons/icon-dim-128.png"
     },
+    "default_title": "WPScout - Scout Any WordPress Website",
     "default_popup": "popup/popup.html"
   },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
   "permissions": [
     "activeTab",
     "scripting",

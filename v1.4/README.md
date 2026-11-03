@@ -1,4 +1,4 @@
-# WPScout (v1.4)
+# WPScout - Scout Any WordPress Website (v1.4)
 
 > **Scout Any WordPress Website.**
 >
@@ -8,7 +8,13 @@
 
 ## 🚀 What's New in v1.4
 
-### 1. 100% Reliable Plugin & Theme Icon Detection
+### 1. Dynamic Dimming Icon (WPSNIFFER Style)
+- **Automatic Tab Awareness**: When browsing the web, the extension icon in Chrome's toolbar dynamically responds to the active tab:
+  - **WordPress Website**: The toolbar icon lights up in **vibrant orange radar** with active status.
+  - **Non-WordPress Website / Browser Pages**: The toolbar icon automatically **dims to a subtle slate gray**, instantly letting you know if a site is running WordPress without needing to open the popup.
+- **Background Service Worker & Content Script**: A lightweight, non-blocking content script (`content.js`) and Manifest V3 background service worker (`background.js`) handle real-time tab status and icon switching with 0ms lag.
+
+### 2. 100% Reliable Plugin & Theme Icon Detection
 - **Multi-Tier Icon Resolver**: Solves missing icons for both directory plugins and premium/custom plugins (matching and exceeding WPSniffer).
 - **Directory Plugins**: Cascades through official WordPress.org CDN formats (`.png`, `256x256.png`, `.svg`, `.jpg`, `.gif` with asset cache busting).
 - **Premium & Commercial Plugins**: Resolves direct brand domains for Gravity Forms, Yoast, Rank Math, Schema Pro, WP Rocket, NitroPack, Elementor Pro, Divi, Beaver Builder, WPBakery, UpdraftPlus, etc. via high-res Google favicon integration (`sz=64`).
