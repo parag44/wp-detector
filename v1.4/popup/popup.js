@@ -1402,6 +1402,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     'icon-128x128.png',
     'icon-256x256.jpg',
     'icon-128x128.jpg',
+    'icon-256x256.gif',
+    'icon-128x128.gif',
     'icon.svg'
   ];
 
@@ -1416,8 +1418,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       slugs.push(base);
     }
 
-    // Common namespace prefixes (e.g. kirkicomponentlibrary -> kirki)
-    if (cleanSlug.startsWith('kirki') && !slugs.includes('kirki')) {
+    // Common namespace prefixes (e.g. kirkicomponentlibrary -> kirki, but NOT independent plugins like kirki-ecommerce)
+    if (cleanSlug.startsWith('kirki') && !cleanSlug.includes('-') && !slugs.includes('kirki')) {
       slugs.push('kirki');
     }
 
@@ -1457,8 +1459,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let resolved = false;
 
-    function applyFoundIcon(src) {
-      if (resolved || !src) return;
+    function applyFoundIcon(src, force = false) {
+      if ((resolved && !force) || !src) return;
       resolved = true;
       pluginIconCache.set(cleanSlug, src);
       imgEl.src = src;
@@ -1482,8 +1484,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. In parallel, query official WordPress.org Plugin API to resolve exact icon & official name
     fetchWpOrgPluginMetadata(cleanSlug).then(meta => {
       if (!meta) return;
-      if (meta.iconUrl && !resolved) {
-        applyFoundIcon(meta.iconUrl);
+      if (meta.iconUrl) {
+        // Authoritative API icon upgrades any candidate/fallback
+        applyFoundIcon(meta.iconUrl, !meta.isProFallback);
       }
       if (rowEl && meta.name) {
         const titleLink = rowEl.querySelector('.plugin-title-link');
