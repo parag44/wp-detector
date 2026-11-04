@@ -163,6 +163,82 @@ async function detectWordPress() {
     }
   });
 
+  // --- MULTI-LAYER PLUGIN SCANNER (INLINE SCRIPTS, LOCALIZED JS & INLINE CSS) ---
+  // Many modern WordPress plugins (such as Advanced Accordion Block, WooCommerce, Elementor,
+  // Tutor LMS, etc.) localize data via wp_localize_script() into inline <script> tags
+  // (e.g. <script id="jquery-core-js-extra"> var aagb_local_object = {"assets": ".../advanced-accordion-block/assets/"} </script>)
+  // Scanning inline script textContent ensures these plugins are always detected even without raw script[src] files.
+  const inlineScripts = document.querySelectorAll('script');
+  inlineScripts.forEach(scriptEl => {
+    const text = scriptEl.textContent;
+    if (!text || !text.includes('/wp-content/plugins/')) return;
+
+    const pluginMatches = text.matchAll(/\/wp-content\/plugins\/([a-zA-Z0-9_-]+)\//gi);
+    for (const match of pluginMatches) {
+      const slug = match[1].toLowerCase();
+      if (!['plugins', 'uploads', 'themes', 'mu-plugins', 'core'].includes(slug)) {
+        isWP = true;
+        wpContentCount++;
+        const snippetIndex = Math.max(0, match.index - 35);
+        const snippet = text.substring(snippetIndex, snippetIndex + 140).replace(/\s+/g, ' ').trim();
+        const existing = pluginsMap.get(slug);
+        if (!existing) {
+          pluginsMap.set(slug, {
+            slug,
+            version: '',
+            method: 'Inline Script Data (wp_localize_script)',
+            sourceTag: 'DOM',
+            evidence: scriptEl.id ? `<script id="${scriptEl.id}"> ...${snippet}...` : snippet
+          });
+        }
+      }
+    }
+  });
+
+  // Also scan all inline <style> tags for plugin asset paths (e.g. @font-face, SVG, background URLs)
+  const inlineStyleBlocks = document.querySelectorAll('style');
+  inlineStyleBlocks.forEach(styleEl => {
+    const text = styleEl.textContent;
+    if (!text || !text.includes('/wp-content/plugins/')) return;
+
+    const pluginMatches = text.matchAll(/\/wp-content\/plugins\/([a-zA-Z0-9_-]+)\//gi);
+    for (const match of pluginMatches) {
+      const slug = match[1].toLowerCase();
+      if (!['plugins', 'uploads', 'themes', 'mu-plugins', 'core'].includes(slug)) {
+        isWP = true;
+        const existing = pluginsMap.get(slug);
+        if (!existing) {
+          const snippetIndex = Math.max(0, match.index - 25);
+          const snippet = text.substring(snippetIndex, snippetIndex + 120).replace(/\s+/g, ' ').trim();
+          pluginsMap.set(slug, {
+            slug,
+            version: '',
+            method: 'Inlined CSS Asset',
+            sourceTag: 'DOM',
+            evidence: styleEl.id ? `<style id="${styleEl.id}"> ...${snippet}...` : snippet
+          });
+        }
+      }
+    }
+  });
+
+  // Scan inlined style and script ID handles for block signatures (e.g. id="aagb-separate-accordion-css")
+  const idElements = document.querySelectorAll('style[id], script[id]');
+  idElements.forEach(el => {
+    const id = (el.id || '').toLowerCase();
+    if (id.startsWith('aagb-') || id.includes('advanced-accordion')) {
+      if (!pluginsMap.has('advanced-accordion-block')) {
+        pluginsMap.set('advanced-accordion-block', {
+          slug: 'advanced-accordion-block',
+          version: '',
+          method: 'Block Asset Handle',
+          sourceTag: 'DOM',
+          evidence: `<${el.tagName.toLowerCase()} id="${el.id}">`
+        });
+      }
+    }
+  });
+
   // --- MULTI-LAYER CASCADE THEME DETECTION (WPOPTIC-STYLE) ---
 
   // Layer 2: <body> Class Inspection (Standard for modern FSE & Block Themes)
@@ -530,7 +606,7 @@ async function detectWordPress() {
     if (s.includes('cache') || s.includes('optimize') || s.includes('rocket') || s === 'autoptimize') return 'Cache';
     if (s.includes('security') || s.includes('fence') || s.includes('firewall') || s === 'wordfence') return 'Security';
     if (s.includes('woo') || s.includes('shop') || s.includes('cart')) return 'E-Commerce';
-    if (s.includes('elementor') || s.includes('builder') || s.includes('blocks') || s.includes('gutenberg')) return 'Blocks';
+    if (s.includes('elementor') || s.includes('builder') || s.includes('blocks') || s.includes('block') || s.includes('gutenberg') || s.includes('accordion')) return 'Blocks';
     if (s.includes('analytics') || s.includes('parsely') || s.includes('pixel') || s.includes('track')) return 'Analytics';
     if (s.includes('access') || s.includes('wcag') || s.includes('ada')) return 'Accessibility';
     return 'Plugin';
@@ -540,6 +616,7 @@ async function detectWordPress() {
     const knownNames = {
       'tutor': 'Tutor LMS',
       'tutor-pro': 'Tutor LMS Pro',
+      'advanced-accordion-block': 'Advanced Accordion Gutenberg Block',
       'wordpress-seo': 'Yoast SEO',
       'wordpress-seo-premium': 'Yoast SEO Premium',
       'contact-form-7': 'Contact Form 7',
