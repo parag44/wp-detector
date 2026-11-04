@@ -680,10 +680,82 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 
+  // --- Empty / Non-WordPress State Handler ---
+  function showEmptyState(title, desc, pillText = 'No Signatures', isInternal = false) {
+    els.loading.classList.add('hidden');
+    els.empty.classList.remove('hidden');
+
+    // Hide all tab content panes completely
+    els.panes.forEach(p => {
+      p.classList.add('hidden');
+      p.classList.remove('active');
+    });
+
+    // Hide the entire tab navigation bar
+    const navTabs = document.querySelector('.nav-tabs');
+    if (navTabs) navTabs.classList.add('hidden');
+
+    // Dim and disable action buttons (copy/export)
+    if (els.copyBtn) {
+      els.copyBtn.style.opacity = '0.35';
+      els.copyBtn.style.pointerEvents = 'none';
+    }
+    if (els.exportBtn) {
+      els.exportBtn.style.opacity = '0.35';
+      els.exportBtn.style.pointerEvents = 'none';
+    }
+
+    // Update live quick status badges in header
+    const pillWp = document.getElementById('pill-wp-status');
+    const pillWpText = document.getElementById('pill-wp-text');
+    const pillVer = document.getElementById('pill-core-version');
+    const pillGut = document.getElementById('pill-gutenberg');
+    const pillApi = document.getElementById('pill-rest-api');
+
+    if (pillWp) {
+      pillWp.className = 'status-pill pill-neutral';
+      if (pillWpText) pillWpText.textContent = isInternal ? 'BROWSER PAGE' : 'NON-WORDPRESS';
+    }
+    if (pillVer) pillVer.classList.add('hidden');
+    if (pillGut) pillGut.classList.add('hidden');
+    if (pillApi) pillApi.classList.add('hidden');
+
+    // Update empty card content
+    const emptyTitle = document.getElementById('empty-title');
+    const emptyDesc = document.getElementById('empty-desc');
+    const emptyPill = document.getElementById('empty-pill');
+    const emptyChecklist = document.getElementById('empty-checklist');
+
+    if (emptyTitle) emptyTitle.textContent = title;
+    if (emptyDesc) emptyDesc.textContent = desc;
+    if (emptyPill) emptyPill.textContent = pillText;
+    if (emptyChecklist) {
+      if (isInternal) {
+        emptyChecklist.classList.add('hidden');
+      } else {
+        emptyChecklist.classList.remove('hidden');
+      }
+    }
+  }
+
   // --- Render Diagnostics Dashboard ---
   function renderDashboard(data) {
     els.loading.classList.add('hidden');
     els.empty.classList.add('hidden');
+
+    // Unhide the tab navigation bar
+    const navTabs = document.querySelector('.nav-tabs');
+    if (navTabs) navTabs.classList.remove('hidden');
+
+    // Re-enable copy & export buttons
+    if (els.copyBtn) {
+      els.copyBtn.style.opacity = '1';
+      els.copyBtn.style.pointerEvents = 'auto';
+    }
+    if (els.exportBtn) {
+      els.exportBtn.style.opacity = '1';
+      els.exportBtn.style.pointerEvents = 'auto';
+    }
 
     // Header Info
     els.siteTitle.textContent = data.pageTitle || 'WordPress Site';
@@ -697,7 +769,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Sub Status Bar
-    document.getElementById('pill-core-version').textContent = data.version !== 'Unknown' ? `v${data.version}` : 'Version Hidden';
+    const pillWp = document.getElementById('pill-wp-status');
+    const pillWpText = document.getElementById('pill-wp-text');
+    if (pillWp) pillWp.className = 'status-pill status-wp';
+    if (pillWpText) pillWpText.textContent = 'WORDPRESS';
+
+    const pillVer = document.getElementById('pill-core-version');
+    if (pillVer) {
+      pillVer.classList.remove('hidden');
+      pillVer.textContent = data.version !== 'Unknown' ? `v${data.version}` : 'Version Hidden';
+    }
+
     const gutenbergPill = document.getElementById('pill-gutenberg');
     if (data.hasGutenberg) gutenbergPill.classList.remove('hidden');
     else gutenbergPill.classList.add('hidden');
@@ -705,6 +787,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const restPill = document.getElementById('pill-rest-api');
     if (data.signals.api.detected) restPill.classList.remove('hidden');
     else restPill.classList.add('hidden');
+
+    // Activate Overview tab
+    switchTab('overview');
 
     // Overview 4 Metric Cards
     document.getElementById('metric-confidence').textContent = data.confidence;
@@ -1237,6 +1322,22 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
     els.empty.classList.add('hidden');
     els.refreshBtn.classList.add('spinning');
 
+    // Hide all tab content panes and tab bar while diagnosing
+    els.panes.forEach(p => {
+      p.classList.add('hidden');
+      p.classList.remove('active');
+    });
+    document.querySelector('.nav-tabs')?.classList.add('hidden');
+
+    // Temporary analyzing status
+    const pillWp = document.getElementById('pill-wp-status');
+    const pillWpText = document.getElementById('pill-wp-text');
+    if (pillWp) pillWp.className = 'status-pill pill-neutral';
+    if (pillWpText) pillWpText.textContent = 'ANALYZING...';
+    document.getElementById('pill-core-version')?.classList.add('hidden');
+    document.getElementById('pill-gutenberg')?.classList.add('hidden');
+    document.getElementById('pill-rest-api')?.classList.add('hidden');
+
     let currentTabUrl = '';
 
     function notifyTabStatus(tabId, isWP) {
@@ -1253,6 +1354,18 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
     try {
       if (!window.chrome || !chrome.tabs || !chrome.tabs.query) {
         // Fallback for standalone preview / browser testing
+        if (window.location.search.includes('internal') || window.location.hash === '#internal') {
+          els.siteTitle.textContent = 'Internal Browser Page';
+          els.siteUrl.textContent = 'chrome://extensions';
+          showEmptyState('Internal Browser Page', 'Chrome extensions cannot inspect browser-internal pages.', 'Protected', true);
+          return;
+        }
+        if (window.location.search.includes('nonwp') || window.location.search.includes('empty') || window.location.hash === '#empty') {
+          els.siteTitle.textContent = 'Non-WordPress Site';
+          els.siteUrl.textContent = 'https://example.com';
+          showEmptyState('Non-WordPress Site', 'No WordPress core files, REST API endpoints, or theme stylesheets were detected on this page.', 'No Signatures', false);
+          return;
+        }
         const sample = getSampleMockData();
         reportData = sample;
         renderDashboard(sample);
@@ -1264,15 +1377,18 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
         if (tab && tab.id) {
           notifyTabStatus(tab.id, false);
         }
-        els.loading.classList.add('hidden');
-        els.empty.classList.remove('hidden');
-        document.getElementById('empty-title').textContent = 'Internal Browser Page';
-        document.getElementById('empty-desc').textContent = 'Chrome extensions cannot inspect browser-internal pages.';
+        if (tab && tab.url) {
+          els.siteTitle.textContent = tab.title || 'Internal Browser Page';
+          els.siteUrl.textContent = tab.url;
+          els.siteUrl.removeAttribute('href');
+        }
+        showEmptyState('Internal Browser Page', 'Chrome extensions cannot inspect browser-internal pages.', 'Protected', true);
         return;
       }
 
       currentTabUrl = tab.url;
       els.siteUrl.textContent = tab.url;
+      els.siteUrl.href = tab.url;
 
       const res = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
@@ -1285,10 +1401,15 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
         if (tab && tab.id) {
           notifyTabStatus(tab.id, false);
         }
-        els.loading.classList.add('hidden');
-        els.empty.classList.remove('hidden');
-        document.getElementById('empty-title').textContent = 'Non-WordPress Site';
-        document.getElementById('empty-desc').textContent = 'No WordPress core files, REST API endpoints, or theme stylesheets were detected on this page.';
+        try {
+          const u = new URL(tab.url);
+          els.siteTitle.textContent = tab.title || u.hostname || 'Non-WordPress Site';
+        } catch (err) {
+          els.siteTitle.textContent = tab.title || 'Non-WordPress Site';
+        }
+        els.siteUrl.textContent = tab.url;
+        els.siteUrl.href = tab.url;
+        showEmptyState('Non-WordPress Site', 'No WordPress core files, REST API endpoints, or theme stylesheets were detected on this page.', 'No Signatures', false);
         return;
       }
 
@@ -1316,10 +1437,7 @@ ${d.plugins.map(p => `- ${p.name} (${p.slug}) [${p.version || 'Version unknown'}
       }
 
     } catch (e) {
-      els.loading.classList.add('hidden');
-      els.empty.classList.remove('hidden');
-      document.getElementById('empty-title').textContent = 'Diagnostics Incomplete';
-      document.getElementById('empty-desc').textContent = e.message || 'Unable to scan page.';
+      showEmptyState('Diagnostics Incomplete', e.message || 'Unable to scan page.', 'Error', false);
     } finally {
       els.refreshBtn.classList.remove('spinning');
     }

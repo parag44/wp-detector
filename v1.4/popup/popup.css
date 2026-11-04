@@ -291,6 +291,16 @@ body.theme-dark .moon-icon { display: none; }
   background: var(--color-success);
 }
 
+.status-pill.pill-neutral {
+  background: var(--bg-card);
+  border-color: var(--border-primary);
+  color: var(--text-secondary);
+}
+
+.status-pill.pill-neutral .status-dot {
+  background: var(--text-muted);
+}
+
 .status-pill.status-wp {
   background: rgba(52, 211, 153, 0.12);
   border-color: rgba(52, 211, 153, 0.35);

@@ -46,11 +46,11 @@
 
       <!-- Live Quick Badges Bar -->
       <div class="sub-status-bar" id="sub-status-bar">
-        <span class="status-pill status-wp" id="pill-wp-status">
+        <span class="status-pill pill-neutral" id="pill-wp-status">
           <span class="status-dot"></span>
-          <span id="pill-wp-text">WORDPRESS</span>
+          <span id="pill-wp-text">ANALYZING...</span>
         </span>
-        <span class="status-pill pill-neutral" id="pill-core-version">v...</span>
+        <span class="status-pill pill-neutral hidden" id="pill-core-version">v...</span>
         <span class="status-pill pill-purple hidden" id="pill-gutenberg">GUTENBERG (BLOCKS)</span>
         <span class="status-pill pill-blue hidden" id="pill-rest-api">&#10003; REST API</span>
       </div>
@@ -70,7 +70,7 @@
     </header>
 
     <!-- Tab Navigation Bar -->
-    <nav class="nav-tabs" role="tablist">
+    <nav class="nav-tabs hidden" role="tablist">
       <button class="nav-tab active" data-tab="overview" role="tab" aria-selected="true">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         <span>Overview</span>
@@ -110,7 +110,7 @@
           <span class="status-pill pill-amber" id="empty-pill">No Signatures</span>
           <p class="empty-desc" id="empty-desc">No WordPress core files, REST API endpoints, or theme stylesheets were detected on this page.</p>
 
-          <div class="empty-checklist">
+          <div class="empty-checklist" id="empty-checklist">
             <div class="chk-item"><span class="chk-icon">✕</span> <span>No <code>/wp-content/</code> or <code>/wp-includes/</code> asset paths</span></div>
             <div class="chk-item"><span class="chk-icon">✕</span> <span>No <code>meta[name="generator"]</code> WordPress tag</span></div>
             <div class="chk-item"><span class="chk-icon">✕</span> <span>No <code>/wp-json/</code> REST API response found</span></div>
@@ -124,7 +124,7 @@
       </div>
 
       <!-- TAB 1: OVERVIEW -->
-      <section id="pane-overview" class="tab-pane active" role="tabpanel">
+      <section id="pane-overview" class="tab-pane hidden" role="tabpanel">
 
         <!-- 4 Metric Cards Grid -->
         <div class="metrics-grid">
