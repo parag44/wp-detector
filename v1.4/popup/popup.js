@@ -408,6 +408,7 @@ async function detectWordPress() {
   // Categorize Plugins & Normalize Titles
   function categorizePlugin(slug) {
     const s = slug.toLowerCase();
+    if (s.includes('lms') || s.includes('tutor') || s.includes('course') || s.includes('learn') || s.includes('academy') || s.includes('sensei') || s.includes('lifter')) return 'LMS';
     if (s.includes('form') || s === 'contact-form-7' || s === 'gravityforms' || s === 'wpforms') return 'Forms';
     if (s.includes('seo') || s.includes('schema') || s === 'wordpress-seo') return 'SEO';
     if (s.includes('cache') || s.includes('optimize') || s.includes('rocket') || s === 'autoptimize') return 'Cache';
@@ -421,7 +422,10 @@ async function detectWordPress() {
 
   function formatPluginName(slug) {
     const knownNames = {
+      'tutor': 'Tutor LMS',
+      'tutor-pro': 'Tutor LMS Pro',
       'wordpress-seo': 'Yoast SEO',
+      'wordpress-seo-premium': 'Yoast SEO Premium',
       'contact-form-7': 'Contact Form 7',
       'woocommerce': 'WooCommerce',
       'wp-optimize': 'WP-Optimize',
@@ -429,10 +433,15 @@ async function detectWordPress() {
       'wp-super-cache': 'WP Super Cache',
       'w3-total-cache': 'W3 Total Cache',
       'seo-by-rank-math': 'Rank Math SEO',
+      'seo-by-rank-math-pro': 'Rank Math SEO Pro',
       'gravityforms': 'Gravity Forms',
       'popup-maker': 'Popup Maker',
       'wp-parsely': 'Parse.ly Analytics',
       'elementor': 'Elementor Website Builder',
+      'elementor-pro': 'Elementor Pro',
+      'advanced-custom-fields': 'Advanced Custom Fields (ACF)',
+      'advanced-custom-fields-pro': 'Advanced Custom Fields Pro',
+      'acf-pro': 'Advanced Custom Fields Pro',
       'accessibility-checker': 'Equalize Digital Accessibility Checker',
       'wordfence': 'Wordfence Security',
       'updraftplus': 'UpdraftPlus Backup'
@@ -892,6 +901,72 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderFilteredPlugins();
   }
 
+  // --- Smart Pro / Commercial Title Derivation Engine ---
+  // When a commercial/pro add-on (e.g. tutor-pro, elementor-pro, advanced-custom-fields-pro)
+  // falls back to its base plugin repository on WordPress.org for icons and metadata,
+  // this extracts the clean core brand name and constructs the correct Pro/Premium/Addon title
+  // rather than overriding it with the free plugin's marketing tagline.
+  function deriveProPluginTitle(rawBaseName, proSlug, baseSlug) {
+    if (!rawBaseName) {
+      return proSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+
+    // 1. Decode HTML entities (e.g. &#8211; -> –, &amp; -> &)
+    let name = rawBaseName
+      .replace(/&#8211;/g, '–')
+      .replace(/&#8212;/g, '—')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#039;/g, "'")
+      .trim();
+
+    // 2. Extract brand name before marketing slogans, taglines, or separators
+    // Matches "Tutor LMS – eLearning and online course solution" -> "Tutor LMS"
+    // Matches "Elementor Website Builder – More than Just a Page Builder" -> "Elementor Website Builder"
+    // Matches "WPForms - Easy Form Builder" -> "WPForms"
+    // Matches "Yoast SEO: WordPress SEO Plugin" -> "Yoast SEO"
+    // Matches "Advanced Custom Fields (ACF)" -> "Advanced Custom Fields"
+    const separatorMatch = name.match(/^(.+?)\s*(?:[–—]| - | : |: | \| )\s*(.+)$/);
+    if (separatorMatch && separatorMatch[1].trim().length >= 2) {
+      name = separatorMatch[1].trim();
+    }
+
+    // 3. Clean up common marketing fluff at end of brand name
+    name = name.replace(/\s*\((?:acf|free|lite)\)/i, '');
+    name = name.replace(/\s+website builder$/i, '');
+    name = name.replace(/\s+page builder$/i, '');
+    name = name.replace(/\s+builder$/i, '');
+    name = name.replace(/\s+customizer framework$/i, '');
+    name = name.replace(/\s+wordpress plugin$/i, '');
+    name = name.replace(/\s+plugin for wordpress$/i, '');
+    name = name.replace(/\s+framework$/i, '');
+    name = name.trim();
+
+    // 4. Determine edition suffix from pro slug
+    const proLower = proSlug.toLowerCase();
+    let edition = 'Pro';
+    if (proLower.endsWith('-premium')) {
+      edition = 'Premium';
+    } else if (proLower.endsWith('-addons') || proLower.endsWith('-addon')) {
+      edition = 'Addons';
+    } else if (proLower.endsWith('-extensions') || proLower.endsWith('-extension')) {
+      edition = 'Extensions';
+    } else if (proLower.endsWith('-plus')) {
+      edition = 'Plus';
+    } else if (proLower.endsWith('-unlimited')) {
+      edition = 'Unlimited';
+    } else if (proLower.endsWith('-core')) {
+      edition = 'Core';
+    }
+
+    // 5. Avoid duplicate suffix (e.g. if name is already "Tutor LMS Pro")
+    if (name.toLowerCase().endsWith(edition.toLowerCase())) {
+      return name;
+    }
+
+    return `${name} ${edition}`;
+  }
+
   // --- Dynamic WordPress.org Plugin Information API Cache ---
   const wpOrgMetadataCache = new Map();
 
@@ -902,7 +977,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return wpOrgMetadataCache.get(cleanSlug);
     }
 
-    const baseSlug = cleanSlug.replace(/-(?:pro|premium|addon|addons|extension|plugin|core|config|lite|master)$/i, '');
+    const baseSlug = cleanSlug.replace(/-(?:pro|premium|addon|addons|extension|extensions|plugin|core|config|lite|master|plus|unlimited)$/i, '');
     const slugsToTry = [cleanSlug];
     if (baseSlug && baseSlug !== cleanSlug) slugsToTry.push(baseSlug);
 
@@ -913,11 +988,23 @@ document.addEventListener('DOMContentLoaded', async () => {
           const data = await res.json();
           if (data && (data.name || data.icons)) {
             const iconUrl = data.icons ? (data.icons['2x'] || data.icons['1x'] || data.icons.svg || data.icons.default) : null;
+            
+            // Smart Pro / Commercial Title Derivation:
+            // When querying baseSlug because the Pro variant isn't in the free wp.org repo,
+            // dynamically derive the Pro title (e.g. "Tutor LMS Pro") instead of overwriting with the free repo's title!
+            let finalName = data.name || '';
+            const isProFallback = (s !== cleanSlug);
+            if (finalName && isProFallback) {
+              finalName = deriveProPluginTitle(finalName, cleanSlug, s);
+            }
+
             const meta = {
-              name: data.name || '',
-              version: data.version || '',
+              name: finalName,
+              version: isProFallback ? '' : (data.version || ''),
               lastUpdated: data.last_updated ? `Updated ${data.last_updated.split(' ')[0]}` : '',
-              iconUrl: iconUrl ? iconUrl.replace(/^http:\/\//i, 'https://') : null
+              iconUrl: iconUrl ? iconUrl.replace(/^http:\/\//i, 'https://') : null,
+              isProFallback,
+              baseSlug: isProFallback ? s : null
             };
             wpOrgMetadataCache.set(cleanSlug, meta);
             return meta;
@@ -1103,8 +1190,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       if (rowEl && meta.name) {
         const titleLink = rowEl.querySelector('.plugin-title-link');
-        if (titleLink && (!titleLink.title || titleLink.textContent === slug)) {
+        if (titleLink) {
           titleLink.textContent = meta.name.replace(/&#8211;/g, '–').replace(/&amp;/g, '&');
+        }
+        // If it was a Pro fallback, update the links to point to the base plugin on WP.org to prevent 404
+        if (meta.isProFallback && meta.baseSlug) {
+          const wpOrgLinks = rowEl.querySelectorAll(`a[href*="wordpress.org/plugins/${cleanSlug}"]`);
+          wpOrgLinks.forEach(a => {
+            a.href = `https://wordpress.org/plugins/${meta.baseSlug}/`;
+            a.title = `Base repository: ${meta.baseSlug}`;
+          });
         }
       }
     });
