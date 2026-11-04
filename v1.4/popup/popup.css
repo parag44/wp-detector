@@ -1360,19 +1360,23 @@ body.theme-light .plugin-thumb-fallback svg {
 }
 
 .empty-icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
   background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--text-muted);
+  box-shadow: var(--shadow-sm);
 }
 
-.empty-wp-svg {
-  width: 24px;
-  height: 24px;
-  fill: var(--text-muted);
+.empty-brand-icon {
+  width: 22px;
+  height: 22px;
+  stroke: var(--text-muted);
+  color: var(--text-muted);
 }
 
 .empty-title {
