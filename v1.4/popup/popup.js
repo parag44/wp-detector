@@ -1178,10 +1178,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (res.ok) {
         const data = await res.json();
         if (data && data.name) {
+          let authorName = '';
+          if (data.author) {
+            if (typeof data.author === 'object') {
+              authorName = data.author.author || data.author.display_name || data.author.user_nicename || '';
+            } else if (typeof data.author === 'string') {
+              authorName = data.author.replace(/<[^>]+>/g, '').trim();
+            }
+          }
           const meta = {
             name: data.name,
             version: data.version || '',
-            author: data.author || ''
+            author: authorName
           };
           wpOrgThemeCache.set(clean, meta);
           return meta;
