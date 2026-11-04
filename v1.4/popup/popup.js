@@ -95,8 +95,8 @@ async function detectWordPress() {
   else if (document.querySelector('.ct-section, link[href*="oxygen"]')) pageBuilder = 'Oxygen';
   else if (hasGutenberg) pageBuilder = 'Gutenberg (Block Editor)';
 
-  // --- Signal 4 & 5: /wp-content/ and /wp-includes/ Asset Scans ---
-  const elements = document.querySelectorAll('link[rel="stylesheet"], script[src], img[src]');
+  // --- Signal 4 & 5: /wp-content/ and /wp-includes/ Asset Scans (Layer 1) ---
+  const elements = document.querySelectorAll('link[href], script[src], img[src], source[srcset]');
   let wpContentCount = 0;
   let wpIncludesCount = 0;
 
@@ -122,21 +122,23 @@ async function detectWordPress() {
       }
     }
 
-    // Active Theme Extraction
+    // Active Theme Extraction from external URLs
     const themeMatch = url.match(/\/wp-content\/themes\/([^\/]+)\//i);
     if (themeMatch) {
-      const detectedTheme = themeMatch[1];
-      if (theme === 'Unknown') {
-        theme = detectedTheme;
-        themeStylesheet = url;
-      } else if (theme !== detectedTheme && !isChildTheme) {
-        isChildTheme = true;
-        parentTheme = detectedTheme;
-      }
+      const detectedTheme = themeMatch[1].toLowerCase();
+      if (!['plugins', 'uploads', 'themes'].includes(detectedTheme)) {
+        if (theme === 'Unknown') {
+          theme = detectedTheme;
+          themeStylesheet = url;
+        } else if (theme !== detectedTheme && !isChildTheme) {
+          isChildTheme = true;
+          parentTheme = detectedTheme;
+        }
 
-      const verMatch = url.match(/(?:\?|&)ver=([0-9a-zA-Z.-]+)/i);
-      if (verMatch && verMatch[1] !== version && !themeVersion) {
-        themeVersion = verMatch[1];
+        const verMatch = url.match(/(?:\?|&)ver=([0-9a-zA-Z.-]+)/i);
+        if (verMatch && verMatch[1] !== version && !themeVersion) {
+          themeVersion = verMatch[1];
+        }
       }
     }
 
@@ -160,6 +162,84 @@ async function detectWordPress() {
       }
     }
   });
+
+  // --- MULTI-LAYER CASCADE THEME DETECTION (WPOPTIC-STYLE) ---
+
+  // Layer 2: <body> Class Inspection (Standard for modern FSE & Block Themes)
+  // WordPress core get_body_class() injects "wp-theme-[slug]" or "theme-[slug]"
+  if (document.body && document.body.className) {
+    const classTokens = document.body.className.split(/\s+/);
+    for (const token of classTokens) {
+      const childMatch = token.match(/^wp-child-theme-([a-zA-Z0-9_-]+)$/i);
+      if (childMatch) {
+        const candidate = childMatch[1].toLowerCase();
+        if (theme === 'Unknown') {
+          theme = candidate;
+        } else if (theme !== candidate) {
+          isChildTheme = true;
+          parentTheme = theme;
+          theme = candidate;
+        }
+        isWP = true;
+      }
+
+      const bodyThemeMatch = token.match(/^(?:wp-theme|theme)-([a-zA-Z0-9_-]+)$/i);
+      if (bodyThemeMatch) {
+        const candidate = bodyThemeMatch[1].toLowerCase();
+        if (!['dark', 'light', 'default', 'custom', 'preview', 'editor', 'mode', 'active', 'ui'].includes(candidate)) {
+          if (theme === 'Unknown') {
+            theme = candidate;
+            isWP = true;
+          }
+        }
+      }
+    }
+  }
+
+  // Layer 3: Inlined <style> ID Handles
+  // When themes use wp_style_add_data( $handle, 'path', ... ) or inline stylesheets,
+  // WordPress outputs <style id="[handle]-style-inline-css"> or <style id="[handle]-style-css">.
+  if (theme === 'Unknown') {
+    const styleTags = document.querySelectorAll('style[id]');
+    for (let i = 0; i < styleTags.length; i++) {
+      const id = styleTags[i].id;
+      if (!id) continue;
+      const handleMatch = id.match(/^([a-zA-Z0-9_-]+)-(?:style|theme)(?:-inline)?-css$/i);
+      if (handleMatch) {
+        const candidate = handleMatch[1].toLowerCase();
+        if (!['global-styles', 'wp-block-library', 'classic-theme', 'core', 'wp', 'block-library'].includes(candidate)) {
+          theme = candidate;
+          isWP = true;
+          break;
+        }
+      }
+    }
+  }
+
+  // Layer 4: Text Content of Inlined <style> Blocks (e.g. bundled @font-face or asset URLs)
+  if (theme === 'Unknown') {
+    const styleTags = document.querySelectorAll('style');
+    for (let i = 0; i < styleTags.length && i < 25; i++) {
+      const text = styleTags[i].textContent;
+      if (text && text.includes('/wp-content/themes/')) {
+        const match = text.match(/\/wp-content\/themes\/([^\/'"\\)]+)\//i);
+        if (match) {
+          const candidate = match[1].toLowerCase();
+          if (!['plugins', 'uploads', 'themes'].includes(candidate)) {
+            theme = candidate;
+            isWP = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  // If theme was found via inlined block theme signals, ensure wpContent signal reflects it
+  if (theme !== 'Unknown' && !signals.wpContent.detected) {
+    signals.wpContent.detected = true;
+    signals.wpContent.detail = `Block theme detected: ${theme}`;
+  }
 
   signals.wpContent.count = wpContentCount;
   signals.wpIncludes.count = wpIncludesCount;
@@ -809,13 +889,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (tabPlCount) tabPlCount.textContent = data.plugins.length;
     const chipAll = document.getElementById('chip-all-count');
     if (chipAll) chipAll.textContent = data.plugins.length;
-    document.getElementById('metric-theme-name').textContent = data.theme !== 'Unknown' ? data.theme : 'Theme';
+    const displayTheme = formatThemeName(data.theme);
+    document.getElementById('metric-theme-name').textContent = data.theme !== 'Unknown' ? displayTheme : 'Theme';
     document.getElementById('metric-signals-count').textContent = `${data.signalScore} / 7`;
     document.getElementById('tab-signals-score').textContent = `${data.signalScore}/7`;
     document.getElementById('signals-score-circle').textContent = data.signalScore;
 
     // Overview Theme Summary Card
-    document.getElementById('overview-theme-name').textContent = data.theme !== 'Unknown' ? data.theme : 'Active Theme';
+    document.getElementById('overview-theme-name').textContent = data.theme !== 'Unknown' ? displayTheme : 'Active Theme';
     document.getElementById('overview-theme-version').textContent = data.themeVersion ? `v${data.themeVersion}` : 'Active';
     document.getElementById('overview-theme-author').textContent = data.themeAuthor ? `By ${data.themeAuthor}` : `Slug: ${data.theme}`;
 
@@ -841,18 +922,51 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (ipEl) ipEl.textContent = data.ip;
 
     // --- Tab 3: Theme Hero Card ---
-    document.getElementById('theme-big-title').textContent = data.theme !== 'Unknown' ? data.theme : 'Custom Theme';
+    document.getElementById('theme-big-title').textContent = data.theme !== 'Unknown' ? displayTheme : 'Custom Theme';
     document.getElementById('theme-pill-slug').textContent = `Slug: ${data.theme}`;
     document.getElementById('theme-pill-ver').textContent = data.themeVersion ? `v${data.themeVersion}` : 'Version unknown';
     if (data.isChildTheme) {
       document.getElementById('theme-pill-child').classList.remove('hidden');
     }
-    document.getElementById('theme-spec-name').textContent = data.theme;
+    document.getElementById('theme-spec-name').textContent = displayTheme;
     document.getElementById('theme-spec-slug').textContent = data.theme;
     document.getElementById('theme-spec-version').textContent = data.themeVersion || 'Not exposed';
     document.getElementById('theme-spec-author').textContent = data.themeAuthor || 'Author not detected';
     const fallbackNameEl = document.getElementById('theme-fallback-name');
-    if (fallbackNameEl) fallbackNameEl.textContent = data.theme;
+    if (fallbackNameEl) fallbackNameEl.textContent = displayTheme;
+
+    // Asynchronously resolve official Theme metadata from WordPress.org API
+    if (data.theme && data.theme !== 'Unknown') {
+      fetchWpOrgThemeMetadata(data.theme).then(meta => {
+        if (!meta) return;
+        if (meta.name) {
+          const ovName = document.getElementById('overview-theme-name');
+          if (ovName) ovName.textContent = meta.name;
+          const metricName = document.getElementById('metric-theme-name');
+          if (metricName) metricName.textContent = meta.name;
+          const bigTitle = document.getElementById('theme-big-title');
+          if (bigTitle) bigTitle.textContent = meta.name;
+          const specName = document.getElementById('theme-spec-name');
+          if (specName) specName.textContent = meta.name;
+          const fbName = document.getElementById('theme-fallback-name');
+          if (fbName) fbName.textContent = meta.name;
+        }
+        if (meta.version && !data.themeVersion) {
+          const ovVer = document.getElementById('overview-theme-version');
+          if (ovVer) ovVer.textContent = `v${meta.version}`;
+          const pillVer = document.getElementById('theme-pill-ver');
+          if (pillVer) pillVer.textContent = `v${meta.version}`;
+          const specVer = document.getElementById('theme-spec-version');
+          if (specVer) specVer.textContent = meta.version;
+        }
+        if (meta.author && !data.themeAuthor) {
+          const ovAuth = document.getElementById('overview-theme-author');
+          if (ovAuth) ovAuth.textContent = `By ${meta.author}`;
+          const specAuth = document.getElementById('theme-spec-author');
+          if (specAuth) specAuth.textContent = meta.author;
+        }
+      });
+    }
 
     const fullThumb = document.getElementById('theme-full-screenshot');
     const fullFallback = document.getElementById('theme-full-fallback');
@@ -1014,6 +1128,68 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     wpOrgMetadataCache.set(cleanSlug, null);
+    return null;
+  }
+
+  // --- Dynamic Theme Name Formatter & Official WordPress.org Resolver ---
+  function formatThemeName(slug) {
+    if (!slug || slug === 'Unknown') return 'Unknown';
+    const clean = slug.toLowerCase().trim();
+    const knownThemes = {
+      'twentytwentyfive': 'Twenty Twenty-Five',
+      'twentytwentyfour': 'Twenty Twenty-Four',
+      'twentytwentythree': 'Twenty Twenty-Three',
+      'twentytwentytwo': 'Twenty Twenty-Two',
+      'twentytwentyone': 'Twenty Twenty-One',
+      'twentytwenty': 'Twenty Twenty',
+      'twentynineteen': 'Twenty Nineteen',
+      'twentyseventeen': 'Twenty Seventeen',
+      'twentysixteen': 'Twenty Sixteen',
+      'twentyfifteen': 'Twenty Fifteen',
+      'twentyfourteen': 'Twenty Fourteen',
+      'twentythirteen': 'Twenty Thirteen',
+      'twentytwelve': 'Twenty Twelve',
+      'twentyeleven': 'Twenty Eleven',
+      'twentyten': 'Twenty Ten',
+      'astra': 'Astra',
+      'generatepress': 'GeneratePress',
+      'hello-elementor': 'Hello Elementor',
+      'kadence': 'Kadence',
+      'oceanwp': 'OceanWP',
+      'neve': 'Neve',
+      'blocksy': 'Blocksy',
+      'flatsome': 'Flatsome',
+      'flavor': 'Flavor',
+      'divi': 'Divi',
+      'droipbase': 'droipbase'
+    };
+    if (knownThemes[clean]) return knownThemes[clean];
+    return clean.split(/[-_]+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  }
+
+  const wpOrgThemeCache = new Map();
+  async function fetchWpOrgThemeMetadata(slug) {
+    if (!slug || slug === 'Unknown') return null;
+    const clean = slug.toLowerCase().trim();
+    if (wpOrgThemeCache.has(clean)) return wpOrgThemeCache.get(clean);
+
+    try {
+      const res = await fetch(`https://api.wordpress.org/themes/info/1.2/?action=theme_information&request[slug]=${encodeURIComponent(clean)}`, { cache: 'force-cache' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.name) {
+          const meta = {
+            name: data.name,
+            version: data.version || '',
+            author: data.author || ''
+          };
+          wpOrgThemeCache.set(clean, meta);
+          return meta;
+        }
+      }
+    } catch (e) {}
+
+    wpOrgThemeCache.set(clean, null);
     return null;
   }
 
