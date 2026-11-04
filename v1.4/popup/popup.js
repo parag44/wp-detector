@@ -235,10 +235,46 @@ async function detectWordPress() {
     }
   }
 
-  // If theme was found via inlined block theme signals, ensure wpContent signal reflects it
+  // Layer 5: Direct style.css Inspection & Header Extraction (WPOPTIC / Theme Standard)
+  // Calls [origin]/wp-content/themes/[slug]/style.css to parse the official WordPress
+  // header comment (Theme Name, Version, Author, Author URI, Description, Template).
+  let themeName = '';
+  let themeDescription = '';
+  let themeAuthorUri = '';
+
+  if (theme !== 'Unknown') {
+    try {
+      const styleUrl = `${origin}/wp-content/themes/${theme}/style.css`;
+      const styleRes = await fetch(styleUrl);
+      if (styleRes.ok) {
+        const cssText = await styleRes.text();
+        if (cssText) {
+          const nameMatch = cssText.match(/Theme Name:\s*([^\r\n*]+)/i);
+          const verMatch = cssText.match(/Version:\s*([^\r\n*]+)/i);
+          const authorMatch = cssText.match(/Author:\s*([^\r\n*]+)/i);
+          const authorUriMatch = cssText.match(/Author URI:\s*([^\r\n*]+)/i);
+          const templateMatch = cssText.match(/Template:\s*([^\r\n*]+)/i);
+          const descMatch = cssText.match(/Description:\s*([^\r\n*]+)/i);
+
+          if (nameMatch) themeName = nameMatch[1].trim();
+          if (verMatch && (!themeVersion || verMatch[1] !== version)) themeVersion = verMatch[1].trim();
+          if (authorMatch && !themeAuthor) themeAuthor = authorMatch[1].trim().replace(/<[^>]+>/g, '');
+          if (authorUriMatch) themeAuthorUri = authorUriMatch[1].trim();
+          if (templateMatch && !isChildTheme) {
+            isChildTheme = true;
+            parentTheme = templateMatch[1].trim();
+          }
+          if (descMatch) themeDescription = descMatch[1].trim();
+          if (!themeStylesheet) themeStylesheet = styleUrl;
+        }
+      }
+    } catch (e) {}
+  }
+
+  // If theme was found via inlined block theme signals or style.css, ensure wpContent signal reflects it
   if (theme !== 'Unknown' && !signals.wpContent.detected) {
     signals.wpContent.detected = true;
-    signals.wpContent.detail = `Block theme detected: ${theme}`;
+    signals.wpContent.detail = `Theme detected (${themeName || theme})`;
   }
 
   signals.wpContent.count = wpContentCount;
@@ -549,8 +585,11 @@ async function detectWordPress() {
     protocol: urlParams.protocol,
     version,
     theme,
+    themeName: themeName || '',
     themeVersion,
     themeAuthor,
+    themeAuthorUri: themeAuthorUri || '',
+    themeDescription: themeDescription || '',
     themeStylesheet,
     isChildTheme,
     parentTheme,
@@ -889,7 +928,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (tabPlCount) tabPlCount.textContent = data.plugins.length;
     const chipAll = document.getElementById('chip-all-count');
     if (chipAll) chipAll.textContent = data.plugins.length;
-    const displayTheme = formatThemeName(data.theme);
+    const displayTheme = data.themeName || formatThemeName(data.theme);
     document.getElementById('metric-theme-name').textContent = data.theme !== 'Unknown' ? displayTheme : 'Theme';
     document.getElementById('metric-signals-count').textContent = `${data.signalScore} / 7`;
     document.getElementById('tab-signals-score').textContent = `${data.signalScore}/7`;
@@ -935,11 +974,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     const fallbackNameEl = document.getElementById('theme-fallback-name');
     if (fallbackNameEl) fallbackNameEl.textContent = displayTheme;
 
-    // Asynchronously resolve official Theme metadata from WordPress.org API
+    // Asynchronously resolve official Theme metadata from local site style.css & WordPress.org API
     if (data.theme && data.theme !== 'Unknown') {
+      // 1. Direct style.css fetch from visited site (authoritative for active site & custom/bespoke themes)
+      fetchSiteThemeStyleCss(data.origin, data.theme).then(styleMeta => {
+        if (!styleMeta) return;
+        if (styleMeta.name) {
+          const ovName = document.getElementById('overview-theme-name');
+          if (ovName) ovName.textContent = styleMeta.name;
+          const metricName = document.getElementById('metric-theme-name');
+          if (metricName) metricName.textContent = styleMeta.name;
+          const bigTitle = document.getElementById('theme-big-title');
+          if (bigTitle) bigTitle.textContent = styleMeta.name;
+          const specName = document.getElementById('theme-spec-name');
+          if (specName) specName.textContent = styleMeta.name;
+          const fbName = document.getElementById('theme-fallback-name');
+          if (fbName) fbName.textContent = styleMeta.name;
+        }
+        if (styleMeta.version && (!data.themeVersion || data.themeVersion === 'Active')) {
+          const ovVer = document.getElementById('overview-theme-version');
+          if (ovVer) ovVer.textContent = `v${styleMeta.version}`;
+          const pillVer = document.getElementById('theme-pill-ver');
+          if (pillVer) pillVer.textContent = `v${styleMeta.version}`;
+          const specVer = document.getElementById('theme-spec-version');
+          if (specVer) specVer.textContent = styleMeta.version;
+        }
+        if (styleMeta.author && (!data.themeAuthor || data.themeAuthor.includes('Unknown'))) {
+          const ovAuth = document.getElementById('overview-theme-author');
+          if (ovAuth) ovAuth.textContent = `By ${styleMeta.author}`;
+          const specAuth = document.getElementById('theme-spec-author');
+          if (specAuth) specAuth.textContent = styleMeta.author;
+        }
+      });
+
+      // 2. WordPress.org Themes API (fallback / enrichment for official repository themes)
       fetchWpOrgThemeMetadata(data.theme).then(meta => {
         if (!meta) return;
-        if (meta.name) {
+        if (meta.name && !data.themeName) {
           const ovName = document.getElementById('overview-theme-name');
           if (ovName) ovName.textContent = meta.name;
           const metricName = document.getElementById('metric-theme-name');
@@ -951,7 +1022,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           const fbName = document.getElementById('theme-fallback-name');
           if (fbName) fbName.textContent = meta.name;
         }
-        if (meta.version && !data.themeVersion) {
+        if (meta.version && (!data.themeVersion || data.themeVersion === 'Active')) {
           const ovVer = document.getElementById('overview-theme-version');
           if (ovVer) ovVer.textContent = `v${meta.version}`;
           const pillVer = document.getElementById('theme-pill-ver');
@@ -1198,6 +1269,48 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {}
 
     wpOrgThemeCache.set(clean, null);
+    return null;
+  }
+
+  // Multi-layer Direct style.css Resolver from Inspected Site (Theme Standard)
+  const siteThemeStyleCache = new Map();
+  async function fetchSiteThemeStyleCss(origin, theme) {
+    if (!origin || !theme || theme === 'Unknown') return null;
+    const cleanTheme = theme.toLowerCase().trim();
+    const cacheKey = `${origin}|${cleanTheme}`;
+    if (siteThemeStyleCache.has(cacheKey)) return siteThemeStyleCache.get(cacheKey);
+
+    try {
+      const url = `${origin.replace(/\/$/, '')}/wp-content/themes/${encodeURIComponent(cleanTheme)}/style.css`;
+      const res = await fetch(url, { cache: 'force-cache' });
+      if (res.ok) {
+        const cssText = await res.text();
+        if (cssText) {
+          const nameMatch = cssText.match(/Theme Name:\s*([^\r\n*]+)/i);
+          const verMatch = cssText.match(/Version:\s*([^\r\n*]+)/i);
+          const authorMatch = cssText.match(/Author:\s*([^\r\n*]+)/i);
+          const authorUriMatch = cssText.match(/Author URI:\s*([^\r\n*]+)/i);
+          const templateMatch = cssText.match(/Template:\s*([^\r\n*]+)/i);
+          const descMatch = cssText.match(/Description:\s*([^\r\n*]+)/i);
+
+          if (nameMatch || verMatch || authorMatch) {
+            const meta = {
+              name: nameMatch ? nameMatch[1].trim() : '',
+              version: verMatch ? verMatch[1].trim() : '',
+              author: authorMatch ? authorMatch[1].trim().replace(/<[^>]+>/g, '') : '',
+              authorUri: authorUriMatch ? authorUriMatch[1].trim() : '',
+              parentTheme: templateMatch ? templateMatch[1].trim() : '',
+              isChildTheme: !!templateMatch,
+              description: descMatch ? descMatch[1].trim() : ''
+            };
+            siteThemeStyleCache.set(cacheKey, meta);
+            return meta;
+          }
+        }
+      }
+    } catch (e) {}
+
+    siteThemeStyleCache.set(cacheKey, null);
     return null;
   }
 
