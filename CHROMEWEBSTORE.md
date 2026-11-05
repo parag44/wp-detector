@@ -39,12 +39,12 @@ Whether you're debugging client websites, conducting competitive research, or au
 • Direct links to official WordPress.org plugin directory pages for instant documentation lookup.
 
 ⚡ **Server, Hosting & CDN Intelligence**
-• Detects the underlying web server software (Nginx, Apache, LiteSpeed, Cloudflare, etc.).
-• Identifies reverse proxies and managed hosts (Cloudflare, Sucuri, WP Engine, Kinsta, Automattic / WordPress VIP, Pantheon, etc.).
-• Detects PHP version when exposed in server response headers.
+• Detects the underlying web server software and proxy architecture.
+• Identifies managed hosting platforms, reverse proxies, and cloud delivery networks.
+• Detects PHP runtime version when exposed in server response headers.
 
 🚀 **Real-Time Cache Status Inspection**
-• Inspects HTTP response headers to identify active caching engines (LiteSpeed Cache, Cloudflare, WP Rocket, Varnish, WP-Optimize, W3 Total Cache, NitroPack, etc.).
+• Inspects HTTP response headers to identify active page caching and performance acceleration layers.
 • Displays real-time cache behavior: HIT, MISS, BYPASS, or DYNAMIC.
 
 🌐 **DNS & Datacenter Resolution**
