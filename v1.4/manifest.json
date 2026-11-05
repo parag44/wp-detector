@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "WPScout - Scout Any WordPress Website",
-  "version": "1.4",
+  "version": "1.4.1",
   "description": "Detect WordPress versions, themes, plugins, server technologies, caching systems, DNS records, and more with a single click.",
   "icons": {
     "16": "icons/icon-16.png",

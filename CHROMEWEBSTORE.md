@@ -1,7 +1,7 @@
 # Chrome Web Store Listing — WPScout
 
 > Last Updated: 2026-11-03
-> Target Version: v1.4
+> Target Version: v1.4.1
 
 ---
 
