@@ -120,6 +120,7 @@ The Chrome Web Store Developer Dashboard requires a specific justification for e
 | `activeTab` | permission | Required to inspect the current active webpage's DOM for WordPress generator meta tags, theme stylesheet links, and script paths when the user opens the extension popup. |
 | `scripting` | permission | Required to execute the lightweight detection function in the active tab context to read asset URLs and REST API link rel elements. |
 | `tabs` | permission | Required to read the current tab's active URL and dynamically update the toolbar action icon between active (WordPress site) and dimmed (non-WordPress site). |
+| `storage` | permission | Required to cache tab-level WordPress detection states across background service worker restarts so toolbar action icons stay accurate without re-executing detection scripts. |
 | `https://api.wordpress.org/*` | host_permission | Required to query official WordPress.org plugin and theme API endpoints to fetch official titles, version numbers, and update dates. |
 | `https://ps.w.org/*` | host_permission | Required to load official plugin brand thumbnails directly from the official WordPress.org Plugin assets CDN. |
 | `https://ts.w.org/*` | host_permission | Required to load official theme screenshot artwork directly from the official WordPress.org Theme assets CDN. |
