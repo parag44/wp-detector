@@ -3,95 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WPScout - Scout Any WordPress Website</title>
+  <title>WPScout - WordPress Intelligence &amp; Security Inspector</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body class="theme-dark">
   <div class="app-container">
 
-    <!-- Top Navigation Header -->
+    <!-- BEGIN: HeaderAndActions -->
     <header class="app-header">
-      <!-- Top Brand Bar (WPSNIFFER Style) -->
       <div class="header-brand-bar">
+        <!-- Logo and Brand Title -->
         <div class="brand-group">
-          <div class="brand-badge" title="WPScout">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              <circle cx="11" cy="11" r="3" fill="#FFFFFF"></circle>
+          <div class="brand-badge-gradient" title="WPScout">
+            <svg class="brand-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
           </div>
-          <span class="brand-name">WPSCOUT</span>
+          <div>
+            <div class="brand-title-wrap">
+              <span class="brand-title">WPSCOUT</span>
+              <span class="pro-badge">PRO</span>
+            </div>
+            <p class="brand-subtitle">Core Intelligence Engine</p>
+          </div>
         </div>
 
+        <!-- Quick Action Toolbar -->
         <div class="header-actions">
-          <a href="https://wise.com/pay/r/dY07p1CL5kn91qw" target="_blank" rel="noopener noreferrer" class="icon-btn support-btn" title="Support WPScout" aria-label="Support">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <!-- Favorite / Support -->
+          <a href="https://wise.com/pay/r/dY07p1CL5kn91qw" target="_blank" rel="noopener noreferrer" class="icon-btn support-btn" id="btn-favorite" title="Support WPScout" aria-label="Support">
+            <svg class="action-svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
           </a>
-          <button id="theme-toggle-btn" class="icon-btn" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
-            <svg class="sun-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-            <svg class="moon-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <!-- Theme Toggle -->
+          <button class="icon-btn" id="theme-toggle-btn" title="Switch Theme" aria-label="Switch Theme">
+            <svg class="sun-icon action-svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <svg class="moon-icon action-svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
           </button>
-          <button id="copy-btn" class="icon-btn" title="Copy Stack Report" aria-label="Copy Report">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <!-- Copy Stack JSON -->
+          <button class="icon-btn" id="copy-btn" title="Copy JSON Summary" aria-label="Copy JSON Summary">
+            <svg class="action-svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
           </button>
-          <button id="export-btn" class="icon-btn" title="Download Report" aria-label="Export Report">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          </button>
-          <button id="refresh-btn" class="icon-btn" title="Refresh Diagnostics" aria-label="Refresh">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          <!-- Refresh / Re-scan -->
+          <button class="icon-btn" id="refresh-btn" title="Re-scan site" aria-label="Re-scan site">
+            <svg class="action-svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
           </button>
         </div>
       </div>
 
-      <!-- Live Quick Badges Bar -->
-      <div class="sub-status-bar" id="sub-status-bar">
-        <span class="status-pill pill-neutral" id="pill-wp-status">
-          <span class="status-dot"></span>
-          <span id="pill-wp-text">ANALYZING...</span>
-        </span>
-        <span class="status-pill pill-neutral hidden" id="pill-core-version">v...</span>
-        <span class="status-pill pill-purple hidden" id="pill-gutenberg">GUTENBERG (BLOCKS)</span>
-        <span class="status-pill pill-blue hidden" id="pill-rest-api">&#10003; REST API</span>
-      </div>
+      <!-- Analyzed Target Domain Identity Card -->
+      <div class="site-card" id="site-card">
+        <div class="site-card-top">
+          <div class="site-card-info">
+            <!-- Simulated Favicon / Brand Symbol -->
+            <div class="site-favicon-wrap" id="site-favicon-wrap">
+              <img id="site-favicon" class="site-favicon-img" src="../icons/icon-48.png" alt="Favicon" width="16" height="16">
+            </div>
+            <div class="site-card-titles">
+              <h1 class="site-title" id="site-title">Detecting site...</h1>
+              <a class="site-url mono" id="site-url" href="#" target="_blank" rel="noopener noreferrer">
+                <span>...</span>
+                <svg class="external-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
 
-      <!-- Current Inspected Site Identity -->
-      <div class="site-bar" id="site-bar">
-        <div class="site-identity">
-          <div class="site-favicon-wrap" id="site-favicon-wrap">
-            <img id="site-favicon" class="site-favicon" src="../icons/icon-48.png" alt="Favicon" width="16" height="16">
-          </div>
-          <div class="site-text">
-            <h1 class="site-title" id="site-title">Detecting site...</h1>
-            <a href="#" class="site-url mono" id="site-url" target="_blank" rel="noopener noreferrer">...</a>
-          </div>
+          <!-- WordPress Badge -->
+          <span class="wp-badge badge-neutral" id="pill-wp-status">
+            <span class="status-pulse-dot" id="pill-wp-dot"></span>
+            <span id="pill-wp-text">ANALYZING...</span>
+          </span>
+        </div>
+
+        <!-- Quick Tags -->
+        <div class="site-quick-tags" id="site-quick-tags">
+          <span class="quick-tag tag-neutral hidden" id="pill-core-version">v...</span>
+          <span class="quick-tag tag-amber hidden" id="pill-cdn-badge">Edge / Host</span>
+          <span class="quick-tag tag-purple hidden" id="pill-theme-badge">Theme</span>
+          <span class="quick-tag tag-blue hidden" id="pill-rest-api">REST API</span>
+          <span class="quick-tag tag-teal hidden" id="pill-gutenberg">Gutenberg</span>
         </div>
       </div>
     </header>
+    <!-- END: HeaderAndActions -->
 
-    <!-- Tab Navigation Bar -->
-    <nav class="nav-tabs hidden" role="tablist">
-      <button class="nav-tab active" data-tab="overview" role="tab" aria-selected="true">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    <!-- BEGIN: NavigationTabs -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="nav-tab active" data-tab="overview" id="tab-btn-overview" role="tab" aria-selected="true">
+        <svg class="tab-svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
         <span>Overview</span>
       </button>
-      <button class="nav-tab" data-tab="theme" role="tab" aria-selected="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"></path></svg>
-        <span>Theme</span>
+      <button class="nav-tab" data-tab="hosting" id="tab-btn-hosting" role="tab" aria-selected="false">
+        <svg class="tab-svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span>Server &amp; Network</span>
       </button>
-      <button class="nav-tab" data-tab="hosting" role="tab" aria-selected="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-        <span>Server</span>
+      <button class="nav-tab" data-tab="plugins" id="tab-btn-plugins" role="tab" aria-selected="false">
+        <svg class="tab-svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span>Plugins</span>
+        <span class="tab-badge" id="tab-plugins-count">0</span>
       </button>
-      <button class="nav-tab" data-tab="signals" role="tab" aria-selected="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      <button class="nav-tab" data-tab="signals" id="tab-btn-signals" role="tab" aria-selected="false">
+        <svg class="tab-svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
         <span>Signals</span>
         <span class="tab-badge badge-green" id="tab-signals-score">0/7</span>
       </button>
     </nav>
+    <!-- END: NavigationTabs -->
 
     <!-- Main Content Container -->
-    <main class="main-content">
+    <main class="main-content" id="main-scroll-area">
 
       <!-- Loading State -->
       <div id="state-loading" class="state-container">
@@ -104,20 +143,18 @@
       <div id="state-empty" class="state-container hidden">
         <div class="empty-card">
           <div class="empty-icon-wrap" title="WPScout">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="empty-brand-icon">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              <circle cx="11" cy="11" r="3" fill="currentColor"></circle>
+            <svg class="empty-brand-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
           </div>
           <h2 class="empty-title" id="empty-title">Non-WordPress Site</h2>
-          <span class="status-pill pill-amber" id="empty-pill">No Signatures</span>
+          <span class="quick-tag tag-amber" id="empty-pill">No Signatures</span>
           <p class="empty-desc" id="empty-desc">No WordPress core files, REST API endpoints, or theme stylesheets were detected on this page.</p>
 
           <div class="empty-checklist" id="empty-checklist">
-            <div class="chk-item"><span class="chk-icon">✕</span> <span>No <code>/wp-content/</code> or <code>/wp-includes/</code> asset paths</span></div>
-            <div class="chk-item"><span class="chk-icon">✕</span> <span>No <code>meta[name="generator"]</code> WordPress tag</span></div>
-            <div class="chk-item"><span class="chk-icon">✕</span> <span>No <code>/wp-json/</code> REST API response found</span></div>
+            <div class="chk-item"><span class="chk-icon">&times;</span> <span>No <code>/wp-content/</code> or <code>/wp-includes/</code> asset paths</span></div>
+            <div class="chk-item"><span class="chk-icon">&times;</span> <span>No <code>meta[name="generator"]</code> WordPress tag</span></div>
+            <div class="chk-item"><span class="chk-icon">&times;</span> <span>No <code>/wp-json/</code> REST API response found</span></div>
           </div>
 
           <button class="btn-primary" id="btn-empty-rescan">
@@ -127,114 +164,378 @@
         </div>
       </div>
 
-      <!-- TAB 1: OVERVIEW -->
+      <!-- ====================== TAB 1: OVERVIEW ====================== -->
       <section id="pane-overview" class="tab-pane hidden" role="tabpanel">
 
-        <!-- 4 Metric Cards Grid -->
+        <!-- 4-Card Quick Metric Matrix -->
         <div class="metrics-grid">
-          <div class="metric-card">
+          <!-- Confidence -->
+          <div class="metric-card" id="card-click-confidence">
             <div class="metric-icon-wrap icon-purple">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-            </div>
-            <div class="metric-info">
-              <div class="metric-val" id="metric-confidence">95%</div>
-              <div class="metric-label">Confidence</div>
-            </div>
-          </div>
-
-          <div class="metric-card" id="card-click-plugins">
-            <div class="metric-icon-wrap icon-blue">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v4h1.5a2.5 2.5 0 0 1 0 5H2v4a2 2 0 0 0 2 2h4v-1.5a2.5 2.5 0 0 1 5 0V21h4a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z"></path></svg>
-            </div>
-            <div class="metric-info">
-              <div class="metric-val" id="metric-plugins">0</div>
-              <div class="metric-label">Plugins</div>
-            </div>
-          </div>
-
-          <div class="metric-card" id="card-click-theme">
-            <div class="metric-icon-wrap icon-teal">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"></path></svg>
-            </div>
-            <div class="metric-info">
-              <div class="metric-val" id="metric-theme-name">1 Theme</div>
-              <div class="metric-label">Active Theme</div>
-            </div>
-          </div>
-
-          <div class="metric-card" id="card-click-signals">
-            <div class="metric-icon-wrap icon-green">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            </div>
-            <div class="metric-info">
-              <div class="metric-val" id="metric-signals-count">7 / 7</div>
-              <div class="metric-label">Signals</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Active Theme Preview Banner -->
-        <div class="section-card theme-summary-card">
-          <div class="theme-summary-thumb">
-            <img id="overview-theme-thumb" src="" alt="Theme Preview" class="theme-thumb-img hidden">
-            <div id="overview-theme-placeholder" class="theme-thumb-placeholder theme-thumb-no-preview" title="No preview available">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                <polyline points="21 15 16 10 5 21"></polyline>
-                <line x1="2" y1="2" x2="22" y2="22"></line>
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
-              <span class="mini-no-preview-text">No preview</span>
             </div>
+            <div class="metric-val" id="metric-confidence">0%</div>
+            <div class="metric-label">Confidence</div>
           </div>
-          <div class="theme-summary-details">
-            <span class="card-eyebrow">Active Theme</span>
-            <div class="theme-title-row">
-              <h3 class="theme-name" id="overview-theme-name">...</h3>
-              <span class="pill-badge" id="overview-theme-version">v...</span>
+
+          <!-- Plugins Count -->
+          <div class="metric-card cursor-pointer" id="card-click-plugins">
+            <div class="metric-icon-wrap icon-blue">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
             </div>
-            <p class="theme-meta-sub" id="overview-theme-author">By ...</p>
+            <div class="metric-val" id="metric-plugins">0</div>
+            <div class="metric-label">Plugins</div>
           </div>
-          <button class="btn-arrow" id="btn-goto-theme" title="View Theme Details">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </button>
+
+          <!-- Active Theme Indicator -->
+          <div class="metric-card cursor-pointer" id="card-click-theme">
+            <div class="metric-icon-wrap icon-sky">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+            <div class="metric-val truncate-metric" id="metric-theme-name" title="Theme">Theme</div>
+            <div class="metric-label">Theme</div>
+          </div>
+
+          <!-- Signals Score -->
+          <div class="metric-card cursor-pointer" id="card-click-signals">
+            <div class="metric-icon-wrap icon-emerald">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+            <div class="metric-val" id="metric-signals-count">0 / 7</div>
+            <div class="metric-label">Signals</div>
+          </div>
         </div>
 
-        <!-- Detected Plugins Section (Theme & Plugins First) -->
-        <div class="section-card plugins-overview-card" id="plugins-section">
-          <div class="card-header-bar">
-            <div class="card-header-title">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v4h1.5a2.5 2.5 0 0 1 0 5H2v4a2 2 0 0 0 2 2h4v-1.5a2.5 2.5 0 0 1 5 0V21h4a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z"></path></svg>
-              <span>Detected Plugins</span>
-              <span class="count-pill" id="overview-plugins-count">0</span>
+        <!-- Active Theme Rich Card -->
+        <article class="rich-card theme-rich-card">
+          <div class="rich-card-header">
+            <div class="eyebrow-text">
+              <span class="blue-dot"></span>
+              <span>Active Theme Details</span>
             </div>
-            <span class="card-header-hint">Scanned Assets &amp; API</span>
+            <span class="badge-mini mono" id="overview-theme-badge">Theme</span>
           </div>
 
-          <div class="plugins-toolbar">
-            <div class="search-input-wrap">
-              <svg class="search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" id="plugin-search" class="search-input" placeholder="Search detected plugins...">
-              <button id="search-clear-btn" class="search-clear-btn hidden" title="Clear search">&times;</button>
+          <div class="theme-card-body">
+            <!-- Theme Preview Mock / Image -->
+            <div class="theme-thumb-box" id="theme-thumb-box">
+              <img id="overview-theme-thumb" src="" alt="Theme Preview" class="theme-thumb-img hidden">
+              <div id="overview-theme-placeholder" class="theme-thumb-placeholder">
+                <div class="theme-placeholder-grad"></div>
+                <div class="theme-placeholder-content">
+                  <span class="theme-placeholder-title" id="theme-placeholder-title">THEME</span>
+                  <div class="theme-placeholder-dots">
+                    <div class="swatch-red"></div>
+                    <div class="swatch-blue"></div>
+                    <div class="swatch-amber"></div>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <!-- Theme Info -->
+            <div class="theme-info-box">
+              <div class="theme-name-row">
+                <h3 class="theme-heading" id="overview-theme-name">Detecting Theme...</h3>
+                <span class="theme-version-badge mono" id="overview-theme-version">v...</span>
+              </div>
+              <p class="theme-author-sub" id="overview-theme-author">By ...</p>
+              <div class="theme-status-row">
+                <span class="theme-status-text" id="overview-theme-status">
+                  <span class="green-dot"></span>
+                  <span id="overview-theme-status-label">Active Stack</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Inspect Theme Button -->
+            <button class="btn-inspect-theme" id="btn-goto-theme" title="Inspect Theme Details">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- Detected Plugins Section -->
+        <div class="rich-card plugins-section-card" id="plugins-section">
+          <div class="rich-card-header">
+            <div class="card-title-flex">
+              <svg class="section-icon text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+              <h3 class="section-heading">Detected Plugins (<span id="overview-plugins-count">0</span>)</h3>
+            </div>
+            <span class="header-hint">Scanned Assets &amp; DOM</span>
           </div>
 
+          <!-- Filter input field -->
+          <div class="search-wrap">
+            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+            <input type="text" id="plugin-search" class="search-input" placeholder="Search detected plugins...">
+            <button id="search-clear-btn" class="search-clear-btn hidden" title="Clear search">&times;</button>
+          </div>
+
+          <!-- Plugins List Container -->
           <div class="plugins-list-container" id="plugins-list">
-            <!-- Populated dynamically with real thumbnails & metadata -->
-          </div>
-
-          <div class="tab-note">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-            <span>Detected via frontend scripts, stylesheets, and exposed REST API endpoints.</span>
+            <!-- Populated dynamically -->
           </div>
         </div>
 
       </section>
 
-      <!-- TAB 3: THEME DETAILS -->
-      <section id="pane-theme" class="tab-pane hidden" role="tabpanel">
+      <!-- ====================== TAB 2: SERVER & NETWORK ====================== -->
+      <section id="pane-hosting" class="tab-pane hidden" role="tabpanel">
+        <div class="rich-card">
+          <div class="rich-card-header border-b-subtle">
+            <div class="card-title-flex">
+              <div class="icon-square-blue">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+              </div>
+              <h2 class="section-heading">Server, Hosting &amp; Network</h2>
+            </div>
+            <span class="badge-live-ping" id="badge-live-status">Active Connection</span>
+          </div>
 
-        <div class="theme-hero-card">
+          <!-- Structured Key-Value Inspector List -->
+          <dl class="data-list text-xs">
+            <!-- IP Address -->
+            <div class="data-item">
+              <dt class="data-dt">IP Address</dt>
+              <dd class="data-dd font-mono font-semibold">
+                <span id="host-ip">...</span>
+                <button class="btn-copy-inline" id="btn-copy-ip" title="Copy IP">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                </button>
+              </dd>
+            </div>
+            <!-- Hosting / ISP -->
+            <div class="data-item">
+              <dt class="data-dt">Hosting / ISP</dt>
+              <dd class="data-dd font-semibold">
+                <span id="host-isp">Detecting...</span>
+                <span class="green-dot"></span>
+              </dd>
+            </div>
+            <!-- Server Location -->
+            <div class="data-item">
+              <dt class="data-dt">Server Location</dt>
+              <dd class="data-dd font-medium" id="host-location">...</dd>
+            </div>
+            <!-- Web Server -->
+            <div class="data-item">
+              <dt class="data-dt">Web Server</dt>
+              <dd class="data-dd font-mono" id="host-server">...</dd>
+            </div>
+            <!-- Page Builder -->
+            <div class="data-item">
+              <dt class="data-dt">Page Builder</dt>
+              <dd class="data-dd" id="host-builder">None Detected (Native Blocks)</dd>
+            </div>
+            <!-- CDN / Edge -->
+            <div class="data-item">
+              <dt class="data-dt">CDN / Edge</dt>
+              <dd class="data-dd font-semibold text-blue flex-center-gap" id="host-cdn">
+                <svg class="cdn-cloud-svg" fill="currentColor" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"></path></svg>
+                <span id="host-cdn-text">None Detected</span>
+              </dd>
+            </div>
+            <!-- Live Caching -->
+            <div class="data-item">
+              <dt class="data-dt">Live Caching</dt>
+              <dd class="data-dd">
+                <span class="badge-tag-cache" id="host-cache-badge">Unknown</span>
+              </dd>
+            </div>
+            <!-- PHP Version -->
+            <div class="data-item">
+              <dt class="data-dt">PHP Version</dt>
+              <dd class="data-dd font-mono" id="host-php">Unknown</dd>
+            </div>
+            <!-- SSL / HTTPS -->
+            <div class="data-item">
+              <dt class="data-dt">SSL / HTTPS</dt>
+              <dd class="data-dd">
+                <span class="badge-tag-ssl">
+                  <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+                  <span>VALID HTTPS (TLS 1.3)</span>
+                </span>
+              </dd>
+            </div>
+            <!-- Nameservers (DNS) -->
+            <div class="data-item-col">
+              <dt class="data-dt-flex">
+                <span>Nameservers (DNS)</span>
+                <span class="text-subtle font-mono text-xs" id="host-dns-count">Records</span>
+              </dt>
+              <dd class="dns-box mono" id="host-dns">
+                <div class="dns-line"><span>Resolving nameservers...</span></div>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ====================== TAB 3: PLUGINS VIEW ====================== -->
+      <section id="pane-plugins" class="tab-pane hidden" role="tabpanel">
+        <div class="rich-card">
+          <div class="rich-card-header">
+            <div>
+              <h2 class="section-heading">All Detected Extensions (<span id="all-plugins-count">0</span>)</h2>
+              <p class="header-desc">Assets identified via static scripts, stylesheets, and Gutenberg DOM blocks.</p>
+            </div>
+            <button class="btn-text-action" id="btn-export-plugins">Export JSON</button>
+          </div>
+
+          <!-- Secondary Filter Chips -->
+          <div class="filter-chips-bar">
+            <button class="chip active" data-filter="all">All (<span id="chip-all-count">0</span>)</button>
+            <button class="chip" data-filter="confirmed">Confirmed</button>
+            <button class="chip" data-filter="url">URL Assets</button>
+            <button class="chip" data-filter="dom">DOM / Blocks</button>
+          </div>
+
+          <!-- Plugin Inventory List (Mirrors overview search filter) -->
+          <div class="plugins-list-container" id="plugins-tab-list">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================== TAB 4: SIGNALS ====================== -->
+      <section id="pane-signals" class="tab-pane hidden" role="tabpanel">
+        <div class="rich-card">
+          <div class="rich-card-header">
+            <h2 class="section-heading">WordPress Verification Signals (<span id="signals-score-header">0/7</span>)</h2>
+            <span class="badge-confidence" id="badge-confidence-tag">High Confidence</span>
+          </div>
+
+          <ul class="signals-list-rich" id="signals-list">
+            <!-- 1. wp-content -->
+            <li class="signal-item-rich" id="sig-wp-content">
+              <div class="sig-left">
+                <span class="sig-dot bg-emerald"></span>
+                <div class="sig-titles">
+                  <span class="sig-name">wp-content Path in Stylesheets</span>
+                  <span class="sig-evidence" id="sig-wp-content-detail">Scanning stylesheets...</span>
+                </div>
+              </div>
+              <span class="sig-tag-status sig-passed">MATCH</span>
+            </li>
+
+            <!-- 2. wp-includes -->
+            <li class="signal-item-rich" id="sig-wp-includes">
+              <div class="sig-left">
+                <span class="sig-dot bg-emerald"></span>
+                <div class="sig-titles">
+                  <span class="sig-name">wp-includes JavaScript Enqueues</span>
+                  <span class="sig-evidence" id="sig-wp-includes-detail">Scanning scripts...</span>
+                </div>
+              </div>
+              <span class="sig-tag-status sig-passed">MATCH</span>
+            </li>
+
+            <!-- 3. Gutenberg Blocks -->
+            <li class="signal-item-rich" id="sig-gutenberg">
+              <div class="sig-left">
+                <span class="sig-dot bg-emerald"></span>
+                <div class="sig-titles">
+                  <span class="sig-name">WordPress Gutenberg Block Markup</span>
+                  <span class="sig-evidence" id="sig-gutenberg-detail">Checking block markers...</span>
+                </div>
+              </div>
+              <span class="sig-tag-status sig-passed">MATCH</span>
+            </li>
+
+            <!-- 4. wp-json REST API -->
+            <li class="signal-item-rich" id="sig-api">
+              <div class="sig-left">
+                <span class="sig-dot bg-emerald"></span>
+                <div class="sig-titles">
+                  <span class="sig-name">wp-json REST API Discovery Endpoint</span>
+                  <span class="sig-evidence" id="sig-api-detail">Checking /wp-json/...</span>
+                </div>
+              </div>
+              <span class="sig-tag-status sig-passed">MATCH</span>
+            </li>
+
+            <!-- 5. Link Header -->
+            <li class="signal-item-rich" id="sig-link-header">
+              <div class="sig-left">
+                <span class="sig-dot bg-emerald"></span>
+                <div class="sig-titles">
+                  <span class="sig-name">wp-json in Link Header</span>
+                  <span class="sig-evidence" id="sig-link-header-detail">Checking Link headers...</span>
+                </div>
+              </div>
+              <span class="sig-tag-status sig-passed">MATCH</span>
+            </li>
+
+            <!-- 6. wp-json link rel -->
+            <li class="signal-item-rich" id="sig-link-rel">
+              <div class="sig-left">
+                <span class="sig-dot bg-emerald"></span>
+                <div class="sig-titles">
+                  <span class="sig-name">wp-json link rel Tag in Head</span>
+                  <span class="sig-evidence" id="sig-link-rel-detail">Checking link[rel="https://api.w.org/"]...</span>
+                </div>
+              </div>
+              <span class="sig-tag-status sig-passed">MATCH</span>
+            </li>
+
+            <!-- 7. Generator Meta Tag -->
+            <li class="signal-item-rich" id="sig-generator">
+              <div class="sig-left">
+                <span class="sig-dot bg-amber" id="sig-dot-generator"></span>
+                <div class="sig-titles">
+                  <span class="sig-name">WordPress generator Meta Tag in Head</span>
+                  <span class="sig-evidence" id="sig-generator-detail">Checking generator tag...</span>
+                </div>
+              </div>
+              <span class="sig-tag-status sig-muted" id="sig-tag-generator">REMOVED</span>
+            </li>
+
+            <!-- 8. Admin Paths -->
+            <li class="signal-item-rich" id="sig-admin-paths">
+              <div class="sig-left">
+                <span class="sig-dot bg-emerald" id="sig-dot-admin"></span>
+                <div class="sig-titles">
+                  <span class="sig-name">Standard Login / Admin Route</span>
+                  <span class="sig-evidence" id="sig-admin-paths-detail">Checking wp-login.php / wp-admin...</span>
+                </div>
+              </div>
+              <span class="sig-tag-status sig-passed" id="sig-tag-admin">MATCH</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- BEGIN: Theme Details Modal / Drawer -->
+    <div id="theme-modal" class="modal-backdrop hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="card-title-flex">
+            <span class="blue-dot"></span>
+            <h3 class="modal-title">Theme Deep Dive</h3>
+          </div>
+          <button class="btn-close-modal" id="btn-close-theme-modal">&times;</button>
+        </div>
+
+        <div class="modal-scrollable">
           <div class="theme-hero-cover" id="theme-hero-cover">
             <img id="theme-full-screenshot" src="" alt="Theme Screenshot" class="theme-full-img hidden">
             <div id="theme-full-fallback" class="theme-full-fallback theme-no-preview">
@@ -255,36 +556,36 @@
 
           <div class="theme-hero-body">
             <div class="theme-header-info">
-              <h2 class="theme-big-title" id="theme-big-title">NASA</h2>
+              <h2 class="theme-big-title" id="theme-big-title">Theme</h2>
               <div class="theme-pills-row">
-                <span class="status-pill pill-blue" id="theme-pill-slug">Slug: nasa</span>
-                <span class="status-pill pill-green" id="theme-pill-ver">v1.0.0</span>
-                <span class="status-pill pill-purple hidden" id="theme-pill-child">Child Theme</span>
+                <span class="quick-tag tag-blue mono" id="theme-pill-slug">Slug: ...</span>
+                <span class="quick-tag tag-emerald mono" id="theme-pill-ver">v...</span>
+                <span class="quick-tag tag-purple hidden" id="theme-pill-child">Child Theme</span>
               </div>
             </div>
 
-            <div class="data-table">
-              <div class="data-row">
-                <span class="data-label">Theme Name</span>
-                <span class="data-val bold" id="theme-spec-name">...</span>
+            <div class="data-list text-xs">
+              <div class="data-item">
+                <span class="data-dt">Theme Name</span>
+                <span class="data-dd font-bold" id="theme-spec-name">...</span>
               </div>
-              <div class="data-row">
-                <span class="data-label">Theme Slug</span>
-                <span class="data-val mono" id="theme-spec-slug">...</span>
+              <div class="data-item">
+                <span class="data-dt">Theme Slug</span>
+                <span class="data-dd font-mono" id="theme-spec-slug">...</span>
               </div>
-              <div class="data-row">
-                <span class="data-label">Detected Version</span>
-                <span class="data-val mono" id="theme-spec-version">Unknown</span>
+              <div class="data-item">
+                <span class="data-dt">Detected Version</span>
+                <span class="data-dd font-mono" id="theme-spec-version">Unknown</span>
               </div>
-              <div class="data-row">
-                <span class="data-label">Author</span>
-                <span class="data-val" id="theme-spec-author">Unknown</span>
+              <div class="data-item">
+                <span class="data-dt">Author</span>
+                <span class="data-dd" id="theme-spec-author">Unknown</span>
               </div>
-              <div class="data-row">
-                <span class="data-label">Style.css Status</span>
-                <span class="data-val status-confirmed" id="theme-spec-style">
+              <div class="data-item">
+                <span class="data-dt">Style.css Status</span>
+                <span class="data-dd status-confirmed flex-center-gap" id="theme-spec-style">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  Verified
+                  <span>Verified</span>
                 </span>
               </div>
             </div>
@@ -296,209 +597,40 @@
               </a>
               <button id="btn-copy-theme" class="btn-secondary">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                <span>Copy Theme Info</span>
+                <span>Copy Info</span>
               </button>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <!-- END: Theme Details Modal -->
 
-      </section>
+    <!-- BEGIN: QuickNotificationToast -->
+    <div class="toast-card hidden" id="toast">
+      <span class="toast-text" id="toast-message">Copied to clipboard</span>
+      <span class="toast-ok">OK</span>
+    </div>
+    <!-- END: QuickNotificationToast -->
 
-      <!-- TAB 4: SERVER & HOSTING -->
-      <section id="pane-hosting" class="tab-pane hidden" role="tabpanel">
-
-        <div class="section-card">
-          <div class="card-header-bar">
-            <div class="card-header-title">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-              <span>Server, Hosting &amp; Network</span>
-            </div>
-          </div>
-
-          <div class="data-table">
-            <div class="data-row">
-              <span class="data-label">IP Address</span>
-              <div class="data-val-group">
-                <span class="data-val mono bold copyable" id="host-ip">...</span>
-              </div>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Hosting / ISP</span>
-              <span class="data-val bold" id="host-isp">Detecting...</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Server Location</span>
-              <span class="data-val" id="host-location">...</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Web Server</span>
-              <span class="data-val mono" id="host-server">...</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Page Builder</span>
-              <span class="data-val" id="host-builder">None Detected</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">CDN / Edge</span>
-              <span class="data-val" id="host-cdn">None Detected</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Live Caching</span>
-              <span class="data-val" id="host-cache">
-                <span class="status-pill pill-neutral" id="host-cache-badge">Unknown</span>
-              </span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">PHP Version</span>
-              <span class="data-val mono" id="host-php">Unknown</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">SSL / HTTPS</span>
-              <span class="data-val" id="host-https">
-                <span class="status-pill pill-green">🔒 HTTPS</span>
-              </span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Nameservers (DNS)</span>
-              <span class="data-val text-right" id="host-dns">...</span>
-            </div>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- TAB 5: DETECTION SIGNALS -->
-      <section id="pane-signals" class="tab-pane hidden" role="tabpanel">
-
-        <div class="signals-header-card">
-          <div class="signals-score-circle">
-            <span class="score-num" id="signals-score-circle">7</span>
-            <span class="score-den">/7</span>
-          </div>
-          <div class="signals-score-info">
-            <h3 class="signals-score-title">WordPress Verification Engine</h3>
-            <p class="signals-score-desc">Evaluates 7 distinct structural signals to reliably confirm WordPress presence.</p>
-          </div>
-        </div>
-
-        <div class="signals-list" id="signals-list">
-          <!-- 1. wp-json API -->
-          <div class="signal-item" id="sig-api">
-            <div class="signal-icon-status">
-              <span class="sig-badge sig-passed">&#10003;</span>
-            </div>
-            <div class="signal-body">
-              <div class="signal-title-row">
-                <span class="signal-name">wp-json API detected</span>
-                <span class="sig-tag sig-tag-api">REST API</span>
-              </div>
-              <div class="signal-evidence" id="sig-api-detail">Checking endpoint...</div>
-            </div>
-          </div>
-
-          <!-- 2. wp-json in Link header -->
-          <div class="signal-item" id="sig-link-header">
-            <div class="signal-icon-status">
-              <span class="sig-badge sig-passed">&#10003;</span>
-            </div>
-            <div class="signal-body">
-              <div class="signal-title-row">
-                <span class="signal-name">wp-json in Link header</span>
-                <span class="sig-tag sig-tag-header">HTTP Header</span>
-              </div>
-              <div class="signal-evidence" id="sig-link-header-detail">Checking Link response header...</div>
-            </div>
-          </div>
-
-          <!-- 3. WordPress generator meta tag -->
-          <div class="signal-item" id="sig-generator">
-            <div class="signal-icon-status">
-              <span class="sig-badge sig-passed">&#10003;</span>
-            </div>
-            <div class="signal-body">
-              <div class="signal-title-row">
-                <span class="signal-name">WordPress generator meta tag</span>
-                <span class="sig-tag sig-tag-dom">DOM Tag</span>
-              </div>
-              <div class="signal-evidence" id="sig-generator-detail">Checking meta[name="generator"]...</div>
-            </div>
-          </div>
-
-          <!-- 4. /wp-content/ pattern -->
-          <div class="signal-item" id="sig-wp-content">
-            <div class="signal-icon-status">
-              <span class="sig-badge sig-passed">&#10003;</span>
-            </div>
-            <div class="signal-body">
-              <div class="signal-title-row">
-                <span class="signal-name">/wp-content/ pattern detected</span>
-                <span class="sig-tag sig-tag-assets">Asset URLs</span>
-              </div>
-              <div class="signal-evidence" id="sig-wp-content-detail">Scanning scripts &amp; stylesheets...</div>
-            </div>
-          </div>
-
-          <!-- 5. /wp-includes/ pattern -->
-          <div class="signal-item" id="sig-wp-includes">
-            <div class="signal-icon-status">
-              <span class="sig-badge sig-passed">&#10003;</span>
-            </div>
-            <div class="signal-body">
-              <div class="signal-title-row">
-                <span class="signal-name">/wp-includes/ pattern detected</span>
-                <span class="sig-tag sig-tag-assets">Core Assets</span>
-              </div>
-              <div class="signal-evidence" id="sig-wp-includes-detail">Scanning core library paths...</div>
-            </div>
-          </div>
-
-          <!-- 6. wp-json link rel detected -->
-          <div class="signal-item" id="sig-link-rel">
-            <div class="signal-icon-status">
-              <span class="sig-badge sig-passed">&#10003;</span>
-            </div>
-            <div class="signal-body">
-              <div class="signal-title-row">
-                <span class="signal-name">wp-json link rel detected</span>
-                <span class="sig-tag sig-tag-dom">HTML Rel</span>
-              </div>
-              <div class="signal-evidence" id="sig-link-rel-detail">Checking &lt;link rel="https://api.w.org/"&gt;...</div>
-            </div>
-          </div>
-
-          <!-- 7. WordPress admin/login paths -->
-          <div class="signal-item" id="sig-admin-paths">
-            <div class="signal-icon-status">
-              <span class="sig-badge sig-passed">&#10003;</span>
-            </div>
-            <div class="signal-body">
-              <div class="signal-title-row">
-                <span class="signal-name">WordPress admin/login paths detected</span>
-                <span class="sig-tag sig-tag-routes">Routes</span>
-              </div>
-              <div class="signal-evidence" id="sig-admin-paths-detail">Checking admin/login signatures...</div>
-            </div>
-          </div>
-        </div>
-
-      </section>
-
-    </main>
-
-    <!-- Bottom Footer -->
+    <!-- BEGIN: ExtensionFooter -->
     <footer class="app-footer">
       <div class="footer-left">
-        <span class="brand-sub">WPScout <span class="v-tag">v1.4</span></span>
+        <span class="footer-brand font-bold">WPScout</span>
+        <span class="footer-version-tag">v1.4.1</span>
         <span class="footer-dot">&bull;</span>
-        <a href="https://wise.com/pay/r/dY07p1CL5kn91qw" target="_blank" rel="noopener noreferrer" class="footer-support-link" title="Support WPScout">Support</a>
+        <a class="footer-link" href="https://wise.com/pay/r/dY07p1CL5kn91qw" target="_blank" rel="noopener noreferrer" title="Support WPScout">Support</a>
       </div>
       <div class="footer-right">
-        <span class="footer-tagline">Scout Any WordPress Website.</span>
+        <span class="footer-tagline">Scout Any WordPress Website</span>
+        <button class="btn-export-icon" id="export-btn" title="Export JSON Report">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+        </button>
       </div>
     </footer>
-
-    <!-- Toast Feedback Notification -->
-    <div id="toast" class="toast hidden">Report copied to clipboard!</div>
+    <!-- END: ExtensionFooter -->
 
   </div>
 
